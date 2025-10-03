@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------------------- */
-/*                           Copyright 2021-2024 NXP                          */
+/*                           Copyright 2021-2025 NXP                          */
 /*                            All rights reserved.                            */
 /*                    SPDX-License-Identifier: BSD-3-Clause                   */
 /* -------------------------------------------------------------------------- */
@@ -13,12 +13,11 @@
 
 #ifndef CONFIG_PRINTK /* Zephyr already has print support */
 #include "fsl_debug_console.h"
-#endif /* CONFIG_PRINTK */
+#endif                /* CONFIG_PRINTK */
 
 #include "fsl_loader.h"
 #include "fsl_power.h"
-#include "fsl_adapter_rpmsg.h"
-#include "fsl_adapter_rfimu.h"
+#include "fsl_adapter_imu.h"
 #include "fsl_os_abstraction.h"
 
 #include "fwk_config.h"
@@ -59,6 +58,9 @@
 
 #define HCI_CMD_BT_HOST_SLEEP_CONFIG_OCF          0x59U
 #define HCI_CMD_BT_HOST_SLEEP_CONFIG_PARAM_LENGTH 2U
+
+#define HCI_CMD_BT_DISABLE_LEPC_TIMER_OCF           0x9FU
+#define HCI_CMD_BT_DISABLE_LEPC_CONFIG_PARAM_LENGTH 0
 
 #define HCI_EVT_PS_SLEEP_OCF 0x20U
 
@@ -194,14 +196,14 @@ static bool PLATFORM_IsHciLinkReady(void);
 static bool PLATFORM_IsBleAwake(void);
 
 /*!
- * \brief RPMSG Rx callback used to receive HCI messages from Controller
+ * \brief IMUMC Rx callback used to receive HCI messages from Controller
  *
  * \param[in] param Usually NULL
  * \param[in] data pointer to data buffer
  * \param[in] len size of the data
- * \return hal_rpmsg_return_status_t tells RPMSG to free or hold the buffer
+ * \return hal_imumc_return_status_t tells IMUMC to free or hold the buffer
  */
-static hal_rpmsg_return_status_t PLATFORM_HciRpmsgRxCallback(void *param, uint8_t *data, uint32_t len);
+static hal_imumc_return_status_t PLATFORM_HciImumcRxCallback(void *param, uint8_t *data, uint32_t len);
 
 /*!
  * \brief Set BT Cal Data to Controller
@@ -246,20 +248,29 @@ static int PLATFORM_HandleBlePowerStateEvent(ble_ps_event_t psEvent);
  */
 static int PLATFORM_BleSetHostSleepConfig(void);
 
+#if defined(gPlatformDisableLEPCTimer_d) && (gPlatformDisableLEPCTimer_d > 0)
+/*!
+ * \brief Disable Controller LE Power Control timer and the supported feature bits
+ *
+ * \return int return status: >=0 for success, <0 for errors
+ */
+static int PLATFORM_DisableLEPCTimer(void);
+#endif
+
 void BLE_MCI_WAKEUP_DONE0_DriverIRQHandler(void);
 
-static void PLATFORM_FillInHciCmdMsg(uint8_t *pbuf, uint16_t opcode, uint8_t msg_sz, const uint8_t *msg_payload);
+static void PLATFORM_FillInHciCmdMsg(uint8_t *pmsg, uint16_t opcode, uint8_t msg_sz, const uint8_t *msg_payload);
 
 /* -------------------------------------------------------------------------- */
 /*                               Private memory                               */
 /* -------------------------------------------------------------------------- */
 
-static RPMSG_HANDLE_DEFINE(hci_rpmsg_handle);
-static hal_rpmsg_config_t hci_rpmsg_config = {
+static IMUMC_HANDLE_DEFINE(hci_imumc_handle);
+static hal_imumc_config_t hci_imumc_config = {
     .local_addr  = 30,
     .remote_addr = 40,
     .imuLink     = (uint8_t)kIMU_LinkCpu2Cpu3,
-    .callback    = PLATFORM_HciRpmsgRxCallback,
+    .callback    = &PLATFORM_HciImumcRxCallback,
     .param       = NULL,
 };
 
@@ -317,10 +328,10 @@ const uint8_t hci_cal_data_params[HCI_CMD_STORE_BT_CAL_DATA_PARAM_LENGTH] = {
     0xF0U,                            //  Encr_Key_Len[3:0]: MinEncrKeyLen = 0x0
                                       //  Encr_Key_Len[7:4]: MaxEncrKeyLen = 0xF
 #if defined(gPlatformEnableTxPowerChangeWithCountry_d) && (gPlatformEnableTxPowerChangeWithCountry_d == 0)
-    0x00U, //  RegionCode : 0x00
+    0x00U,                            //  RegionCode : 0x00
 #else
     0x00U, //  Reserved : 0x00
-#endif /* gPlatformEnableTxPowerChangeWithCountry_d */
+#endif                                /* gPlatformEnableTxPowerChangeWithCountry_d */
 };
 
 #if !defined(gPlatformDisableSetBtCalDataAnnex100_d) || (gPlatformDisableSetBtCalDataAnnex100_d == 0)
@@ -332,17 +343,17 @@ const uint8_t hci_cal_data_params[HCI_CMD_STORE_BT_CAL_DATA_PARAM_LENGTH] = {
  */
 const uint8_t hci_cal_data_annex100_params[HCI_CMD_STORE_BT_CAL_DATA_PARAM_ANNEX100_LENGTH] = {
     /*                   BT_HW_INFO   START              */
-    0x64U, //  Annex Type : 0x64
-    0x00U, //  CheckSum: Annex100 ignores checksum
-    0x10U, //  Length-In-Byte : 0x0010
-    0x00U, //  Length-In-Byte : 0x0010
-    0xFFU, // Pointer for next annex structure : 0xFFFFFFFF
-    0xFFU, // Pointer for next annex structure : 0xFFFFFFFF
-    0xFFU, // Pointer for next annex structure : 0xFFFFFFFF
-    0xFFU, // Pointer for next annex structure : 0xFFFFFFFF
-    0x01U, // Ext_PA Gain : Bit[7:1]   Ext_PA Present : Bit[0]
+    0x64U,                                       //  Annex Type : 0x64
+    0x00U,                                       //  CheckSum: Annex100 ignores checksum
+    0x10U,                                       //  Length-In-Byte : 0x0010
+    0x00U,                                       //  Length-In-Byte : 0x0010
+    0xFFU,                                       // Pointer for next annex structure : 0xFFFFFFFF
+    0xFFU,                                       // Pointer for next annex structure : 0xFFFFFFFF
+    0xFFU,                                       // Pointer for next annex structure : 0xFFFFFFFF
+    0xFFU,                                       // Pointer for next annex structure : 0xFFFFFFFF
+    0x01U,                                       // Ext_PA Gain : Bit[7:1]   Ext_PA Present : Bit[0]
 #if defined(gPlatformEnableTxPowerChangeWithCountry_d) && (gPlatformEnableTxPowerChangeWithCountry_d == 0)
-    0x00U, // Ext_Ant Gain : Bit[4:1]   Ext_Ant Present : Bit[0]
+    0x00U,                                       // Ext_Ant Gain : Bit[4:1]   Ext_Ant Present : Bit[0]
 #else
     0x00U, // Reserved
 #endif                                           /* gPlatformEnableTxPowerChangeWithCountry_d */
@@ -430,6 +441,11 @@ void PLATFORM_VendorSpecificInit(void)
 
     (void)PLATFORM_BleSetHostSleepConfig();
 
+#if defined(gPlatformDisableLEPCTimer_d) && (gPlatformDisableLEPCTimer_d == 1)
+    /* Allow Controller to disable LEPC*/
+    (void)PLATFORM_DisableLEPCTimer();
+#endif
+
 #if !defined(gPlatformDisableBleLowPower_d) || (gPlatformDisableBleLowPower_d == 0)
     /* Allow Controller to enter low power */
     (void)PLATFORM_EnableBleLowPower();
@@ -447,13 +463,14 @@ int PLATFORM_TerminateBle(void)
             break;
         }
 
-        if (PLATFORM_TerminateHciLink() != 0)
+        /* Power off CPU2 first */
+        if (PLATFORM_TerminateControllers((uint8_t)connBle_c) != 0) /* MISRA CID 26829044 */
         {
             ret = -1;
             break;
         }
 
-        if (PLATFORM_TerminateControllers((uint8_t)connBle_c) != 0) /* MISRA CID 26829044 */
+        if (PLATFORM_TerminateHciLink() != 0)
         {
             ret = -2;
             break;
@@ -488,7 +505,7 @@ int PLATFORM_ResetBle(void)
         if ((PLATFORM_GetRunningControllers() & conn802_15_4_c) != 0U)
         {
             /* Currently the CPU2 is running the combo firmware, so we should reset using this firmware */
-            PLATFORM_ResetOt();
+            ret = PLATFORM_ResetOt();
         }
         else
         {
@@ -568,8 +585,8 @@ int PLATFORM_SendHciMessage(uint8_t *msg, uint32_t len)
             break;
         }
 
-        /* Send HCI Packet through RPMSG channel */
-        if (HAL_RpmsgSend(hci_rpmsg_handle, msg, len) != kStatus_HAL_RpmsgSuccess)
+        /* Send HCI Packet through IMUMC channel */
+        if (HAL_ImumcSend(hci_imumc_handle, msg, len) != kStatus_HAL_ImumcSuccess)
         {
             ret = -2;
             break;
@@ -656,6 +673,12 @@ int PLATFORM_RequestBleWakeUp(void)
          * completely awake and ready to receive a message */
         NVIC_EnableIRQ(BLE_MCI_WAKEUP_DONE0_IRQn);
 
+        /* Make sure to clear wake up event */
+        if (OSA_EventClear((osa_event_handle_t)wakeUpEventGroup, (uint32_t)ble_awake_event) != KOSA_StatusSuccess)
+        {
+            ret = -1;
+        }
+
         /* Wake up BLE core with PMU BLE_WAKEUP bit
          * This bit is maintained until we receive a BLE_MCI_WAKEUP_DONE0
          * interrupt */
@@ -681,20 +704,17 @@ int PLATFORM_RequestBleWakeUp(void)
 int PLATFORM_ReleaseBleWakeUp(void)
 {
     int ret = 0;
-    /* Nothing to do, the BLE controller awakes with a one shot interrupt from PMU
-     * For now, there's no mechanism to force it active for a defined period of time
-     * The only concern is if the CPU2 has time to re-enter sleep while CPU3 still
-     * needs CPU2 power domain ressources such as IMU/SMU
-     * TODO: Use GPIO output from CPU2 to track sleep/active periods and measure
-     * the minimal time before CPU2 re-enters sleep after a wake up */
+
+    /* Clear BLE wake up interrupt */
+    PMU_DisableBleWakeup(0x1U);
+    NVIC_DisableIRQ(BLE_MCI_WAKEUP_DONE0_IRQn);
+
     return ret;
 }
 
 void BLE_MCI_WAKEUP_DONE0_DriverIRQHandler(void)
 {
-    /* The Controller is awake, we can clear BLE wake up interrupt */
-    PMU_DisableBleWakeup(0x1U);
-    NVIC_DisableIRQ(BLE_MCI_WAKEUP_DONE0_IRQn);
+    /* Nothing to do */
 }
 
 int PLATFORM_HandleControllerPowerState(void)
@@ -714,6 +734,11 @@ int PLATFORM_HandleControllerPowerState(void)
     return ret;
 }
 
+bool PLATFORM_IsControllerActive(void)
+{
+    return ((blePowerState == ble_awake_state) && (hciInitialized == true));
+}
+
 /* -------------------------------------------------------------------------- */
 /*                              Private functions                             */
 /* -------------------------------------------------------------------------- */
@@ -724,8 +749,8 @@ static int PLATFORM_InitHciLink(void)
 
     do
     {
-        /* Init RPMSG/IMU Channel */
-        if (HAL_RpmsgInit((hal_rpmsg_handle_t)hci_rpmsg_handle, &hci_rpmsg_config) != kStatus_HAL_RpmsgSuccess)
+        /* Init IMUMC Channel */
+        if (HAL_ImumcInit((hal_imumc_handle_t)hci_imumc_handle, &hci_imumc_config) != kStatus_HAL_ImumcSuccess)
         {
             ret = -1;
             break;
@@ -741,18 +766,12 @@ static int PLATFORM_TerminateHciLink(void)
 
     do
     {
-        /* Force wake up CPU2 before send IMU_MSG_CONTROL_SHUTDOWN in HAL_ImuDeinit() */
-        PMU_EnableBleWakeup(0x1U);
-
         /* Deinitialize IMU first
-         * Ignoring return value because kStatus_HAL_RpmsgError means it was already deinitialize */
-        (void)HAL_ImuDeinit(kIMU_LinkCpu2Cpu3, 0);
+         * Ignoring return value because kStatus_HAL_ImumcError means it was already deinitialize */
+        (void)HAL_ImuDeinit(kIMU_LinkCpu2Cpu3, 1);
 
-        /* Clear CPU2 wake up bit after HAL_ImuDeinit() */
-        PMU_DisableBleWakeup(0x1U);
-
-        /* Deinitialize RPMSG first */
-        if (HAL_RpmsgDeinit(hci_rpmsg_handle) != kStatus_HAL_RpmsgSuccess)
+        /* Deinitialize IMUMC first */
+        if (HAL_ImumcDeinit(hci_imumc_handle) != kStatus_HAL_ImumcSuccess)
         {
             ret = -2;
             break;
@@ -764,15 +783,23 @@ static int PLATFORM_TerminateHciLink(void)
 
 static bool PLATFORM_IsHciLinkReady(void)
 {
-    return (HAL_ImuLinkIsUp(hci_rpmsg_config.imuLink) == kStatus_HAL_RpmsgSuccess);
+    return (HAL_ImuLinkIsUp(hci_imumc_config.imuLink) == kStatus_HAL_ImumcSuccess);
 }
 
 static bool PLATFORM_IsBleAwake(void)
 {
+    /* The power state information of CPU2 is managed by a software state machine.
+     * This is an additional hardware check to make sure of the CPU2 power state
+     * Sending a HCI message while CPU2 is in low power causes message loss
+     */
+    if (BLE_POWER_STATUS() != BLE_POWER_ON)
+    {
+        blePowerState = ble_asleep_state;
+    }
     return (blePowerState != ble_asleep_state);
 }
 
-static hal_rpmsg_return_status_t PLATFORM_HciRpmsgRxCallback(void *param, uint8_t *data, uint32_t len)
+static hal_imumc_return_status_t PLATFORM_HciImumcRxCallback(void *param, uint8_t *data, uint32_t len)
 {
     bool    handled    = false;
     uint8_t packetType = data[0];
@@ -887,15 +914,10 @@ static int PLATFORM_HandleBlePowerStateEvent(ble_ps_event_t psEvent)
             {
                 case ble_asleep_event:
                     blePowerState = ble_asleep_state;
-                    /* Make sure to clear wake up event */
-                    if (OSA_EventClear((osa_event_handle_t)wakeUpEventGroup, (uint32_t)ble_awake_event) !=
-                        KOSA_StatusSuccess)
-                    {
-                        ret = -1;
-                    }
                     break;
 
                 default:
+                    /* nothing to do */
                     break;
             }
         }
@@ -910,6 +932,7 @@ static int PLATFORM_HandleBlePowerStateEvent(ble_ps_event_t psEvent)
                     break;
 
                 default:
+                    /* nothing to do */
                     break;
             }
         }
@@ -946,11 +969,33 @@ static int PLATFORM_BleSetHostSleepConfig(void)
     return ret;
 }
 
-static void PLATFORM_FillInHciCmdMsg(uint8_t *pbuf, uint16_t opcode, uint8_t msg_sz, const uint8_t *msg_payload)
+#if defined(gPlatformDisableLEPCTimer_d) && (gPlatformDisableLEPCTimer_d == 1)
+static int PLATFORM_DisableLEPCTimer(void)
 {
-    pbuf[0] = HCI_COMMAND_PACKET;
-    pbuf[1] = (uint8_t)(opcode & 0xff);
-    pbuf[2] = (uint8_t)((uint32_t)(opcode >> 8) & 0xff);
-    pbuf[3] = msg_sz;
-    (void)memcpy(&pbuf[4], msg_payload, msg_sz);
+    int ret = 0;
+    /* This command must be sent before any LE connection, likely
+     * after HCI init  */
+    uint8_t  buffer[1 + HCI_CMD_PACKET_HEADER_LENGTH + HCI_CMD_BT_DISABLE_LEPC_CONFIG_PARAM_LENGTH];
+    uint16_t opcode = get_opcode(HCI_CMD_VENDOR_OCG, HCI_CMD_BT_DISABLE_LEPC_TIMER_OCF);
+
+    PLATFORM_FillInHciCmdMsg(&buffer[0], opcode, 0, NULL);
+
+    ret = PLATFORM_SendHciMessage(buffer, sizeof(buffer));
+
+    if (ret != 0)
+    {
+        ret = -1;
+    }
+
+    return ret;
+}
+#endif /* gPlatformDisableLEPCTimer_d */
+
+static void PLATFORM_FillInHciCmdMsg(uint8_t *pmsg, uint16_t opcode, uint8_t msg_sz, const uint8_t *msg_payload)
+{
+    pmsg[0] = HCI_COMMAND_PACKET;
+    pmsg[1] = (uint8_t)(opcode & 0xffu);
+    pmsg[2] = (uint8_t)((opcode >> 8) & 0xffu);
+    pmsg[3] = msg_sz;
+    (void)memcpy(&pmsg[4], msg_payload, msg_sz);
 }

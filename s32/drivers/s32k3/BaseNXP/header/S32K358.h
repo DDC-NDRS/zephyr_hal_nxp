@@ -57,15 +57,15 @@
 #include "S32K358_LPUART.h"
 #include "S32K358_MCM_CM7.h"
 #include "S32K358_MC_CGM.h"
-#include "S32K358_MC_ME.h"
-#include "S32K358_MC_RGM.h"
+/* #include "S32K358_MC_ME.h"  */ /* No used in Zephyr-RTOS @see soc/nxp/s32/common/mc_me.c  */
+/* #include "S32K358_MC_RGM.h" */ /* No used in Zephyr-RTOS @see soc/nxp/s32/common/mc_rgm.c */
 #include "S32K358_MDM_AP.h"
 #include "S32K358_MSCM.h"
 #include "S32K358_MU.h"
 #include "S32K358_PFLASH.h"
 #include "S32K358_PIT.h"
 #include "S32K358_PLL.h"
-#include "S32K358_PMC.h"
+/* #include "S32K358_PMC.h" */ /* No used in Zephyr-RTOS @see soc/nxp/s32/s32k3/pmc.c */
 #include "S32K358_PRAMC.h"
 #include "S32K358_QUADSPI.h"
 #include "S32K358_QUADSPI_ARDB.h"
@@ -75,10 +75,10 @@
 #include "S32K358_SELFTEST_GPR.h"
 #include "S32K358_SEMA42.h"
 #include "S32K358_SIRC.h"
-#include "S32K358_SIUL2.h"
+/* #include "S32K358_SIUL2.h" */ /* No used in Zephyr-RTOS @see soc/nxp/s32/s32k3/pinctrl_soc.h */
 #include "S32K358_STCU.h"
 #include "S32K358_STM.h"
-#include "S32K358_SWT.h"
+/* #include "S32K358_SWT.h" */ /* No used in Zephyr-RTOS @see drivers/watchdog/wdt_nxp_s32.c */
 #include "S32K358_SXOSC.h"
 #include "S32K358_TEMPSENSE.h"
 #include "S32K358_TRGMUX.h"

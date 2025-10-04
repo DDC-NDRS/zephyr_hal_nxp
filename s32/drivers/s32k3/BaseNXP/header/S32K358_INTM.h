@@ -1,31 +1,9 @@
 /*
-** ###################################################################
-**     Processor:           S32K358_M7
-**     Compiler:            Keil ARM C/C++ Compiler
-**     Reference manual:    S32K3xx RM Rev.5
-**     Version:             rev. 1.1, 2022-10-01
-**     Build:               b221001
-**
-**     Abstract:
-**         Peripheral Access Layer for S32K358_M7
-**
-**     Copyright 1997-2016 Freescale Semiconductor, Inc.
-**     Copyright 2016-2022 NXP
-**
-**     NXP Confidential. This software is owned or controlled by NXP and may only be
-**     used strictly in accordance with the applicable license terms. By expressly
-**     accepting such terms or by downloading, installing, activating and/or otherwise
-**     using the software, you are agreeing that you have read, and that you agree to
-**     comply with and are bound by, such license terms. If you do not agree to be
-**     bound by the applicable license terms, then you may not retain, install,
-**     activate or otherwise use the software. The production use license in
-**     Section 2.3 is expressly granted for this software.
-**
-**     http:                 www.nxp.com
-**     mail:                 support@nxp.com
-**
-** ###################################################################
-*/
+ * Copyright 1997-2016 Freescale Semiconductor, Inc.
+ * Copyright 2016-2022 NXP
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 
 /*!
  * @file S32K358_INTM.h
@@ -98,10 +76,10 @@ typedef struct {
   __IO uint32_t INTM_MM;                           /**< Monitor Mode, offset: 0x0 */
   __O  uint32_t INTM_IACK;                         /**< Interrupt Acknowledge, offset: 0x4 */
   struct {                                         /* offset: 0x8, array step: 0x10 */
-    __IO uint32_t INTM_IRQSEL;                       /**< Interrupt Request Select for Monitor 0..Interrupt Request Select for Monitor 3, array offset: 0x8, array step: 0x10 */
-    __IO uint32_t INTM_LATENCY;                      /**< Interrupt Latency for Monitor 0..Interrupt Latency for Monitor 3, array offset: 0xC, array step: 0x10 */
-    __IO uint32_t INTM_TIMER;                        /**< Timer for Monitor 0..Timer for Monitor 3, array offset: 0x10, array step: 0x10 */
-    __I  uint32_t INTM_STATUS;                       /**< Status for Monitor 0..Status for Monitor 3, array offset: 0x14, array step: 0x10 */
+    __IO uint32_t INTM_IRQSEL;                     /**< Interrupt Request Select for Monitor 0..Interrupt Request Select for Monitor 3, array offset: 0x8, array step: 0x10 */
+    __IO uint32_t INTM_LATENCY;                    /**< Interrupt Latency for Monitor 0..Interrupt Latency for Monitor 3, array offset: 0xC, array step: 0x10 */
+    __IO uint32_t INTM_TIMER;                      /**< Timer for Monitor 0..Timer for Monitor 3, array offset: 0x10, array step: 0x10 */
+    __I  uint32_t INTM_STATUS;                     /**< Status for Monitor 0..Status for Monitor 3, array offset: 0x14, array step: 0x10 */
   } MON[INTM_MON_COUNT];
 } INTM_Type, *INTM_MemMapPtr;
 

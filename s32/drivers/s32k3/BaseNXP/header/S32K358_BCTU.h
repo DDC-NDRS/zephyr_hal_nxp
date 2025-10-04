@@ -1,31 +1,9 @@
 /*
-** ###################################################################
-**     Processor:           S32K358_M7
-**     Compiler:            Keil ARM C/C++ Compiler
-**     Reference manual:    S32K3xx RM Rev.5
-**     Version:             rev. 1.1, 2022-10-01
-**     Build:               b221001
-**
-**     Abstract:
-**         Peripheral Access Layer for S32K358_M7
-**
-**     Copyright 1997-2016 Freescale Semiconductor, Inc.
-**     Copyright 2016-2022 NXP
-**
-**     NXP Confidential. This software is owned or controlled by NXP and may only be
-**     used strictly in accordance with the applicable license terms. By expressly
-**     accepting such terms or by downloading, installing, activating and/or otherwise
-**     using the software, you are agreeing that you have read, and that you agree to
-**     comply with and are bound by, such license terms. If you do not agree to be
-**     bound by the applicable license terms, then you may not retain, install,
-**     activate or otherwise use the software. The production use license in
-**     Section 2.3 is expressly granted for this software.
-**
-**     http:                 www.nxp.com
-**     mail:                 support@nxp.com
-**
-** ###################################################################
-*/
+ * Copyright 1997-2016 Freescale Semiconductor, Inc.
+ * Copyright 2016-2022 NXP
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 
 /*!
  * @file S32K358_BCTU.h

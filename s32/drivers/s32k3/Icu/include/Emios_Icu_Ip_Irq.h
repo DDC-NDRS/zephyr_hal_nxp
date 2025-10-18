@@ -131,7 +131,7 @@ extern "C"{
 *                                      FUNCTION PROTOTYPES
 ==================================================================================================*/
 #if (STD_ON == EMIOS_ICU_IP_USED)
-    
+
 #define ICU_START_SEC_CODE
 #include "Icu_MemMap.h"
 

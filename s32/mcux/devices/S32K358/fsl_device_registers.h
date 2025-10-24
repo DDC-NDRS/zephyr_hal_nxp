@@ -29,7 +29,7 @@
 #include "S32K358_glue_mcux.h"
 
 /*
- * RTD header S32K344_COMMON.h already defined the code configuration for CMSIS,
+ * RTD header S32K358_COMMON.h already defined the code configuration for CMSIS,
  * so include the CMSIS core header here since it's needed for some common
  * functions of MCUX.
  */

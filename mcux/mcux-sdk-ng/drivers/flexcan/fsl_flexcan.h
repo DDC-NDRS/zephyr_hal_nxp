@@ -488,15 +488,15 @@ enum _flexcan_interrupt_enable
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_MEMORY_ERROR_CONTROL) && FSL_FEATURE_FLEXCAN_HAS_MEMORY_ERROR_CONTROL)
 #if !(defined(FSL_FEATURE_FLEXCAN_HAS_NO_HANCEI_SUPPORT) && FSL_FEATURE_FLEXCAN_HAS_NO_HANCEI_SUPPORT)
     /*! Host Access With Non-Correctable Errors interrupt, use high word bit 0. */
-    kFLEXCAN_HostAccessNCErrorInterruptEnable = FLEXCAN_MECR_INT_MASK(CAN_MECR_HANCEI_MSK_MASK),
+    #define kFLEXCAN_HostAccessNCErrorInterruptEnable FLEXCAN_MECR_INT_MASK(CAN_MECR_HANCEI_MSK_MASK)
 #endif
 #if !(defined(FSL_FEATURE_FLEXCAN_HAS_NO_FANCEI_SUPPORT) && FSL_FEATURE_FLEXCAN_HAS_NO_FANCEI_SUPPORT)
     /*! FlexCAN Access With Non-Correctable Errors interrupt, use high word bit 2. */
-    kFLEXCAN_FlexCanAccessNCErrorInterruptEnable = FLEXCAN_MECR_INT_MASK(CAN_MECR_FANCEI_MSK_MASK),
+    #define kFLEXCAN_FlexCanAccessNCErrorInterruptEnable FLEXCAN_MECR_INT_MASK(CAN_MECR_FANCEI_MSK_MASK)
 #endif
 #if !(defined(FSL_FEATURE_FLEXCAN_HAS_NO_CEI_SUPPORT) && FSL_FEATURE_FLEXCAN_HAS_NO_CEI_SUPPORT)
     /*! Host or FlexCAN Access With Correctable Errors interrupt, use high word bit 3. */
-    kFLEXCAN_HostOrFlexCanCErrorInterruptEnable = FLEXCAN_MECR_INT_MASK(CAN_MECR_CEI_MSK_MASK),
+    #define kFLEXCAN_HostOrFlexCanCErrorInterruptEnable FLEXCAN_MECR_INT_MASK(CAN_MECR_CEI_MSK_MASK)
 #endif
 #endif
 };
@@ -553,25 +553,25 @@ enum _flexcan_flags
 #endif
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_MEMORY_ERROR_CONTROL) && FSL_FEATURE_FLEXCAN_HAS_MEMORY_ERROR_CONTROL)
     /*! Host Access With Non-Correctable Error Interrupt Flag. */
-    kFLEXCAN_HostAccessNonCorrectableErrorIntFlag = FLEXCAN_MECR_STATUS_MASK(CAN_ERRSR_HANCEIF_MASK),
+    #define kFLEXCAN_HostAccessNonCorrectableErrorIntFlag FLEXCAN_MECR_STATUS_MASK(CAN_ERRSR_HANCEIF_MASK)
     /*! FlexCAN Access With Non-Correctable Error Interrupt Flag. */
-    kFLEXCAN_FlexCanAccessNonCorrectableErrorIntFlag = FLEXCAN_MECR_STATUS_MASK(CAN_ERRSR_FANCEIF_MASK),
+    #define kFLEXCAN_FlexCanAccessNonCorrectableErrorIntFlag FLEXCAN_MECR_STATUS_MASK(CAN_ERRSR_FANCEIF_MASK)
     /*! Correctable Error Interrupt Flag. */
-    kFLEXCAN_CorrectableErrorIntFlag = FLEXCAN_MECR_STATUS_MASK(CAN_ERRSR_CEIF_MASK),
+    #define kFLEXCAN_CorrectableErrorIntFlag FLEXCAN_MECR_STATUS_MASK(CAN_ERRSR_CEIF_MASK)
     /*! Host Access With Non-Correctable Error Interrupt Overrun Flag. */
-    kFLEXCAN_HostAccessNonCorrectableErrorOverrunFlag = FLEXCAN_MECR_STATUS_MASK(CAN_ERRSR_HANCEIOF_MASK),
+    #define kFLEXCAN_HostAccessNonCorrectableErrorOverrunFlag FLEXCAN_MECR_STATUS_MASK(CAN_ERRSR_HANCEIOF_MASK)
     /*! FlexCAN Access With Non-Correctable Error Interrupt Overrun Flag. */
-    kFLEXCAN_FlexCanAccessNonCorrectableErrorOverrunFlag = FLEXCAN_MECR_STATUS_MASK(CAN_ERRSR_FANCEIOF_MASK),
+    #define kFLEXCAN_FlexCanAccessNonCorrectableErrorOverrunFlag FLEXCAN_MECR_STATUS_MASK(CAN_ERRSR_FANCEIOF_MASK)
     /*! Correctable Error Interrupt Overrun Flag. */
-    kFLEXCAN_CorrectableErrorOverrunFlag = FLEXCAN_MECR_STATUS_MASK(CAN_ERRSR_CEIOF_MASK),
+    #define kFLEXCAN_CorrectableErrorOverrunFlag FLEXCAN_MECR_STATUS_MASK(CAN_ERRSR_CEIOF_MASK)
     /*! All Memory Error Interrupt Flags. */
-    kFLEXCAN_AllMemoryErrorIntFlag =
-        (kFLEXCAN_HostAccessNonCorrectableErrorIntFlag | kFLEXCAN_FlexCanAccessNonCorrectableErrorIntFlag |
-         kFLEXCAN_CorrectableErrorIntFlag),
+    #define kFLEXCAN_AllMemoryErrorIntFlag \
+        (kFLEXCAN_HostAccessNonCorrectableErrorIntFlag | kFLEXCAN_FlexCanAccessNonCorrectableErrorIntFlag | \
+         kFLEXCAN_CorrectableErrorIntFlag)
     /*! All Memory Error Flags. */
-    kFLEXCAN_AllMemoryErrorFlag =
-        (kFLEXCAN_HostAccessNonCorrectableErrorIntFlag | kFLEXCAN_FlexCanAccessNonCorrectableErrorIntFlag |
-         kFLEXCAN_CorrectableErrorIntFlag | kFLEXCAN_HostAccessNonCorrectableErrorOverrunFlag |
+    #define kFLEXCAN_AllMemoryErrorFlag \
+        (kFLEXCAN_HostAccessNonCorrectableErrorIntFlag | kFLEXCAN_FlexCanAccessNonCorrectableErrorIntFlag | \
+         kFLEXCAN_CorrectableErrorIntFlag | kFLEXCAN_HostAccessNonCorrectableErrorOverrunFlag | \
          kFLEXCAN_FlexCanAccessNonCorrectableErrorOverrunFlag | kFLEXCAN_CorrectableErrorOverrunFlag)
 #endif
 };

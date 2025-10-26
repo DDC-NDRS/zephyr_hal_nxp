@@ -81,7 +81,11 @@ static const clock_ip_name_t s_edmaClockName[] = EDMA_CLOCKS;
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 
 #if defined(DMA_IRQS)
+#if !defined(_MSVC_VER) /* #CUSTOM@NDRS */
+static const IRQn_Type s_edmaIRQNumber[1][FSL_FEATURE_EDMA_MODULE_CHANNEL];
+#else
 static const IRQn_Type s_edmaIRQNumber[][FSL_FEATURE_EDMA_MODULE_CHANNEL] = DMA_IRQS;
+#endif
 #endif
 
 /*! @brief Pointers to transfer handle for each EDMA channel. */
@@ -854,8 +858,8 @@ void EDMA_CreateHandle(edma_handle_t *handle, DMA_Type *base, uint32_t channel)
     handle->base    = base;
     handle->channel = (uint8_t)channel;
     /* Get the DMA instance number */
-    edmaInstance               = EDMA_GetInstance(base);
-    channelIndex               = (edmaInstance * (uint32_t)FSL_FEATURE_EDMA_MODULE_CHANNEL) + channel;
+    edmaInstance = EDMA_GetInstance(base);
+    channelIndex = (edmaInstance * (uint32_t)FSL_FEATURE_EDMA_MODULE_CHANNEL) + channel;
     s_EDMAHandle[channelIndex] = handle;
     /* record enabled channel */
     s_EDMAEnabledChannel[edmaInstance][channel] = true;

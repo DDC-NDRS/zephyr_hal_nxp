@@ -240,6 +240,7 @@ extern "C"{
 #endif /* #ifdef _IAR_C_S32K3XX_ */
 
 /* check that the compiler used is supported (otherwise some defines might not exist) */
+#if !defined(_MSC_VER) /* #CUSTOM@NDRS */
 #ifndef _GREENHILLS_C_S32K3XX_
     #ifndef _DIABDATA_C_S32K3XX_
         #ifndef _CODEWARRIOR_C_S32K3XX_
@@ -255,6 +256,8 @@ extern "C"{
         #endif
     #endif
 #endif
+#endif
+
 #if (MCAL_PLATFORM_ARM  == MCAL_ARM_AARCH64)
 /**
 * @brief Data Synchronization Barrier (DSB) completes when all instructions before this instruction complete

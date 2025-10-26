@@ -225,7 +225,7 @@ void Sys_EL1ResumeInterrupts(void);
 /* ISR() macro defined by Autosar OS*/
 #else
 /* Baremetal or FreeRTOS case */
-#if defined (USE_SW_VECTOR_MODE)
+#if defined (USE_SW_VECTOR_MODE) || defined(_MSC_VER) /* #CUSTOM@NRDS */
     #define ISR(IsrName)       void IsrName(void)
 #else
     #define ISR(IsrName)       INTERRUPT_FUNC void IsrName(void)

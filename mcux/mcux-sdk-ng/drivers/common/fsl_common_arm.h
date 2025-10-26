@@ -401,6 +401,9 @@ _Pragma("diag_suppress=Pm120")
 #elif defined(__GNUC__) || defined(DOXYGEN_OUTPUT)
 /*! Macro to define a variable with alignbytes alignment */
 #define SDK_ALIGN(var, alignbytes) var __attribute__((aligned(alignbytes)))
+#elif defined(_MSC_VER) /* #CUSTOM@NDRS */
+/*! Macro to define a variable with alignbytes alignment */
+#define SDK_ALIGN(var, alignbytes) __declspec(align(alignbytes)) var
 #else
 #error Toolchain not supported
 #endif
@@ -547,6 +550,10 @@ _Pragma("diag_suppress=Pm120")
 #define AT_CACHE_LINE_SECTION(var)                   __attribute__((section("CacheLineData,\"aw\",%nobits @"))) CACHE_LINE_DATA(var)
 #define AT_CACHE_LINE_SECTION_INIT(var)              __attribute__((section("CacheLineData.init"))) CACHE_LINE_DATA(var)
 
+#elif defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define AT_CACHE_LINE_SECTION(var)                   CACHE_LINE_DATA(var)
+#define AT_CACHE_LINE_SECTION_INIT(var)              CACHE_LINE_DATA(var)
+
 #else
 #error Toolchain not supported.
 #endif
@@ -588,6 +595,11 @@ _Pragma("diag_suppress=Pm120")
 #define AT_QUICKACCESS_SECTION_DATA(var)  __attribute__((section("DataQuickAccess"))) var
 #define AT_QUICKACCESS_SECTION_DATA_ALIGN(var, alignbytes) \
     __attribute__((section("DataQuickAccess"))) var __attribute__((aligned(alignbytes)))
+#elif defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define AT_QUICKACCESS_SECTION_CODE(func) func
+#define AT_QUICKACCESS_SECTION_DATA(var)  var
+#define AT_QUICKACCESS_SECTION_DATA_ALIGN(var, alignbytes) SDK_ALIGN(var, alignbytes)
+
 #else
 #error Toolchain not supported.
 #endif /* QuickAccess section macro */
@@ -606,6 +618,8 @@ _Pragma("diag_suppress=Pm120")
 #define RAMFUNCTION_SECTION_CODE(func) __attribute__((section("RamFunction"))) func
 #elif (defined(__GNUC__)) || defined(DOXYGEN_OUTPUT)
 #define RAMFUNCTION_SECTION_CODE(func) __attribute__((section("RamFunction"))) func
+#elif defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define RAMFUNCTION_SECTION_CODE(func) func
 #else
 #error Toolchain not supported.
 #endif /* defined(__ICCARM__) */

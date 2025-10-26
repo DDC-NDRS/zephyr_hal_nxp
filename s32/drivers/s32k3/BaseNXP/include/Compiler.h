@@ -411,6 +411,44 @@ extern "C"{
     
 #endif /* #ifdef _IAR_C_S32K3XX_ */
 
+/**************************************** MSVC *************************************************/
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+    /* Prototypes for intrinsic functions */
+    /**
+    * @brief The compiler abstraction shall provide the INLINE define for abstraction of the keyword
+    *        inline.
+    */
+    #define INLINE              __inline
+    /**
+    * @brief The compiler abstraction shall provide the LOCAL_INLINE define for abstraction of the
+    *       keyword inline in functions with "static" scope
+    */
+    #define LOCAL_INLINE            static __inline
+    /**
+    * @brief Compiler abstraction for specifying an interrupt handler.
+    */
+    #define INTERRUPT_FUNC      
+    /**
+    * @brief Compiler abstraction for the asm keyword.
+    */    
+    #define ASM_KEYWORD
+    /**
+    * @brief Compiler abstraction for the data alignment
+    */
+    #define ALIGNED_VARS_START(sec_name, align)
+    /**
+    * @brief Compiler abstraction for the data alignment
+    */
+    #define VAR_ALIGN(v, size) __declspec(align(size)) v;
+    /**
+    * @brief Compiler abstraction for the data alignment
+    */
+    #define ALIGNED_VARS_STOP()
+    /**
+    * @brief Compiler abstraction for the packed qualifier
+    */
+    #define PACKED
+#endif /* #if defined(_MSC_VER) */
 
 /**
 * @brief The compiler abstraction shall define the FUNC macro for the declaration and definition of

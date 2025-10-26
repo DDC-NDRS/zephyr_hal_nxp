@@ -36,7 +36,7 @@ extern "C"{
 * 2) needed interfaces from external units
 * 3) internal and external interfaces from this unit
 ==================================================================================================*/
-#if !defined(NO_STDINT_H)
+#if !defined(NO_STDINT_H) && !defined(_MSC_VER) /* #CUSTOM@NDRS */
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -172,7 +172,7 @@ extern "C"{
 /*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
 ==================================================================================================*/
-#if !defined(NO_STDINT_H)
+#if !defined(NO_STDINT_H) && !defined(_MSC_VER) /* #CUSTOM@NDRS */
 #if (CPU_TYPE == CPU_TYPE_64) || (CPU_TYPE == CPU_TYPE_32) || (CPU_TYPE == CPU_TYPE_16)
 
 /**
@@ -181,7 +181,6 @@ extern "C"{
 * @implements boolean_type
 */
 typedef bool boolean;
-
 
 /**
 * @brief Unsigned 8 bit integer with range of 0 ..+255 (0x00..0xFF) -

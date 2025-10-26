@@ -2585,18 +2585,18 @@ Clock_Ip_ClockConfigType const Clock_Ip_aClockConfig[2U] = {
         4U,                         /* cmusCount */             /* CLOCK_IP_CONFIGURED_CMUS_0_NO */
         6U,                         /* configureFrequenciesCount */ /* CLOCK_IP_CONFIGURED_FREQUENCIES_0_NO */
 
-        (&Clock_Ip_IrcoscConfigurations_0),              /* Ircosc configurations */
-        (&Clock_Ip_XoscConfigurations_0),                /* Xosc configurations */
-        (&Clock_Ip_PllConfigurations_0),                 /* Pll configurations */
-        (&Clock_Ip_SelectorConfigurations_0),            /* Selectors configurations */
-        (&Clock_Ip_DividerConfigurations_0),             /* dividers configurations */
-        (&Clock_Ip_DividerTriggerConfigurations_0),      /* dividerTriggers configurations */
-        (NULL_PTR),                                      /* fracDivs configurations */
-        (&Clock_Ip_ExtClkConfigurations_0),              /* extClks configurations */
-        (&Clock_Ip_GatesConfigurations_0),               /* gates configurations */
-        (NULL_PTR),                                      /* pcfs configurations */
-        (&Clock_Ip_CmuConfigurations_0),                 /* cmus configurations */
-        (&Clock_Ip_ConfiguredFrequencyConfigurations_0), /* configureFrequencies configurations */
+        ((const Clock_Ip_IrcoscConfigType(*)[])&Clock_Ip_IrcoscConfigurations_0),           /* Ircosc configurations */
+        ((const Clock_Ip_XoscConfigType(*)[])&Clock_Ip_XoscConfigurations_0),               /* Xosc configurations */
+        ((const Clock_Ip_PllConfigType(*)[])&Clock_Ip_PllConfigurations_0),                 /* Pll configurations */
+        ((const Clock_Ip_SelectorConfigType(*)[])&Clock_Ip_SelectorConfigurations_0),       /* Selectors configurations */
+        ((const Clock_Ip_DividerConfigType(*)[])&Clock_Ip_DividerConfigurations_0),         /* dividers configurations */
+        ((const Clock_Ip_DividerTriggerConfigType(*)[])&Clock_Ip_DividerTriggerConfigurations_0), /* dividerTriggers configurations */
+        (NULL_PTR),                                                                         /* fracDivs configurations */
+        ((const Clock_Ip_ExtClkConfigType(*)[])&Clock_Ip_ExtClkConfigurations_0),           /* extClks configurations */
+        ((const Clock_Ip_GateConfigType(*)[])&Clock_Ip_GatesConfigurations_0),              /* gates configurations */
+        (NULL_PTR),                                                                         /* pcfs configurations */
+        ((const Clock_Ip_CmuConfigType(*)[])&Clock_Ip_CmuConfigurations_0),                 /* cmus configurations */
+        ((const Clock_Ip_ConfiguredFrequencyType(*)[])&Clock_Ip_ConfiguredFrequencyConfigurations_0), /* configureFrequencies configurations */
     },
 
     /*! @brief User Configuration structure clock_Cfg_1 */
@@ -2621,15 +2621,15 @@ Clock_Ip_ClockConfigType const Clock_Ip_aClockConfig[2U] = {
         (NULL_PTR),                 /* Ircosc configurations */
         (NULL_PTR),                 /* Xosc configurations */
         (NULL_PTR),                 /* Pll configurations */
-        (&Clock_Ip_SelectorConfigurations_1),       /* Selectors configurations */
-        (&Clock_Ip_DividerConfigurations_1),        /* dividers configurations */
+        ((const Clock_Ip_SelectorConfigType(*)[])&Clock_Ip_SelectorConfigurations_1),       /* Selectors configurations */
+        ((const Clock_Ip_DividerConfigType(*)[])&Clock_Ip_DividerConfigurations_1),         /* dividers configurations */
         (NULL_PTR),                 /* dividerTriggers configurations */
         (NULL_PTR),                 /* fracDivs configurations */
-        (&Clock_Ip_ExtClkConfigurations_1),         /* extClks configurations */
-        (&Clock_Ip_GatesConfigurations_1),          /* gates configurations */
+        ((const Clock_Ip_ExtClkConfigType(*)[])&Clock_Ip_ExtClkConfigurations_1),           /* extClks configurations */
+        ((const Clock_Ip_GateConfigType(*)[])&Clock_Ip_GatesConfigurations_1),              /* gates configurations */
         (NULL_PTR),                 /* pcfs configurations */
-        (&Clock_Ip_CmuConfigurations_1),            /* cmus configurations */
-        (&Clock_Ip_ConfiguredFrequencyConfigurations_1), /* configureFrequencies configurations */
+        ((const Clock_Ip_CmuConfigType(*)[])&Clock_Ip_CmuConfigurations_1),                 /* cmus configurations */
+        ((const Clock_Ip_ConfiguredFrequencyType(*)[])&Clock_Ip_ConfiguredFrequencyConfigurations_1), /* configureFrequencies configurations */
     },
 };
 

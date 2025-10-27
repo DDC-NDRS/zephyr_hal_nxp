@@ -73,16 +73,26 @@ typedef struct {
   __IO uint32_t PRCR1;                             /**< Platform RAM Configuration register 1, offset: 0x0 */
 } PRAMC_Type, *PRAMC_MemMapPtr;
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#include "s32k3_reg_stub.h"
+#endif
+
 /** Number of instances of the PRAMC module. */
 #define PRAMC_INSTANCE_COUNT                     (3u)
 
 /* PRAMC - Peripheral instance base addresses */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define IP_PRAMC_0_BASE                          ((uintptr_t)ut_mcu_pramc_0_area)
+#define IP_PRAMC_1_BASE                          ((uintptr_t)ut_mcu_pramc_1_area)
+#else
 /** Peripheral PRAMC_0 base address */
 #define IP_PRAMC_0_BASE                          (0x40264000u)
-/** Peripheral PRAMC_0 base pointer */
-#define IP_PRAMC_0                               ((PRAMC_Type *)IP_PRAMC_0_BASE)
 /** Peripheral PRAMC_1 base address */
 #define IP_PRAMC_1_BASE                          (0x40464000u)
+#endif
+
+/** Peripheral PRAMC_0 base pointer */
+#define IP_PRAMC_0                               ((PRAMC_Type *)IP_PRAMC_0_BASE)
 /** Peripheral PRAMC_1 base pointer */
 #define IP_PRAMC_1                               ((PRAMC_Type *)IP_PRAMC_1_BASE)
 /** Peripheral PRAMC_2 base address */

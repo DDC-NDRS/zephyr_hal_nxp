@@ -76,12 +76,21 @@ typedef struct {
   __IO uint32_t MISCELLANEOUS_IN;                  /**< Miscellaneous input, offset: 0xC */
 } SIRC_Type, *SIRC_MemMapPtr;
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#include "s32k3_reg_stub.h"
+#endif
+
 /** Number of instances of the SIRC module. */
 #define SIRC_INSTANCE_COUNT                      (1u)
 
 /* SIRC - Peripheral instance base addresses */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define IP_SIRC_BASE                             ((uintptr_t)ut_mcu_sirc_area)
+#else
 /** Peripheral SIRC base address */
 #define IP_SIRC_BASE                             (0x402C8000u)
+#endif
+
 /** Peripheral SIRC base pointer */
 #define IP_SIRC                                  ((SIRC_Type *)IP_SIRC_BASE)
 /** Array initializer of SIRC peripheral base addresses */

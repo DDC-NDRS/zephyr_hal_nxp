@@ -142,12 +142,21 @@ typedef struct {
   __IO uint16_t IRSPRC[MSCM_IRSPRC_COUNT];         /**< Interrupt Router Shared Peripheral Routing Control, array offset: 0x880, array step: 0x2 */
 } MSCM_Type, *MSCM_MemMapPtr;
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#include "s32k3_reg_stub.h"
+#endif
+
 /** Number of instances of the MSCM module. */
 #define MSCM_INSTANCE_COUNT                      (1u)
 
 /* MSCM - Peripheral instance base addresses */
 /** Peripheral MSCM base address */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define IP_MSCM_BASE                             ((uintptr_t)ut_mcu_mscm_area)
+#else
 #define IP_MSCM_BASE                             (0x40260000u)
+#endif
+
 /** Peripheral MSCM base pointer */
 #define IP_MSCM                                  ((MSCM_Type *)IP_MSCM_BASE)
 /** Array initializer of MSCM peripheral base addresses */

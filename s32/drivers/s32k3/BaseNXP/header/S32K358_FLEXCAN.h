@@ -127,40 +127,56 @@ typedef struct {
   __IO uint32_t ERFFEL[FLEXCAN_ERFFEL_COUNT];      /**< Enhanced Rx FIFO Filter Element, array offset: 0x3000, array step: 0x4 */
 } FLEXCAN_Type, *FLEXCAN_MemMapPtr;
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#include "s32k3_reg_stub.h"
+#endif
+
 /** Number of instances of the FLEXCAN module. */
 #define FLEXCAN_INSTANCE_COUNT                   (8u)
 
 /* FLEXCAN - Peripheral instance base addresses */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define IP_CAN_0_BASE                            ((uintptr_t)ut_mcu_flexcan_0_area)
+#define IP_CAN_1_BASE                            ((uintptr_t)ut_mcu_flexcan_1_area)
+#define IP_CAN_2_BASE                            ((uintptr_t)ut_mcu_flexcan_2_area)
+#define IP_CAN_3_BASE                            ((uintptr_t)ut_mcu_flexcan_3_area)
+#define IP_CAN_4_BASE                            ((uintptr_t)ut_mcu_flexcan_4_area)
+#define IP_CAN_5_BASE                            ((uintptr_t)ut_mcu_flexcan_5_area)
+#define IP_CAN_6_BASE                            ((uintptr_t)ut_mcu_flexcan_6_area)
+#define IP_CAN_7_BASE                            ((uintptr_t)ut_mcu_flexcan_7_area)
+#else
 /** Peripheral CAN_0 base address */
 #define IP_CAN_0_BASE                            (0x40304000u)
-/** Peripheral CAN_0 base pointer */
-#define IP_CAN_0                                 ((FLEXCAN_Type *)IP_CAN_0_BASE)
 /** Peripheral CAN_1 base address */
 #define IP_CAN_1_BASE                            (0x40308000u)
-/** Peripheral CAN_1 base pointer */
-#define IP_CAN_1                                 ((FLEXCAN_Type *)IP_CAN_1_BASE)
 /** Peripheral CAN_2 base address */
 #define IP_CAN_2_BASE                            (0x4030C000u)
-/** Peripheral CAN_2 base pointer */
-#define IP_CAN_2                                 ((FLEXCAN_Type *)IP_CAN_2_BASE)
 /** Peripheral CAN_3 base address */
 #define IP_CAN_3_BASE                            (0x40310000u)
-/** Peripheral CAN_3 base pointer */
-#define IP_CAN_3                                 ((FLEXCAN_Type *)IP_CAN_3_BASE)
 /** Peripheral CAN_4 base address */
 #define IP_CAN_4_BASE                            (0x40314000u)
-/** Peripheral CAN_4 base pointer */
-#define IP_CAN_4                                 ((FLEXCAN_Type *)IP_CAN_4_BASE)
 /** Peripheral CAN_5 base address */
 #define IP_CAN_5_BASE                            (0x40318000u)
-/** Peripheral CAN_5 base pointer */
-#define IP_CAN_5                                 ((FLEXCAN_Type *)IP_CAN_5_BASE)
 /** Peripheral CAN_6 base address */
 #define IP_CAN_6_BASE                            (0x4031C000u)
-/** Peripheral CAN_6 base pointer */
-#define IP_CAN_6                                 ((FLEXCAN_Type *)IP_CAN_6_BASE)
 /** Peripheral CAN_7 base address */
 #define IP_CAN_7_BASE                            (0x40320000u)
+#endif
+
+/** Peripheral CAN_0 base pointer */
+#define IP_CAN_0                                 ((FLEXCAN_Type *)IP_CAN_0_BASE)
+/** Peripheral CAN_1 base pointer */
+#define IP_CAN_1                                 ((FLEXCAN_Type *)IP_CAN_1_BASE)
+/** Peripheral CAN_2 base pointer */
+#define IP_CAN_2                                 ((FLEXCAN_Type *)IP_CAN_2_BASE)
+/** Peripheral CAN_3 base pointer */
+#define IP_CAN_3                                 ((FLEXCAN_Type *)IP_CAN_3_BASE)
+/** Peripheral CAN_4 base pointer */
+#define IP_CAN_4                                 ((FLEXCAN_Type *)IP_CAN_4_BASE)
+/** Peripheral CAN_5 base pointer */
+#define IP_CAN_5                                 ((FLEXCAN_Type *)IP_CAN_5_BASE)
+/** Peripheral CAN_6 base pointer */
+#define IP_CAN_6                                 ((FLEXCAN_Type *)IP_CAN_6_BASE)
 /** Peripheral CAN_7 base pointer */
 #define IP_CAN_7                                 ((FLEXCAN_Type *)IP_CAN_7_BASE)
 /** Array initializer of FLEXCAN peripheral base addresses */

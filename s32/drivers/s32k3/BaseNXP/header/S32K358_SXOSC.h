@@ -74,12 +74,21 @@ typedef struct {
   __I  uint32_t SXOSC_STAT;                        /**< Oscillator Status Register, offset: 0x4 */
 } SXOSC_Type, *SXOSC_MemMapPtr;
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#include "s32k3_reg_stub.h"
+#endif
+
 /** Number of instances of the SXOSC module. */
 #define SXOSC_INSTANCE_COUNT                     (1u)
 
 /* SXOSC - Peripheral instance base addresses */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define IP_SXOSC_BASE                            ((uintptr_t)ut_mcu_sxosc_area)
+#else
 /** Peripheral SXOSC base address */
 #define IP_SXOSC_BASE                            (0x402CC000u)
+#endif
+
 /** Peripheral SXOSC base pointer */
 #define IP_SXOSC                                 ((SXOSC_Type *)IP_SXOSC_BASE)
 /** Array initializer of SXOSC peripheral base addresses */

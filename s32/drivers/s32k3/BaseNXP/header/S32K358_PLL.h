@@ -84,16 +84,26 @@ typedef struct {
   __IO uint32_t PLLODIV[PLL_PLLODIV_COUNT];        /**< PLL Output Divider, array offset: 0x80, array step: 0x4 */
 } PLL_Type, *PLL_MemMapPtr;
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#include "s32k3_reg_stub.h"
+#endif
+
 /** Number of instances of the PLL module. */
 #define PLL_INSTANCE_COUNT                       (2u)
 
 /* PLL - Peripheral instance base addresses */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define IP_PLL_BASE                              ((uintptr_t)ut_mcu_pll_area)
+#define IP_PLL_AUX_BASE                          ((uintptr_t)ut_mcu_pll_aux_area)
+#else
 /** Peripheral PLL base address */
 #define IP_PLL_BASE                              (0x402E0000u)
-/** Peripheral PLL base pointer */
-#define IP_PLL                                   ((PLL_Type *)IP_PLL_BASE)
 /** Peripheral PLL_AUX base address */
 #define IP_PLL_AUX_BASE                          (0x402E4000u)
+#endif
+
+/** Peripheral PLL base pointer */
+#define IP_PLL                                   ((PLL_Type *)IP_PLL_BASE)
 /** Peripheral PLL_AUX base pointer */
 #define IP_PLL_AUX                               ((PLL_Type *)IP_PLL_AUX_BASE)
 /** Array initializer of PLL peripheral base addresses */

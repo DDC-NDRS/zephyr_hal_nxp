@@ -157,12 +157,21 @@ typedef struct {
   __I  uint32_t MUX_14_DIV_UPD_STAT;               /**< Clock Mux 14 Divider Update Status Register, offset: 0x6BC */
 } MC_CGM_Type, *MC_CGM_MemMapPtr;
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#include "s32k3_reg_stub.h"
+#endif
+
 /** Number of instances of the MC_CGM module. */
 #define MC_CGM_INSTANCE_COUNT                    (1u)
 
 /* MC_CGM - Peripheral instance base addresses */
 /** Peripheral MC_CGM base address */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define IP_MC_CGM_BASE                           ((uintptr_t)ut_mcu_mc_cgm_area)
+#else
 #define IP_MC_CGM_BASE                           (0x402D8000u)
+#endif
+
 /** Peripheral MC_CGM base pointer */
 #define IP_MC_CGM                                ((MC_CGM_Type *)IP_MC_CGM_BASE)
 /** Array initializer of MC_CGM peripheral base addresses */

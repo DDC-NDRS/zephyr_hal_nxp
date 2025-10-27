@@ -78,12 +78,21 @@ typedef struct {
   __IO uint32_t RTCVAL;                            /**< RTC Compare value register, offset: 0x14 */
 } RTC_Type, *RTC_MemMapPtr;
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#include "s32k3_reg_stub.h"
+#endif
+
 /** Number of instances of the RTC module. */
 #define RTC_INSTANCE_COUNT                       (1u)
 
 /* RTC - Peripheral instance base addresses */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define IP_RTC_BASE                              ((uintptr_t)ut_mcu_rtc_area)
+#else
 /** Peripheral RTC base address */
 #define IP_RTC_BASE                              (0x40288000u)
+#endif
+
 /** Peripheral RTC base pointer */
 #define IP_RTC                                   ((RTC_Type *)IP_RTC_BASE)
 /** Array initializer of RTC peripheral base addresses */

@@ -695,14 +695,16 @@ status_t FLEXCAN_EnterFreezeMode(CAN_Type *base)
     /* Set Freeze, Halt bits. */
     base->MCR |= CAN_MCR_FRZ_MASK;
     base->MCR |= CAN_MCR_HALT_MASK;
-    while (0U == (base->MCR & CAN_MCR_FRZACK_MASK))
-    {
-#if FLEXCAN_MODULE_TIMEOUT
-        if (--timeout == 0U)
-        {
+    while (0U == (base->MCR & CAN_MCR_FRZACK_MASK)) {
+        #if FLEXCAN_MODULE_TIMEOUT
+        if (--timeout == 0U) {
             return kStatus_Timeout;
         }
-#endif
+        #endif
+
+        #if defined(_MSC_VER) /* #CUSTOM@NDRS */
+        break;
+        #endif
     }
     return kStatus_Success;
 }
@@ -870,14 +872,16 @@ static status_t FLEXCAN_Reset(CAN_Type *base)
     /* Assert Soft Reset Signal. */
     base->MCR |= CAN_MCR_SOFTRST_MASK;
     /* Wait until FlexCAN reset completes. */
-    while (0U != (base->MCR & CAN_MCR_SOFTRST_MASK))
-    {
-#if FLEXCAN_MODULE_TIMEOUT
-        if (--timeout == 0U)
-        {
+    while (0U != (base->MCR & CAN_MCR_SOFTRST_MASK)) {
+        #if FLEXCAN_MODULE_TIMEOUT
+        if (--timeout == 0U) {
             return kStatus_Timeout;
         }
-#endif
+        #endif
+
+        #if defined(_MSC_VER) /* #CUSTOM@NDRS */
+        break;
+        #endif
     }
 
     /* Reset MCR register. */

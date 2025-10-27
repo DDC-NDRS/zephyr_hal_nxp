@@ -75,12 +75,21 @@ typedef struct {
   __IO uint32_t STDBY_ENABLE;                      /**< Standby Enable Register, offset: 0x8 */
 } FIRC_Type, *FIRC_MemMapPtr;
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#include "s32k3_reg_stub.h"
+#endif
+
 /** Number of instances of the FIRC module. */
 #define FIRC_INSTANCE_COUNT                      (1u)
 
 /* FIRC - Peripheral instance base addresses */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define IP_FIRC_BASE                             ((uintptr_t)ut_mcu_firc_area)
+#else
 /** Peripheral FIRC base address */
 #define IP_FIRC_BASE                             (0x402D0000u)
+#endif
+
 /** Peripheral FIRC base pointer */
 #define IP_FIRC                                  ((FIRC_Type *)IP_FIRC_BASE)
 /** Array initializer of FIRC peripheral base addresses */

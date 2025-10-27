@@ -106,12 +106,21 @@ typedef struct {
   __IO uint32_t DATA[FLASH_DATA_COUNT];            /**< Program Data, array offset: 0x100, array step: 0x4 */
 } FLASH_Type, *FLASH_MemMapPtr;
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#include "s32k3_reg_stub.h"
+#endif
+
 /** Number of instances of the FLASH module. */
 #define FLASH_INSTANCE_COUNT                     (1u)
 
 /* FLASH - Peripheral instance base addresses */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define IP_FLASH_BASE                            ((uintptr_t)ut_mcu_flash_periph_area)
+#else
 /** Peripheral FLASH base address */
 #define IP_FLASH_BASE                            (0x402EC000u)
+#endif
+
 /** Peripheral FLASH base pointer */
 #define IP_FLASH                                 ((FLASH_Type *)IP_FLASH_BASE)
 /** Array initializer of FLASH peripheral base addresses */

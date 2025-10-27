@@ -90,12 +90,21 @@ typedef struct {
   __I  uint32_t QSPI_SFP_CTRL_ALT;                 /**< QuadSPI SFP Control Alternate, offset: 0xC4 */
 } CONFIGURATION_GPR_Type, *CONFIGURATION_GPR_MemMapPtr;
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#include "s32k3_reg_stub.h"
+#endif
+
 /** Number of instances of the CONFIGURATION_GPR module. */
 #define CONFIGURATION_GPR_INSTANCE_COUNT         (1u)
 
 /* CONFIGURATION_GPR - Peripheral instance base addresses */
 /** Peripheral CONFIGURATION_GPR base address */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define IP_CONFIGURATION_GPR_BASE                ((uintptr_t)ut_mcu_configuration_gpr_area)
+#else
 #define IP_CONFIGURATION_GPR_BASE                (0x4039C000u)
+#endif
+
 /** Peripheral CONFIGURATION_GPR base pointer */
 #define IP_CONFIGURATION_GPR                     ((CONFIGURATION_GPR_Type *)IP_CONFIGURATION_GPR_BASE)
 /** Array initializer of CONFIGURATION_GPR peripheral base addresses */

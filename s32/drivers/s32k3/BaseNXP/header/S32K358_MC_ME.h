@@ -131,12 +131,21 @@ typedef struct {
   __IO uint32_t PRTN2_COFB2_CLKEN;                 /**< Partition 2 COFB Set 2 Clock Enable Register, offset: 0x538 */
 } MC_ME_Type, *MC_ME_MemMapPtr;
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#include "s32k3_reg_stub.h"
+#endif
+
 /** Number of instances of the MC_ME module. */
 #define MC_ME_INSTANCE_COUNT                     (1u)
 
 /* MC_ME - Peripheral instance base addresses */
 /** Peripheral MC_ME base address */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define IP_MC_ME_BASE                            ((uintptr_t)ut_mcu_mc_me_area)
+#else
 #define IP_MC_ME_BASE                            (0x402DC000u)
+#endif
+
 /** Peripheral MC_ME base pointer */
 #define IP_MC_ME                                 ((MC_ME_Type *)IP_MC_ME_BASE)
 /** Array initializer of MC_ME peripheral base addresses */

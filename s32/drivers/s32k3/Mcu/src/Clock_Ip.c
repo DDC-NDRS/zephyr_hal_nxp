@@ -918,6 +918,10 @@ Clock_Ip_PllStatusType Clock_Ip_GetPllStatus(void)
     {
         CallbackIndex = Clock_Ip_au8PllCallbackIndex[Clock_Ip_au8ClockFeatures[Clock_Ip_aeHwPllName[Index]][CLOCK_IP_CALLBACK]];
         PllStatus = Clock_Ip_axPllCallbacks[CallbackIndex].Complete(Clock_Ip_aeHwPllName[Index]);
+        #if defined(_MSC_VER) /* #CUSTOM@NDRS Always mimic PllStatus as locked */
+        PllStatus = STATUS_PLL_LOCKED;
+        #endif
+
         if (STATUS_PLL_UNLOCKED == PllStatus)
         {
             RetValue = CLOCK_IP_PLL_UNLOCKED;

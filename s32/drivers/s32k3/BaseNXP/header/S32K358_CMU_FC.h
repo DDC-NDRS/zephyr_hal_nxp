@@ -78,24 +78,36 @@ typedef struct {
   __IO uint32_t IER;                               /**< Interrupt Enable Register, offset: 0x14 */
 } CMU_FC_Type, *CMU_FC_MemMapPtr;
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#include "s32k3_reg_stub.h"
+#endif
+
 /** Number of instances of the CMU_FC module. */
 #define CMU_FC_INSTANCE_COUNT                    (4u)
 
 /* CMU_FC - Peripheral instance base addresses */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define IP_CMU_0_BASE                            ((uintptr_t)ut_mcu_cmu_0_area)
+#define IP_CMU_3_BASE                            ((uintptr_t)ut_mcu_cmu_3_area)
+#define IP_CMU_4_BASE                            ((uintptr_t)ut_mcu_cmu_4_area)
+#define IP_CMU_5_BASE                            ((uintptr_t)ut_mcu_cmu_5_area)
+#else
 /** Peripheral CMU_0 base address */
 #define IP_CMU_0_BASE                            (0x402BC000u)
-/** Peripheral CMU_0 base pointer */
-#define IP_CMU_0                                 ((CMU_FC_Type *)IP_CMU_0_BASE)
 /** Peripheral CMU_3 base address */
 #define IP_CMU_3_BASE                            (0x402BC060u)
-/** Peripheral CMU_3 base pointer */
-#define IP_CMU_3                                 ((CMU_FC_Type *)IP_CMU_3_BASE)
 /** Peripheral CMU_4 base address */
 #define IP_CMU_4_BASE                            (0x402BC080u)
-/** Peripheral CMU_4 base pointer */
-#define IP_CMU_4                                 ((CMU_FC_Type *)IP_CMU_4_BASE)
 /** Peripheral CMU_5 base address */
 #define IP_CMU_5_BASE                            (0x402BC0A0u)
+#endif
+
+/** Peripheral CMU_0 base pointer */
+#define IP_CMU_0                                 ((CMU_FC_Type *)IP_CMU_0_BASE)
+/** Peripheral CMU_3 base pointer */
+#define IP_CMU_3                                 ((CMU_FC_Type *)IP_CMU_3_BASE)
+/** Peripheral CMU_4 base pointer */
+#define IP_CMU_4                                 ((CMU_FC_Type *)IP_CMU_4_BASE)
 /** Peripheral CMU_5 base pointer */
 #define IP_CMU_5                                 ((CMU_FC_Type *)IP_CMU_5_BASE)
 /** Array initializer of CMU_FC peripheral base addresses */

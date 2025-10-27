@@ -74,12 +74,21 @@ typedef struct {
   __I  uint32_t STAT;                              /**< Oscillator Status Register, offset: 0x4 */
 } FXOSC_Type, *FXOSC_MemMapPtr;
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#include "s32k3_reg_stub.h"
+#endif
+
 /** Number of instances of the FXOSC module. */
 #define FXOSC_INSTANCE_COUNT                     (1u)
 
 /* FXOSC - Peripheral instance base addresses */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define IP_FXOSC_BASE                            ((uintptr_t)ut_mcu_fxosc_area)
+#else
 /** Peripheral FXOSC base address */
 #define IP_FXOSC_BASE                            (0x402D4000u)
+#endif
+
 /** Peripheral FXOSC base pointer */
 #define IP_FXOSC                                 ((FXOSC_Type *)IP_FXOSC_BASE)
 /** Array initializer of FXOSC peripheral base addresses */

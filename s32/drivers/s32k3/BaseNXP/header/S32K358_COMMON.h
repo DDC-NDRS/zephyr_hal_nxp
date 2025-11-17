@@ -88,7 +88,7 @@
 *   \li for automatic generation of peripheral register debug information.
 */
 #ifndef __IO
-#ifdef __cplusplus
+#if defined(__cplusplus) || defined(_MSC_VER) /* #CUSTOM@NDRS */
   #define   __I     volatile             /*!< Defines 'read only' permissions                 */
 #else
   #define   __I     volatile const       /*!< Defines 'read only' permissions                 */

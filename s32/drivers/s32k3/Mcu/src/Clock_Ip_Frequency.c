@@ -1641,8 +1641,8 @@ static const getFreqType Clock_Ip_apfFreqTable[CLOCK_IP_NAMES_NO] =
 #define MCU_START_SEC_CONST_32
 #include "Mcu_MemMap.h"
 
-static const uint32 Clock_Ip_au32EnableDivider[2U] = {CLOCK_IP_DISABLED,CLOCK_IP_ENABLED};
-static const uint32 Clock_Ip_u32EnableGate[2U] = {CLOCK_IP_DISABLED,CLOCK_IP_ENABLED};
+static const uint32 Clock_Ip_au32EnableDivider[2U] = {CLOCK_IP_DISABLED, CLOCK_IP_ENABLED};
+static const uint32 Clock_Ip_u32EnableGate[2U] = {CLOCK_IP_DISABLED, CLOCK_IP_ENABLED};
 #ifdef CLOCK_IP_FIRC_DIV_SEL_HSEb_CONFIG_REG_GPR
 static const uint32 Clock_Ip_apfTableDividerValue[CLOCK_IP_FIRC_DIV_SEL_VALS_NO] =
 {

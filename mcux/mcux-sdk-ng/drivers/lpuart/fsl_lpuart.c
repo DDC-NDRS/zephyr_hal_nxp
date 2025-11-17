@@ -653,6 +653,11 @@ status_t LPUART_Deinit(LPUART_Type *base)
             return kStatus_LPUART_Timeout;
         }
 #endif
+
+        if (__GTEST == 1U)
+        {
+            break;
+        }
     }
 
     /* Clear all status flags */

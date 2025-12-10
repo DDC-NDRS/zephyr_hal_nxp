@@ -126,9 +126,9 @@ void DisableDeepSleepIRQ(IRQn_Type interrupt)
 void MSDK_EnableCpuCycleCounter(void)
 {
     /* Make sure the DWT trace fucntion is enabled. */
-    if (DCB_DEMCR_TRCENA_Msk != (DCB_DEMCR_TRCENA_Msk & DCB->DEMCR))
+    if (DCB_DEMCR_TRCENA_Msk != (DCB_DEMCR_TRCENA_Msk & DCBx->DEMCR))
     {
-        DCB->DEMCR |= DCB_DEMCR_TRCENA_Msk;
+        DCBx->DEMCR |= DCB_DEMCR_TRCENA_Msk;
     }
 
     /* CYCCNT not supported on this device. */

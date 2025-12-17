@@ -25,9 +25,8 @@ extern "C"{
 * 3) internal and external interfaces from this unit
 ==================================================================================================*/
 #include "Mcal.h"
-#include "S32K358_GMAC.h"
-#include "Emac_Ip_Wrapper.h"
-#include "S32K358_DCM_GPR.h"
+#include "S32K358_GMAC.h" 
+#include "S32K358_DCM_GPR.h" 
 /*==================================================================================================
 *                              SOURCE FILE VERSION INFORMATION
 ==================================================================================================*/
@@ -42,20 +41,6 @@ extern "C"{
 /*==================================================================================================
 *                                     FILE VERSION CHECKS
 ==================================================================================================*/
-    /* Checks against Emac_Ip_Wrapper.h */
-    #if (GMAC_IP_DEVICE_REGISTERS_VENDOR_ID != EMAC_IP_WRAPPER_VENDOR_ID)
-        #error "Gmac_Ip_Device_Registers.h and Emac_Ip_Wrapper.h have different vendor ids"
-    #endif
-    #if (( GMAC_IP_DEVICE_REGISTERS_AR_RELEASE_MAJOR_VERSION    != EMAC_IP_WRAPPER_AR_RELEASE_MAJOR_VERSION) || \
-        ( GMAC_IP_DEVICE_REGISTERS_AR_RELEASE_MINOR_VERSION    != EMAC_IP_WRAPPER_AR_RELEASE_MINOR_VERSION) || \
-        ( GMAC_IP_DEVICE_REGISTERS_AR_RELEASE_REVISION_VERSION != EMAC_IP_WRAPPER_AR_RELEASE_REVISION_VERSION))
-        #error "AUTOSAR Version Numbers of Gmac_Ip_Device_Registers.h and Emac_Ip_Wrapper.h are different"
-    #endif
-    #if (( GMAC_IP_DEVICE_REGISTERS_SW_MAJOR_VERSION != EMAC_IP_WRAPPER_SW_MAJOR_VERSION) || \
-        ( GMAC_IP_DEVICE_REGISTERS_SW_MINOR_VERSION != EMAC_IP_WRAPPER_SW_MINOR_VERSION) || \
-        ( GMAC_IP_DEVICE_REGISTERS_SW_PATCH_VERSION != EMAC_IP_WRAPPER_SW_PATCH_VERSION))
-        #error "Software Version Numbers of Gmac_Ip_Device_Registers.h and Emac_Ip_Wrapper.h are different"
-    #endif
 
 #ifndef DISABLE_MCAL_INTERMODULE_ASR_CHECK
     /* Checks against Mcal.h */
@@ -119,15 +104,16 @@ typedef struct
 /** @endcond */
 
 /* @internal @brief Macro for different between header files */
-    #define MAC_VLAN_TAG_DATA_REG       MAC_VLAN_TAG.MAC_VLAN_TAG_DATA
-    #define MAC_VLAN_TAG_CTRL_REG       MAC_VLAN.MAC_VLAN_TAG_CTRL
+    #define MAC_VLAN_TAG_DATA_REG       MAC_VLAN_TAG_DATA.MAC_VLAN_TAG_DATA
+    #define MAC_VLAN_TAG_CTRL_REG       MAC_VLAN_TAG_CTRL
     #define MAC_VLAN_INCL_REG           MAC_VLAN_INCL.MAC_VLAN_INCL
 
 /* @internal @brief Base addresses for the DMA channels */
     #define DEV_REG_GMAC_CH_BASE \
     { { \
         (Gmac_Ip_ChannelType *)(IP_GMAC_0_BASE + (uint32)DMA_CH0_CONTROL_ADDR16), \
-        (Gmac_Ip_ChannelType *)(IP_GMAC_0_BASE + (uint32)DMA_CH1_CONTROL_ADDR16)  \
+        (Gmac_Ip_ChannelType *)(IP_GMAC_0_BASE + (uint32)DMA_CH1_CONTROL_ADDR16), \
+        (Gmac_Ip_ChannelType *)(IP_GMAC_0_BASE + (uint32)DMA_CH2_CONTROL_ADDR16)  \
     } } \
 
 
@@ -157,10 +143,11 @@ typedef struct
     #define DEV_REG_GMAC_QUEUE_BASE \
     { { \
         (Gmac_Ip_QueueType *)(IP_GMAC_0_BASE + (uint32)MTL_TXQ0_OPERATION_MODE_ADDR16), \
-        (Gmac_Ip_QueueType *)(IP_GMAC_0_BASE + (uint32)MTL_TXQ1_OPERATION_MODE_ADDR16)  \
+        (Gmac_Ip_QueueType *)(IP_GMAC_0_BASE + (uint32)MTL_TXQ1_OPERATION_MODE_ADDR16), \
+        (Gmac_Ip_QueueType *)(IP_GMAC_0_BASE + (uint32)MTL_TXQ2_OPERATION_MODE_ADDR16)  \
     } } \
 
-    /*==================================================================================================
+/*==================================================================================================
                                              ENUMS
 ==================================================================================================*/
 

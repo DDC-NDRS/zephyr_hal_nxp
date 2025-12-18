@@ -72,12 +72,16 @@
 #define C40_SECTORS_IN_SUPER_SECTOR (C40_SUPER_SECTOR_SIZE / C40_SECTOR_SIZE)
 
 /*
- * RM, PFLASH chapter:
+ * RM, PFLASH chapter: 21.7.1.9 Super Sector Program and Erase Hardware Lock (SSPELOCK)
  * For 512 KB blocks, the first half of the block is protected with super sector granularity.
  * For 1 MB blocks, the first 768 KB is protected with super sector granularity.
+ * For 2 MB blocks, the first 1792 KB is protected with super sector granularity.
  */
+#if FSL_FEATURE_FLASH_C40_BLOCK_SIZE_CODE == (2 * 1024 * 1024) /* #CUSTOM@NDRS */
 
-#if FSL_FEATURE_FLASH_C40_BLOCK_SIZE_CODE == (1024 * 1024)
+#define C40_MAX_SUPER_SECTOR_BLOCK_AREA (1792 * 1024)
+
+#elif FSL_FEATURE_FLASH_C40_BLOCK_SIZE_CODE == (1024 * 1024)
 
 #define C40_MAX_SUPER_SECTOR_BLOCK_AREA (768 * 1024)
 

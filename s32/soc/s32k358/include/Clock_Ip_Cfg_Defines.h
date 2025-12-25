@@ -130,8 +130,8 @@ extern "C" {
  * @brief Number of clock configurations 0
  */
 #define CLOCK_IP_CONFIGURED_IRCOSCS_0_NO          (3U)
-#define CLOCK_IP_CONFIGURED_XOSCS_0_NO            (2U)
-#define CLOCK_IP_CONFIGURED_PLLS_0_NO             (2U)
+#define CLOCK_IP_CONFIGURED_XOSCS_0_NO            (1U)
+#define CLOCK_IP_CONFIGURED_PLLS_0_NO             (1U)
 #define CLOCK_IP_CONFIGURED_SELECTORS_0_NO        (15U)
 #define CLOCK_IP_CONFIGURED_DIVIDERS_0_NO         (27U)
 #define CLOCK_IP_CONFIGURED_DIVIDER_TRIGGERS_0_NO (1U)

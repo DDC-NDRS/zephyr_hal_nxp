@@ -219,7 +219,7 @@ static Clock_Ip_PllConfigType const Clock_Ip_PllConfigurations_0[CLOCK_IP_CONFIG
         0U,                         /* numeratorFracLoopDiv */
         120U,                       /* mulFactorDiv */
         1U,                         /* ModulationBypass */
-        0U,                         /* Modulation type: Spread spectrum modulation bypassed */
+        1U,                         /* Modulation type: Spread spectrum modulation bypassed */
         0U,                         /* modulationPeriod */
         0U,                         /* incrementStep */
         0U,                         /* sigmaDelta */
@@ -244,7 +244,7 @@ static Clock_Ip_PllConfigType const Clock_Ip_PllConfigurations_0[CLOCK_IP_CONFIG
         0U,                         /* multiplier */
         0U,                         /* postdivider */
         0U,                         /* numeratorFracLoopDiv */
-        120U,                       /* mulFactorDiv */
+        125U,                       /* mulFactorDiv */
         0U,                         /* ModulationBypass */
         1U,                         /* Modulation type: Spread spectrum modulation bypassed */
         0U,                         /* modulationPeriod */
@@ -2573,8 +2573,8 @@ Clock_Ip_ClockConfigType const Clock_Ip_aClockConfig[2U] = {
         (NULL_PTR),                 /* Register data if register value optimization is enabled */
 
         3U,                         /* ircoscsCount */          /* CLOCK_IP_CONFIGURED_IRCOSCS_0_NO */
-        2U,                         /* xoscsCount */            /* CLOCK_IP_CONFIGURED_XOSCS_0_NO   */
-        2U,                         /* pllsCount */             /* CLOCK_IP_CONFIGURED_PLLS_0_NO    */
+        1U,                         /* xoscsCount */            /* CLOCK_IP_CONFIGURED_XOSCS_0_NO   */
+        1U,                         /* pllsCount */             /* CLOCK_IP_CONFIGURED_PLLS_0_NO    */
         15U,                        /* selectorsCount */        /* CLOCK_IP_CONFIGURED_SELECTORS_0_NO */
         27U,                        /* dividersCount */         /* CLOCK_IP_CONFIGURED_DIVIDERS_0_NO */
         1U,                         /* dividerTriggersCount */  /* CLOCK_IP_CONFIGURED_DIVIDER_TRIGGERS_0_NO */

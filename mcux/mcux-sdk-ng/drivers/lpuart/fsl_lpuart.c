@@ -654,7 +654,7 @@ status_t LPUART_Deinit(LPUART_Type *base)
         }
 #endif
 
-        if (__GTEST == 1U)
+        if (IS_ENABLED(__GTEST)) /* #CUSTOM@NDRS */
         {
             break;
         }

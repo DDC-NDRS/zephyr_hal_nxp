@@ -98,11 +98,14 @@
 /* @brief Message buffer size */
 #define FSL_FEATURE_FLEXCAN_HAS_MESSAGE_BUFFER_MAX_NUMBERn(x) \
     (((x) == CAN0) ? (96) : \
-    (((x) == CAN1) ? (64) : \
-    (((x) == CAN2) ? (64) : \
-    (((x) == CAN3) ? (32) : \
-    (((x) == CAN4) ? (32) : \
-    (((x) == CAN5) ? (32) : (-1)))))))
+    (((x) == CAN1) ? (96) : \
+    (((x) == CAN2) ? (96) : \
+    (((x) == CAN3) ? (64) : \
+    (((x) == CAN4) ? (64) : \
+    (((x) == CAN5) ? (64) : \
+    (((x) == CAN6) ? (64) : \
+    (((x) == CAN7) ? (64) : (-1)))))))))
+
 /* @brief Has doze mode support (register bit field MCR[DOZE]). */
 #define FSL_FEATURE_FLEXCAN_HAS_DOZE_MODE_SUPPORT (1)
 /* @brief Insatnce has doze mode support (register bit field MCR[DOZE]). */

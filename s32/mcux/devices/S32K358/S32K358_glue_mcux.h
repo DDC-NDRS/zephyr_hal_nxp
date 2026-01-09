@@ -106,19 +106,29 @@
 #define CAN5_BASE                                IP_CAN_5_BASE
 /** Peripheral CAN_5 base pointer */
 #define CAN5                                     ((CAN_Type *)CAN5_BASE)
+/** Peripheral CAN_6 base address */
+#define CAN6_BASE                                IP_CAN_6_BASE
+/** Peripheral CAN_6 base pointer */
+#define CAN6                                     ((CAN_Type *)CAN6_BASE)
+/** Peripheral CAN_7 base address */
+#define CAN7_BASE                                IP_CAN_7_BASE
+/** Peripheral CAN_7 base pointer */
+#define CAN7                                     ((CAN_Type *)CAN7_BASE)
+
 /** Array initializer of CAN peripheral base addresses */
-#define CAN_BASE_ADDRS                           { CAN0_BASE, CAN1_BASE, CAN2_BASE, CAN3_BASE, CAN4_BASE, CAN5_BASE }
+#define CAN_BASE_ADDRS                           { CAN0_BASE, CAN1_BASE, CAN2_BASE, CAN3_BASE, CAN4_BASE, CAN5_BASE, CAN6_BASE, CAN7_BASE }
 /** Array initializer of CAN peripheral base pointers */
-#define CAN_BASE_PTRS                            { CAN0, CAN1, CAN2, CAN3, CAN4, CAN5 }
+#define CAN_BASE_PTRS                            { CAN0, CAN1, CAN2, CAN3, CAN4, CAN5, CAN6, CAN7 }
+
 /** Interrupt vectors for the CAN peripheral type */
-#define CAN_Rx_Warning_IRQS                      { FlexCAN0_0_IRQn, FlexCAN1_0_IRQn, FlexCAN2_0_IRQn, FlexCAN3_0_IRQn, FlexCAN4_0_IRQn, FlexCAN5_0_IRQn}
-#define CAN_Tx_Warning_IRQS                      { FlexCAN0_0_IRQn, FlexCAN1_0_IRQn, FlexCAN2_0_IRQn, FlexCAN3_0_IRQn, FlexCAN4_0_IRQn, FlexCAN5_0_IRQn}
-#define CAN_Wake_Up_IRQS                         { FlexCAN0_0_IRQn, FlexCAN1_0_IRQn, FlexCAN2_0_IRQn, FlexCAN3_0_IRQn, FlexCAN4_0_IRQn, FlexCAN5_0_IRQn}
-#define CAN_Error_IRQS                           { FlexCAN0_0_IRQn, FlexCAN1_0_IRQn, FlexCAN2_0_IRQn, FlexCAN3_0_IRQn, FlexCAN4_0_IRQn, FlexCAN5_0_IRQn}
-#define CAN_Bus_Off_IRQS                         { FlexCAN0_0_IRQn, FlexCAN1_0_IRQn, FlexCAN2_0_IRQn, FlexCAN3_0_IRQn, FlexCAN4_0_IRQn, FlexCAN5_0_IRQn}
-#define CAN_ORed_Message_buffer_0_31_IRQS        { FlexCAN0_1_IRQn, FlexCAN1_1_IRQn, FlexCAN2_1_IRQn, FlexCAN3_1_IRQn, FlexCAN4_1_IRQn, FlexCAN5_1_IRQn}
-#define CAN_ORed_Message_buffer_32_63_IRQS       { FlexCAN0_2_IRQn, FlexCAN1_2_IRQn, FlexCAN2_2_IRQn, NotAvail_IRQn, NotAvail_IRQn, NotAvail_IRQn}
-#define CAN_ORed_Message_buffer_64_95_IRQS       { FlexCAN0_1_IRQn, NotAvail_IRQn, NotAvail_IRQn, NotAvail_IRQn, NotAvail_IRQn, NotAvail_IRQn}
+#define CAN_Rx_Warning_IRQS                      { FlexCAN0_0_IRQn, FlexCAN1_0_IRQn, FlexCAN2_0_IRQn, FlexCAN3_0_IRQn, FlexCAN4_0_IRQn, FlexCAN5_0_IRQn, FlexCAN6_0_IRQn, FlexCAN7_0_IRQn }
+#define CAN_Tx_Warning_IRQS                      { FlexCAN0_0_IRQn, FlexCAN1_0_IRQn, FlexCAN2_0_IRQn, FlexCAN3_0_IRQn, FlexCAN4_0_IRQn, FlexCAN5_0_IRQn, FlexCAN6_0_IRQn, FlexCAN7_0_IRQn }
+#define CAN_Wake_Up_IRQS                         { FlexCAN0_0_IRQn, FlexCAN1_0_IRQn, FlexCAN2_0_IRQn, FlexCAN3_0_IRQn, FlexCAN4_0_IRQn, FlexCAN5_0_IRQn, FlexCAN6_0_IRQn, FlexCAN7_0_IRQn }
+#define CAN_Error_IRQS                           { FlexCAN0_0_IRQn, FlexCAN1_0_IRQn, FlexCAN2_0_IRQn, FlexCAN3_0_IRQn, FlexCAN4_0_IRQn, FlexCAN5_0_IRQn, FlexCAN6_0_IRQn, FlexCAN7_0_IRQn }
+#define CAN_Bus_Off_IRQS                         { FlexCAN0_0_IRQn, FlexCAN1_0_IRQn, FlexCAN2_0_IRQn, FlexCAN3_0_IRQn, FlexCAN4_0_IRQn, FlexCAN5_0_IRQn, FlexCAN6_0_IRQn, FlexCAN7_0_IRQn }
+#define CAN_ORed_Message_buffer_0_31_IRQS        { FlexCAN0_1_IRQn, FlexCAN1_1_IRQn, FlexCAN2_1_IRQn, FlexCAN3_1_IRQn, FlexCAN4_1_IRQn, FlexCAN5_1_IRQn, FlexCAN6_1_IRQn, FlexCAN7_1_IRQn }
+#define CAN_ORed_Message_buffer_32_63_IRQS       { FlexCAN0_2_IRQn, FlexCAN1_2_IRQn, FlexCAN2_2_IRQn, FlexCAN3_2_IRQn, FlexCAN4_2_IRQn, FlexCAN5_2_IRQn, FlexCAN6_2_IRQn, FlexCAN7_2_IRQn }
+#define CAN_ORed_Message_buffer_64_95_IRQS       { FlexCAN0_3_IRQn, FlexCAN1_3_IRQn, FlexCAN2_3_IRQn, NotAvail_IRQn  , NotAvail_IRQn  , NotAvail_IRQn  , NotAvail_IRQn  , NotAvail_IRQn   }
 #define CAN_ORed_Message_buffer_IRQS             CAN_ORed_Message_buffer_0_31_IRQS
 
 /* LPI2C - Peripheral instance base addresses */

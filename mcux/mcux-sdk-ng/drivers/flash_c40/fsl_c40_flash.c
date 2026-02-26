@@ -40,6 +40,8 @@
 #define RAMFUNC __ramfunc
 #elif defined(__GNUC__)
 #define RAMFUNC __attribute__((section("CodeQuickAccess"), __noinline__))
+#elif defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define RAMFUNC __declspec(code_seg("CodeQuickAccess"))
 #else
 #error "Unsupported toolchain"
 #endif

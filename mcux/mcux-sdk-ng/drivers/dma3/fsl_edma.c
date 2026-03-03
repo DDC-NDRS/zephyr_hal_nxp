@@ -71,7 +71,12 @@ static void EDMA_HandleTransferConfig(edma_handle_t *handle,
  ******************************************************************************/
 
 /*! @brief Array to map EDMA instance number to base pointer. */
-static DMA_Type *const s_edmaBases[] = DMA_BASE_PTRS;
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+extern uint8_t ut_mcu_edma_area[];
+static DMA_Type* const s_edmaBases[] = {(DMA_Type*)ut_mcu_edma_area};
+#else
+static DMA_Type* const s_edmaBases[] = DMA_BASE_PTRS;
+#endif
 
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
 #if (defined(FSL_FEATURE_EDMA_HAS_COMMON_CLOCK_GATE) && (FSL_FEATURE_EDMA_HAS_COMMON_CLOCK_GATE))
@@ -81,7 +86,7 @@ static const clock_ip_name_t s_edmaClockName[] = EDMA_CLOCKS;
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 
 #if defined(DMA_IRQS)
-#if !defined(_MSVC_VER) /* #CUSTOM@NDRS */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
 static const IRQn_Type s_edmaIRQNumber[1][FSL_FEATURE_EDMA_MODULE_CHANNEL];
 #else
 static const IRQn_Type s_edmaIRQNumber[][FSL_FEATURE_EDMA_MODULE_CHANNEL] = DMA_IRQS;
@@ -467,7 +472,9 @@ void EDMA_DisableChannelInterrupts(DMA_Type *base, uint32_t channel, uint32_t ma
 void EDMA_TcdReset(edma_tcd_t *tcd)
 {
     assert(tcd != NULL);
+    #if !defined(_MSC_VER) /* #CUSTOM@NDRs */
     assert(((uint32_t)tcd & 0x1FU) == 0U);
+    #endif
 
     /* Reset channel TCD */
     tcd->SADDR     = 0U;
@@ -517,7 +524,9 @@ void EDMA_TcdReset(edma_tcd_t *tcd)
 void EDMA_TcdSetTransferConfig(edma_tcd_t *tcd, const edma_transfer_config_t *config, edma_tcd_t *nextTcd)
 {
     assert(tcd != NULL);
+    #if !defined(_MSC_VER) /* #CUSTOM@NDRs */
     assert(((uint32_t)tcd & 0x1FU) == 0U);
+    #endif
     assert(config != NULL);
     assert(((uint32_t)nextTcd & 0x1FU) == 0U);
     assert((config->srcAddr % (1UL << (uint32_t)config->srcTransferSize)) == 0U);

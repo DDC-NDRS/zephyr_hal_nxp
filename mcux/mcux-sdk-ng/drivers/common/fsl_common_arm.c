@@ -131,7 +131,7 @@ void MSDK_EnableCpuCycleCounter(void)
         CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
     }
     #else
-    if (DCB_DEMCR_TRCENA_Msk != (DCB_DEMCR_TRCENA_Msk & DCB->DEMCR)) {
+    if (DCB_DEMCR_TRCENA_Msk != (DCB_DEMCR_TRCENA_Msk & DCBx->DEMCR)) {
         DCBx->DEMCR |= DCB_DEMCR_TRCENA_Msk;
     }
     #endif

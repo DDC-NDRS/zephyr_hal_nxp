@@ -635,7 +635,7 @@ _Pragma("diag_suppress=Pm120")
 #elif (defined(__GNUC__)) || defined(DOXYGEN_OUTPUT)
 #define MCUX_RAMFUNC __attribute__((noinline)) __attribute__((long_call, section(".ramfunc")))
 #elif defined(_MSC_VER) /* #CUSTOM@NDRS */
-#define RAMFUNCTION_SECTION_CODE(func) func
+#define MCUX_RAMFUNC
 #else
 #error Toolchain not supported.
 #endif /* defined(__ICCARM__) */

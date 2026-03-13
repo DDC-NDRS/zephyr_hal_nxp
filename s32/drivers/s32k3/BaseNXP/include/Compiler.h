@@ -105,15 +105,15 @@ extern "C"{
     * @brief Compiler abstraction for specifying an interrupt handler.
     */
     #define INTERRUPT_FUNC      __interrupt
-    
+
     /**
     * @brief Compiler abstraction for the asm keyword.
-    */    
+    */
     #define ASM_KEYWORD  __asm
 
     /**
     * @brief Compiler abstraction for the asm keyword.
-    */    
+    */
     #define ASMV_KEYWORD  __asm volatile
 
     /**
@@ -132,7 +132,7 @@ extern "C"{
     * @brief Compiler abstraction for the packed qualifier
     */
     #define PACKED __packed
-    
+
 #endif /* #ifdef _GREENHILLS_C_S32K3XX_ */
 
 /**************************************** Wind River Diab *****************************************/
@@ -153,7 +153,7 @@ extern "C"{
     /**
     * @brief Compiler abstraction for specifying an interrupt handler. Diab version 7 and above use clang
     */
-#ifdef __clang__ 
+#ifdef __clang__
     #define INTERRUPT_FUNC      __attribute__((interrupt))
 #else
     #define INTERRUPT_FUNC      __interrupt__
@@ -163,7 +163,7 @@ extern "C"{
     * @brief Compiler abstraction for the asm keyword.
     */
     #define ASM_KEYWORD  __asm
-    
+
     /**
     * @brief Compiler abstraction for the asm keyword.
     */
@@ -185,7 +185,7 @@ extern "C"{
      * @brief Compiler abstraction for the packed qualifier
      */
     #define PACKED __attribute__((packed))
-    
+
 #endif /* #ifdef _DIABDATA_C_S32K3XX_ */
 
 /*************************************** CodeWarrior **********************************************/
@@ -207,7 +207,7 @@ extern "C"{
     * @brief Compiler abstraction for specifying an interrupt handler.
     */
     #define INTERRUPT_FUNC      __declspec(interrupt nowarn)
- 
+
     /**
     * @brief Compiler abstraction for the asm keyword.
     */
@@ -224,7 +224,7 @@ extern "C"{
     /**
     * @brief Compiler abstraction for the data alignment
     */
-    #define ALIGNED_VARS_STOP()    
+    #define ALIGNED_VARS_STOP()
     /**
     * @brief Compiler abstraction for the packed qualifier
     */
@@ -251,7 +251,7 @@ extern "C"{
     * @brief Compiler abstraction for specifying an interrupt handler.
     */
     #define INTERRUPT_FUNC      __attribute__((interrupt));
-    
+
     /**
     * @brief Compiler abstraction for the asm keyword.
     */
@@ -269,7 +269,7 @@ extern "C"{
     * @brief Compiler abstraction for the data alignment
     */
     #define ALIGNED_VARS_STOP()
-    
+
 #endif /* #ifdef _HITECH_C_S32K3XX_ */
 
 /**************************************** Linaro *********************************************/
@@ -294,11 +294,11 @@ extern "C"{
 
     /**
     * @brief Compiler abstraction for the asm keyword.
-    */    
+    */
     #define ASM_KEYWORD  __asm__
     /**
     * @brief Compiler abstraction for the asm keyword.
-    */    
+    */
     #define ASMV_KEYWORD  __asm__ volatile
 
     /**
@@ -312,12 +312,12 @@ extern "C"{
     /**
     * @brief Compiler abstraction for the data alignment
     */
-    #define ALIGNED_VARS_STOP()    
+    #define ALIGNED_VARS_STOP()
     /**
      * @brief Compiler abstraction for the packed qualifier
      */
     #define PACKED __attribute__((__packed__))
-    
+
 #endif /* #ifdef _LINARO_C_S32K3XX_ */
 /**************************************** DS5 *************************************************/
 #ifdef _ARM_DS5_C_S32K3XX_
@@ -340,7 +340,7 @@ extern "C"{
     #define INTERRUPT_FUNC
         /**
     * @brief Compiler abstraction for the asm keyword.
-    */    
+    */
     #define ASM_KEYWORD  __asm
 
     /**
@@ -359,7 +359,7 @@ extern "C"{
      * @brief Compiler abstraction for the packed qualifier
      */
     #define PACKED __packed
-    
+
 #endif /* #ifdef _ARM_DS5_C_S32K3XX_ */
 
 /**************************************** IAR *************************************************/
@@ -381,20 +381,20 @@ extern "C"{
     * @brief Compiler abstraction for specifying an interrupt handler.
     */
     #define INTERRUPT_FUNC
-    
+
         /**
     * @brief Compiler abstraction for the asm keyword.
-    */    
+    */
     #define ASM_KEYWORD  __asm
     /**
     * @brief Compiler abstraction for the asm keyword.
-    */    
+    */
     #define ASMV_KEYWORD  __asm volatile
 
     /**
     * @brief Compiler abstraction for the data alignment
     */
-    #define ALIGNED_VARS_START(sec_name, align) 
+    #define ALIGNED_VARS_START(sec_name, align)
     /**
     * @brief Compiler abstraction for the data alignment
     */
@@ -403,12 +403,12 @@ extern "C"{
     /**
     * @brief Compiler abstraction for the data alignment
     */
-    #define ALIGNED_VARS_STOP()   
+    #define ALIGNED_VARS_STOP()
    /**
     * @brief Compiler abstraction for the packed qualifier
     */
     #define PACKED __packed
-    
+
 #endif /* #ifdef _IAR_C_S32K3XX_ */
 
 /**************************************** MSVC *************************************************/
@@ -427,10 +427,10 @@ extern "C"{
     /**
     * @brief Compiler abstraction for specifying an interrupt handler.
     */
-    #define INTERRUPT_FUNC      
+    #define INTERRUPT_FUNC
     /**
     * @brief Compiler abstraction for the asm keyword.
-    */    
+    */
     #define ASM_KEYWORD
     /**
     * @brief Compiler abstraction for the data alignment
@@ -507,13 +507,13 @@ extern "C"{
 
 
 /**
-* @brief The compiler abstraction shall define the FUNC_P2CONST macro for the declaration and 
+* @brief The compiler abstraction shall define the FUNC_P2CONST macro for the declaration and
 * definition of functions returning a pointer to a constant
 */
 #define FUNC_P2CONST(rettype, ptrclass, memclass) const ptrclass rettype * memclass
 
 /**
-* @brief The compiler abstraction shall define the FUNC_P2VAR macro for the declaration and 
+* @brief The compiler abstraction shall define the FUNC_P2VAR macro for the declaration and
 * definition of functions returning a pointer to a variable.
 */
 #define FUNC_P2VAR(rettype, ptrclass, memclass) ptrclass rettype * memclass

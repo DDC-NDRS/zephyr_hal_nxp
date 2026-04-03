@@ -933,7 +933,7 @@ status_t LPI2C_MasterReceive(LPI2C_Type *base, void *rxBuff, size_t rxSize)
                 return result;
             }
 
-            uint16_t tmpChunk = MIN(rxSize - chunkSize, LPI2C_MAX_RX_SIZE);
+            uint16_t tmpChunk = MIN((uint16_t)rxSize - chunkSize, LPI2C_MAX_RX_SIZE);
             base->MTDR = (uint32_t)kRxDataCmd | LPI2C_MTDR_DATA(tmpChunk - 1U);
             chunkSize += tmpChunk;
         }

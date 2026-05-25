@@ -77,7 +77,7 @@
 #include "S32K358_SIRC.h"
 /* #include "S32K358_SIUL2.h" */ /* No used in Zephyr-RTOS @see soc/nxp/s32/s32k3/pinctrl_soc.h */
 #include "S32K358_STCU.h"
-#include "S32K358_STM.h"
+/* #include "S32K358_STM.h" */ /* No used in Zephyr-RTOS @see drivers/counter/counter_nxp_s32_sys_timer.c */
 /* #include "S32K358_SWT.h" */ /* No used in Zephyr-RTOS @see drivers/watchdog/wdt_nxp_s32.c */
 #include "S32K358_SXOSC.h"
 #include "S32K358_TEMPSENSE.h"

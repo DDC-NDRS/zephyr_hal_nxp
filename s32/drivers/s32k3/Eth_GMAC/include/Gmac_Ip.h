@@ -165,6 +165,9 @@ Gmac_Ip_StatusType Gmac_Ip_DisableController(uint8 Instance);
  */
 void Gmac_Ip_SetSpeed(uint8 Instance, Gmac_Ip_SpeedType Speed);
 
+/* #CUSTOM@NDRS */
+void Gmac_Ip_SetDuplex(uint8 Instance, Gmac_Ip_DuplexType Duplex);
+
 /*!
  * @brief Provides a transmit buffer to be used by the application for transmission.
  *

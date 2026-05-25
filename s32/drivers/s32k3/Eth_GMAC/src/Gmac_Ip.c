@@ -1379,6 +1379,17 @@ void Gmac_Ip_SetSpeed(uint8 Instance, Gmac_Ip_SpeedType Speed)
     GMAC_SetSpeed(Base, Speed);
 }
 
+void Gmac_Ip_SetDuplex(uint8 Instance, Gmac_Ip_DuplexType Duplex)
+{
+    GMAC_Type *Base;
+
+    GMAC_DEV_ASSERT(Instance <  FEATURE_GMAC_NUM_INSTANCES);
+
+    Base = Gmac_apxBases[Instance];
+    Base->MAC_CONFIGURATION |= GMAC_MAC_CONFIGURATION_DM(Duplex);
+}
+
+
 /*FUNCTION**********************************************************************
  *
  * Function Name : Gmac_Ip_GetTxBuff
@@ -1450,7 +1461,7 @@ Gmac_Ip_StatusType Gmac_Ip_GetTxBuff(uint8 Instance,
 /*FUNCTION**********************************************************************
  *
  * Function Name : Gmac_Ip_GetTxMultiBuff
- * implements     
+ * implements
  *END**************************************************************************/
 Gmac_Ip_StatusType Gmac_Ip_GetTxMultiBuff(uint8 Instance,
                                                   uint8 ring,
@@ -1693,7 +1704,7 @@ Gmac_Ip_StatusType Gmac_Ip_SendMultiBufferFrame(uint8 Instance,
     {
         DeAllocate = TRUE;
     }
-    
+
     /* This operation can happen when there are no enough descriptors for all the buffers or when cache operation failed */
     if (DeAllocate)
     {
@@ -1749,7 +1760,7 @@ Gmac_Ip_StatusType Gmac_Ip_ReadFrame(uint8 Instance,
     }
     else
     {
-      
+
 #if (STD_ON == GMAC_HAS_CACHE_MANAGEMENT)
         /* Mark the cache lines where external data buffers are placed as invalid in order to get the new data from data buffers from memory. */
         CacheStatus =  Cache_Ip_InvalidateByAddr(CacheType, CACHE_IP_DATA, (uint32)Bd->Info0, Bd->Info1 & GMAC_INFO1_LENGTH_MASK);
@@ -1859,7 +1870,7 @@ void Gmac_Ip_SetRxExternalBuffer(uint8 Instance,
     Bd->Info0 = (uint32)Buff->Data;
     Bd->Info1 = (uint32)((uint32)Buff->Length & GMAC_INFO1_LENGTH_MASK);
     Bd->Des3  = GMAC_RDES3_OWN_MASK | GMAC_RDES3_INTE_MASK | GMAC_RDES3_BUF1V_MASK;
-   
+
     Gmac_apxState[Instance]->RxAllocDesc[Ring]++;
 
      if ((uint32)Gmac_apxState[Instance]->RxAllocDesc[Ring] >= (uint32)&ListBd[RingLength])

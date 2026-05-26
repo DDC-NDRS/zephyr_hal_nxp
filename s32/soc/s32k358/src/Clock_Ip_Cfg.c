@@ -1585,7 +1585,7 @@ static const Clock_Ip_SelectorConfigType Clock_Ip_SelectorConfigurations_1[CLOCK
     #if (CLOCK_IP_CONFIGURED_SELECTORS_1_NO > 0U)
     {
         EMAC_RX_CLK,                /* Clock name associated to selector */
-        EMAC_MII_RMII_TX_CLK,       /* Name of the selected input source */
+        FIRC_CLK,                   /* Name of the selected input source */
     },
     #endif
 
@@ -1599,7 +1599,7 @@ static const Clock_Ip_SelectorConfigType Clock_Ip_SelectorConfigurations_1[CLOCK
     #if (CLOCK_IP_CONFIGURED_SELECTORS_1_NO > 2U)
     {
         EMAC_TX_CLK,                /* Clock name associated to selector */
-        EMAC_MII_RMII_TX_CLK,       /* Name of the selected input source */
+        FIRC_CLK,                   /* Name of the selected input source */
     },
     #endif
 };
@@ -1610,7 +1610,7 @@ static const Clock_Ip_DividerConfigType Clock_Ip_DividerConfigurations_1[CLOCK_I
     #if (CLOCK_IP_CONFIGURED_DIVIDERS_1_NO > 0U)
     {
         EMAC_RX_CLK,                /* name */
-        2U,                         /* value */
+        1U,                         /* value */
         {
             0U,
         }
@@ -1630,7 +1630,7 @@ static const Clock_Ip_DividerConfigType Clock_Ip_DividerConfigurations_1[CLOCK_I
     #if (CLOCK_IP_CONFIGURED_DIVIDERS_1_NO > 2U)
     {
         EMAC_TX_CLK,                /* name */
-        2U,                         /* value */
+        1U,                         /* value */
         {
             0U,
         }
@@ -1651,7 +1651,7 @@ static const Clock_Ip_ExtClkConfigType Clock_Ip_ExtClkConfigurations_1[CLOCK_IP_
     #if (CLOCK_IP_CONFIGURED_EXT_CLKS_1_NO > 1U)
     {
         EMAC_MII_RMII_TX_CLK,       /* name */
-        50000000U,                  /* value */
+        0,                          /* value */
     },
     #endif
 };

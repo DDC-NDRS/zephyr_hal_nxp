@@ -41,6 +41,9 @@ extern "C" {
 #define CLOCK_IP_CFG_SW_MINOR_VERSION_C            0
 #define CLOCK_IP_CFG_SW_PATCH_VERSION_C            0
 
+#define CLOCK_IP_KHZ(x) ((uint32_t)(x) * 1000UL)
+#define CLOCK_IP_MHZ(x) ((uint32_t)(x) * 1000000UL)
+
 /*==================================================================================================
 *                                     FILE VERSION CHECKS
 ==================================================================================================*/
@@ -1488,7 +1491,7 @@ static Clock_Ip_CmuConfigType const
             CMU_FC_IER_FLLAIE(0U) |
             CMU_FC_IER_FHHAIE(0U)
         ),
-        16000000U,                  /* FXOSC_CLK as 16 MHz */
+        CLOCK_IP_MHZ(16),           /* FXOSC_CLK as 16 MHz */
         {
             0U,                     /* Start index in register values array */
             0U,                     /* End index in register values array */
@@ -1506,7 +1509,7 @@ static Clock_Ip_CmuConfigType const
             CMU_FC_IER_FLLAIE(0U) |
             CMU_FC_IER_FHHAIE(0U)
         ),
-        200000000U,                 /* CORE_CLK as 200 MHz */
+        CLOCK_IP_MHZ(200),          /* CORE_CLK as 200 MHz */
         {
             0U,                     /* Start index in register values array */
             0U,                     /* End index in register values array */
@@ -1524,7 +1527,7 @@ static Clock_Ip_CmuConfigType const
             CMU_FC_IER_FLLAIE(0U) |
             CMU_FC_IER_FHHAIE(0U)
         ),
-        100000000U,                 /* AIPS_PLAT_CLK as 100 MHz */
+        CLOCK_IP_MHZ(100),          /* AIPS_PLAT_CLK as 100 MHz */
         {
             0U,                     /* Start index in register values array */
             0U,                     /* End index in register values array */
@@ -1542,7 +1545,7 @@ static Clock_Ip_CmuConfigType const
             CMU_FC_IER_FLLAIE(0U) |
             CMU_FC_IER_FHHAIE(0U)
         ),
-        100000000U,                 /* HSE_CLK as 100 MHz */
+        CLOCK_IP_MHZ(100),          /* HSE_CLK as 100 MHz */
         {
             0U,                     /* Start index in register values array */
             0U,                     /* End index in register values array */

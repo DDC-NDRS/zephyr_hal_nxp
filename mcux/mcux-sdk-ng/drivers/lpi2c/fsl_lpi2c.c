@@ -676,8 +676,11 @@ void LPI2C_MasterSetBaudRate(LPI2C_Type *base, uint32_t sourceClock_Hz, uint32_t
     uint8_t bestclkCycle = 0U;
 
     uint32_t absError  = 0U;
-    uint32_t bestError = 0xffffffffu;
+    uint32_t bestError = 0xFFFFFFFFU;
     uint32_t computedRate;
+
+    /* Allow up to 2% baudrate error tolerance (integer math -> divide by 50). */
+    uint32_t allowedError = (uint32_t)(baudRate_Hz / 50U);
 
     uint32_t tmpReg = 0U;
     uint32_t a;
@@ -694,8 +697,8 @@ void LPI2C_MasterSetBaudRate(LPI2C_Type *base, uint32_t sourceClock_Hz, uint32_t
      */
     for (prescale = 0U; prescale <= 7U; prescale++)
     {
-        divider = (uint8_t)((1U << prescale) & 0xffU);
-        scl_lat = (uint8_t)(((2U + filtScl) / divider) & 0xffU);
+        divider = (uint8_t)((1U << prescale) & 0xFFU);
+        scl_lat = (uint8_t)(((2U + filtScl) / divider) & 0xFFU);
 
         /* Calculate the clkCycle, clkCycle = CLKLO + CLKHI, divider = 2 ^ prescale */
         a = (10U * sourceClock_Hz / divider / baudRate_Hz + 5U) / 10U;
@@ -728,11 +731,11 @@ void LPI2C_MasterSetBaudRate(LPI2C_Type *base, uint32_t sourceClock_Hz, uint32_t
         {
             bestPre      = prescale;
             bestDivider  = divider;
-            bestclkCycle = (uint8_t)(clkCycle & 0xffU);
+            bestclkCycle = (uint8_t)(clkCycle & 0xFFU);
             bestError    = absError;
 
-            /* If the error is 0, then we can stop searching because we won't find a better match. */
-            if (absError == 0U)
+            /* If the error is 0 or within the allowed tolerance, accept and stop searching. */
+            if ((absError == 0U) || (absError <= allowedError))
             {
                 break;
             }
@@ -753,7 +756,7 @@ void LPI2C_MasterSetBaudRate(LPI2C_Type *base, uint32_t sourceClock_Hz, uint32_t
     */
 
     assert(bestclkCycle >= scl_lat);
-    uint8_t tmpHigh = (uint8_t)(((bestclkCycle - scl_lat) / 2U) & 0xffU);
+    uint8_t tmpHigh = (uint8_t)(((bestclkCycle - scl_lat) / 2U) & 0xFFU);
 
     a = 13U * sourceClock_Hz / baudRate_Hz / bestDivider / 25U;
     assert((uint32_t)bestclkCycle > a);
@@ -761,7 +764,7 @@ void LPI2C_MasterSetBaudRate(LPI2C_Type *base, uint32_t sourceClock_Hz, uint32_t
 
     if (tmpHigh > (bestclkCycle - (uint8_t)a + 1U))
     {
-        tmpHigh = (uint8_t)((bestclkCycle - (uint8_t)a + 1U) & 0xffU);
+        tmpHigh = (uint8_t)((bestclkCycle - (uint8_t)a + 1U) & 0xFFU);
     }
 
     uint32_t clk_bdr = sourceClock_Hz / baudRate_Hz;
@@ -772,11 +775,11 @@ void LPI2C_MasterSetBaudRate(LPI2C_Type *base, uint32_t sourceClock_Hz, uint32_t
     /* The min tHD:STA/tSU:STA/tSU:STO should be at least 0.4 times of the SCL clock cycle, use 0.5 to be safe:
        tHD:STA = ((SETHOLD + 1) x (2 ^ PRESCALE) / sourceClock_Hz) > (0.5 / baudRate_Hz), bestDivider = 2 ^ PRESCALE */
 
-    uint8_t tmpHold = (uint8_t)(((clk_bdr / bestDivider / 2U) - 1U) & 0xffU);
+    uint8_t tmpHold = (uint8_t)(((clk_bdr / bestDivider / 2U) - 1U) & 0xFFU);
 
     /* The max tVD:DAT/tVD:ACK/tHD:DAT should be at most 0.345 times of the SCL clock cycle, use 0.25 to be safe:
        tVD:DAT = ((DATAVD + 1) x (2 ^ PRESCALE) / sourceClock_Hz) < (0.25 / baudRate_Hz), bestDivider = 2 ^ PRESCALE */
-    uint8_t tmpDataVd = (uint8_t)(((clk_bdr / bestDivider / 4U) - 1U) & 0xffU);
+    uint8_t tmpDataVd = (uint8_t)(((clk_bdr / bestDivider / 4U) - 1U) & 0xFFU);
 
     /* Set CLKHI, CLKLO, SETHOLD, DATAVD value. */
     tmpReg = LPI2C_MCCR0_CLKHI((uint32_t)tmpHigh) |
@@ -1074,7 +1077,7 @@ status_t LPI2C_MasterTransferBlocking(LPI2C_Type *base, lpi2c_master_transfer_t 
             while (0U != subaddressRemaining)
             {
                 subaddressRemaining--;
-                uint8_t subaddressByte    = (uint8_t)((transfer->subaddress >> (8U * subaddressRemaining)) & 0xffU);
+                uint8_t subaddressByte    = (uint8_t)((transfer->subaddress >> (8U * subaddressRemaining)) & 0xFFU);
                 commandBuffer[cmdCount++] = subaddressByte;
             }
         }
@@ -1517,7 +1520,7 @@ static void LPI2C_InitTransferStateMachine(lpi2c_master_handle_t *handle)
             uint32_t subaddressRemaining = xfer->subaddressSize;
             while (0U != (subaddressRemaining--))
             {
-                uint8_t subaddressByte = (uint8_t)((xfer->subaddress >> (8U * subaddressRemaining)) & 0xffU);
+                uint8_t subaddressByte = (uint8_t)((xfer->subaddress >> (8U * subaddressRemaining)) & 0xFFU);
                 cmd[cmdCount++]        = subaddressByte;
             }
         }
@@ -2402,8 +2405,8 @@ void LPI2C_SlaveTransferHandleIRQ(LPI2C_Type *base, lpi2c_slave_handle_t *handle
             }
             if (0U != (flags & (uint32_t)kLPI2C_SlaveAddressValidFlag))
             {
-                xfer->event           = kLPI2C_SlaveAddressMatchEvent;
-                xfer->receivedAddress = (uint8_t)(base->SASR & 0xffU);
+                xfer->event = kLPI2C_SlaveAddressMatchEvent;
+                xfer->receivedAddress = (uint8_t)(base->SASR & 0xFFU);
 
                 /* Update handle status to busy because slave is addressed. */
                 handle->isBusy = true;

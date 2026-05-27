@@ -1133,7 +1133,7 @@ Gmac_Ip_StatusType Gmac_Ip_Init(uint8 Instance,
     GMAC_DEV_ASSERT(PoolSize <= FEATURE_GMAC_MTL_TX_POOL_SIZE);
 #endif
 
-    Base   = Gmac_apxBases[Instance];
+    Base = Gmac_apxBases[Instance];
 
     if (Instance < 1U)
     {

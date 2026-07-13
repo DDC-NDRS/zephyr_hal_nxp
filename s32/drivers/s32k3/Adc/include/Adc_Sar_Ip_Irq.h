@@ -8,12 +8,12 @@
 #define ADC_SAR_IP_IRQ_H
 
 /**
-*   @file
-*
-*   @addtogroup adc_sar_ip Adc Sar IPL
-*   @{
-*/
-#if defined (__cplusplus)
+ *   @file
+ *
+ *   @addtogroup adc_sar_ip Adc Sar IPL
+ *   @{
+ */
+#if defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -29,13 +29,13 @@ extern "C" {
 /*==================================================================================================
 *                              SOURCE FILE VERSION INFORMATION
 ==================================================================================================*/
-#define ADC_SAR_IP_VENDOR_ID_IRQ                      43
-#define ADC_SAR_IP_AR_RELEASE_MAJOR_VERSION_IRQ       4
-#define ADC_SAR_IP_AR_RELEASE_MINOR_VERSION_IRQ       7
-#define ADC_SAR_IP_AR_RELEASE_REVISION_VERSION_IRQ    0
-#define ADC_SAR_IP_SW_MAJOR_VERSION_IRQ               3
-#define ADC_SAR_IP_SW_MINOR_VERSION_IRQ               0
-#define ADC_SAR_IP_SW_PATCH_VERSION_IRQ               0
+#define ADC_SAR_IP_VENDOR_ID_IRQ                   43
+#define ADC_SAR_IP_AR_RELEASE_MAJOR_VERSION_IRQ    4
+#define ADC_SAR_IP_AR_RELEASE_MINOR_VERSION_IRQ    7
+#define ADC_SAR_IP_AR_RELEASE_REVISION_VERSION_IRQ 0
+#define ADC_SAR_IP_SW_MAJOR_VERSION_IRQ            3
+#define ADC_SAR_IP_SW_MINOR_VERSION_IRQ            0
+#define ADC_SAR_IP_SW_PATCH_VERSION_IRQ            0
 
 /*==================================================================================================
 *                                       FILE VERSION CHECKS
@@ -43,31 +43,28 @@ extern "C" {
 #ifndef DISABLE_MCAL_INTERMODULE_ASR_CHECK
 /* Check if Adc_Sar_Ip_Irq.h file and StandardTypes.h file are of the same Autosar version */
 #if ((ADC_SAR_IP_AR_RELEASE_MAJOR_VERSION_IRQ != STD_AR_RELEASE_MAJOR_VERSION) || \
-     (ADC_SAR_IP_AR_RELEASE_MINOR_VERSION_IRQ != STD_AR_RELEASE_MINOR_VERSION)    \
-    )
-    #error "AutoSar Version Numbers of Adc_Sar_Ip_Irq.h and StandardTypes.h are different"
+     (ADC_SAR_IP_AR_RELEASE_MINOR_VERSION_IRQ != STD_AR_RELEASE_MINOR_VERSION))
+#error "AutoSar Version Numbers of Adc_Sar_Ip_Irq.h and StandardTypes.h are different"
 #endif
 #endif
 
 /* Check if Adc_Sar_Ip_Irq.h file and Adc_Sar_Ip_CfgDefines.h file are of the same vendor */
 #if (ADC_SAR_IP_VENDOR_ID_IRQ != ADC_SAR_IP_VENDOR_ID_CFGDEFINES)
-    #error "Adc_Sar_Ip_Irq.h and Adc_Sar_Ip_CfgDefines.h have different vendor ids"
+#error "Adc_Sar_Ip_Irq.h and Adc_Sar_Ip_CfgDefines.h have different vendor ids"
 #endif
 
 /* Check if Adc_Sar_Ip_Irq.h file and Adc_Sar_Ip_CfgDefines.h file are of the same Autosar version */
 #if ((ADC_SAR_IP_AR_RELEASE_MAJOR_VERSION_IRQ != ADC_SAR_IP_AR_RELEASE_MAJOR_VERSION_CFGDEFINES) || \
      (ADC_SAR_IP_AR_RELEASE_MINOR_VERSION_IRQ != ADC_SAR_IP_AR_RELEASE_MINOR_VERSION_CFGDEFINES) || \
-     (ADC_SAR_IP_AR_RELEASE_REVISION_VERSION_IRQ != ADC_SAR_IP_AR_RELEASE_REVISION_VERSION_CFGDEFINES) \
-    )
-    #error "AutoSar Version Numbers of Adc_Sar_Ip_Irq.h and Adc_Sar_Ip_CfgDefines.h are different"
+     (ADC_SAR_IP_AR_RELEASE_REVISION_VERSION_IRQ != ADC_SAR_IP_AR_RELEASE_REVISION_VERSION_CFGDEFINES))
+#error "AutoSar Version Numbers of Adc_Sar_Ip_Irq.h and Adc_Sar_Ip_CfgDefines.h are different"
 #endif
 
 /* Check if Adc_Sar_Ip_Irq.h file and Adc_Sar_Ip_CfgDefines.h file are of the same Software version */
 #if ((ADC_SAR_IP_SW_MAJOR_VERSION_IRQ != ADC_SAR_IP_SW_MAJOR_VERSION_CFGDEFINES) || \
      (ADC_SAR_IP_SW_MINOR_VERSION_IRQ != ADC_SAR_IP_SW_MINOR_VERSION_CFGDEFINES) || \
-     (ADC_SAR_IP_SW_PATCH_VERSION_IRQ != ADC_SAR_IP_SW_PATCH_VERSION_CFGDEFINES) \
-    )
-  #error "Software Version Numbers of Adc_Sar_Ip_Irq.h and Adc_Sar_Ip_CfgDefines.h are different"
+     (ADC_SAR_IP_SW_PATCH_VERSION_IRQ != ADC_SAR_IP_SW_PATCH_VERSION_CFGDEFINES))
+#error "Software Version Numbers of Adc_Sar_Ip_Irq.h and Adc_Sar_Ip_CfgDefines.h are different"
 #endif
 
 /*==================================================================================================
@@ -122,7 +119,7 @@ void Adc_Sar_Ip_IRQHandler(const uint32 Instance);
 #define ADC_STOP_SEC_CODE
 #include "Adc_MemMap.h"
 
-#if defined (__cplusplus)
+#if defined(__cplusplus)
 }
 #endif
 

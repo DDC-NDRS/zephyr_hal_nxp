@@ -475,7 +475,6 @@ static inline volatile uint32 * Adc_Sar_GetChannelWatchdogAddress(const uint32 I
 }
 #endif /* ADC_SAR_IP_HAS_CWSELR_UNROLLED == 1 */
 
-#if (STD_ON == ADC_SAR_IP_WDG_ENABLED)
 /*FUNCTION*********************************************************************
  *
  * Function Name : Adc_Sar_WriteChannelMapping
@@ -511,7 +510,6 @@ static inline void Adc_Sar_WriteChannelMapping(const uint32 Instance,
     CWSELR(AdcBasePtr, RegisterNumber) = CwselrVal;
 #endif /* (ADC_SAR_IP_HAS_CWSELR_UNROLLED == 1u) */
 }
-#endif /* (STD_ON == ADC_SAR_IP_WDG_ENABLED) */
 
 static inline void Adc_Sar_ResetWdogCWSELR(const uint32 Instance, const uint8 RegisterNumber)
 {

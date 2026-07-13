@@ -632,7 +632,6 @@ void Adc_Sar_Ip_DisableChannelDmaAll(uint32 const u32Instance);
  */
 void Adc_Sar_Ip_SetDmaClearSource(uint32 const u32Instance, Adc_Sar_Ip_ClearSourceType const pDmaClear);
 
-#if (STD_ON == ADC_SAR_IP_WDG_ENABLED)
 /*!
  * @brief Configure watchdog threshold register
  *
@@ -645,7 +644,6 @@ void Adc_Sar_Ip_SetDmaClearSource(uint32 const u32Instance, Adc_Sar_Ip_ClearSour
  */
 void Adc_Sar_Ip_SetWdgThreshold(uint32 const u32Instance, uint8 const u8RegisterIdx,
                                 Adc_Sar_Ip_WdgThresholdType const* const pThresholdValues);
-#endif /* (STD_ON == ADC_SAR_IP_WDG_ENABLED) */
 
 /*!
  * @brief Configure conversion mode

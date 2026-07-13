@@ -286,7 +286,6 @@ typedef enum
 typedef void Adc_Sar_Ip_ChanNotificationType(const uint16 PhysicalChanId);
 #endif /* (STD_ON == ADC_SAR_IP_EOC_ENABLED) */
 
-#if (STD_ON == ADC_SAR_IP_WDG_ENABLED)
 /*!
  * @brief Defines the watchdog notification header
  *
@@ -297,7 +296,6 @@ typedef void Adc_Sar_Ip_ChanNotificationType(const uint16 PhysicalChanId);
  * Implements : Adc_Sar_Ip_WdgChanNotificationType_Class
  */
 typedef void Adc_Sar_Ip_WdgNotificationType(const uint16 ChanIdx, const uint8 Flags);
-#endif /* (STD_ON == ADC_SAR_IP_WDG_ENABLED) */
 
 /*!
  * @brief Defines the channel configuration
@@ -310,10 +308,8 @@ typedef struct
 {
     uint8 ChanIndex;
     boolean PresamplingEnable;
-#if (STD_ON == ADC_SAR_IP_WDG_ENABLED)
     uint8 WdgThreshRegIndex;
     boolean WdgNotificationEn;
-#endif /* (STD_ON == ADC_SAR_IP_WDG_ENABLED) */
 #if (STD_ON == ADC_SAR_IP_EOC_ENABLED)
     boolean EndOfConvNotification;
 #endif /* (STD_ON == ADC_SAR_IP_EOC_ENABLED) */
@@ -337,16 +333,13 @@ typedef struct
     uint8 SampleTimeArr[ADC_SAR_IP_NUM_GROUP_CHAN];  /*!< Sample time for each channel group */
 #endif /* FEATURE_ADC_HAS_CONVERSION_TIMING */
     uint8 PowerDownDelay;                     /*!< Delay before entering Power Down */
-#if FEATURE_ADC_HAS_CLOCK_DIVIDER
     boolean ClkDivEnable;               /*!< Clock divider enable */
-#endif /* FEATURE_ADC_HAS_CLOCK_DIVIDER */
 #if FEATURE_ADC_HAS_AVERAGING
     boolean AvgEn;
     Adc_Sar_Ip_AvgSelectType AvgSel;
 #endif /* FEATURE_ADC_HAS_AVERAGING */
 } Adc_Sar_Ip_ClockConfigType;
 
-#if (STD_ON == ADC_SAR_IP_WDG_ENABLED)
 /*!
  * @brief Defines the upper and lower thresholds for analog watchdog.
  *
@@ -362,7 +355,6 @@ typedef struct
     boolean LowThresholdIntEn;     /*!< Enable interrupt when lower threshold exceeded */
     boolean HighThresholdIntEn;    /*!< Enable interrupt when upper threshold exceeded */
 } Adc_Sar_Ip_WdgThresholdType;
-#endif /* (STD_ON == ADC_SAR_IP_WDG_ENABLED) */
 
 /*!
  * @brief Defines the data regarding a conversion, beyond the conversion data.
@@ -390,7 +382,6 @@ typedef struct
     uint32 ChanMaskArr[ADC_SAR_IP_NUM_GROUP_CHAN];  /*!< Bit-mask used to configure channels in chain */
 } Adc_Sar_Ip_ChansIdxMaskType;
 
-#if (STD_ON == ADC_SAR_IP_SELFTEST_ENABLED)
 /*!
  * @brief Defines configuration of self-test threshold values
  *
@@ -400,30 +391,19 @@ typedef struct
  */
 typedef struct
 {
-#ifdef ADC_STAW0R_AWDE
     uint16 AdcSTAW0RHighVal;  /*!< Adc STAW0R threshold high value */
     uint16 AdcSTAW0RLowVal;   /*!< Adc STAW0R threshold low value */
-#endif /* ADC_STAW0R_AWDE */
-#ifdef ADC_STAW1R_AWDE
     uint16 AdcSTAW1RLowVal;   /*!< Adc STAW1R threshold low value */
-#endif /* ADC_STAW1AR_AWDE */
-#ifdef ADC_STAW1AR_AWDE
     uint16 AdcSTAW1ARHighVal; /*!< Adc STAW1AR threshold high value */
     uint16 AdcSTAW1ARLowVal;  /*!< Adc STAW1AR threshold low value */
     uint16 AdcSTAW1BRHighVal; /*!< Adc STAW1BR threshold high value */
     uint16 AdcSTAW1BRLowVal;  /*!< Adc STAW1BR threshold low value */
-#endif /* ADC_STAW1AR_AWDE */
-#ifdef ADC_STAW2R_AWDE
     uint16 AdcSTAW2RLowVal;   /*!< Adc STAW2R threshold low value */
-#endif /* ADC_STAW2R_AWDE */
-#ifdef ADC_STAW4R_AWDE
     uint16 AdcSTAW4RHighVal;  /*!< Adc STAW4R threshold high value */
     sint16 AdcSTAW4RLowVal;   /*!< Adc STAW4R threshold low value */
     uint16 AdcSTAW5RHighVal;  /*!< Adc STAW5R threshold high value */
     sint16 AdcSTAW5RLowVal;   /*!< Adc STAW5R threshold low value */
-#endif /* ADC_STAW4R_AWDE */
 } Adc_Sar_Ip_SelfTestThresholdType;
-#endif /* (STD_ON == ADC_SAR_IP_SELFTEST_ENABLED) */
 
 /*!
  * @brief Defines the module configuration
@@ -473,12 +453,8 @@ typedef struct
     uint16 DecodeDelay; /*!< Delay for decoding Input MUX channels */
 #endif /* FEATURE_ADC_SAR_DECODE_DELAY */
     uint8 PowerDownDelay; /*!< Delay before entering Power Down */
-#if FEATURE_ADC_HAS_CLOCK_DIVIDER
     boolean ClkDivEnable;               /*!< Clock divider enable */
-#endif /* FEATURE_ADC_HAS_CLOCK_DIVIDER */
-#if (STD_ON == ADC_SAR_IP_SELFTEST_ENABLED)
     const Adc_Sar_Ip_SelfTestThresholdType * SelfTestThresholdConfig; /*!< Self test threshold configuration */
-#endif /* (STD_ON == ADC_SAR_IP_SELFTEST_ENABLED) */
 #if FEATURE_ADC_HAS_AVERAGING
     boolean AvgEn;
     Adc_Sar_Ip_AvgSelectType AvgSel;
@@ -494,10 +470,8 @@ typedef struct
     uint8 NumChannels;
     const Adc_Sar_Ip_ChanConfigType * ChannelConfigsPtr;
 
-#if (STD_ON == ADC_SAR_IP_WDG_ENABLED)
     uint8 NumWdgThresholds;
     const Adc_Sar_Ip_WdgThresholdType * WdgThresholds;
-#endif /* (STD_ON == ADC_SAR_IP_WDG_ENABLED) */
 
 #if (STD_ON == ADC_SAR_IP_ECH_ENABLED)
     void (*EndOfNormalChainNotification)(void);
@@ -515,9 +489,7 @@ typedef struct
 #if (STD_ON == ADC_SAR_IP_EOC_ENABLED)
     Adc_Sar_Ip_ChanNotificationType * EndOfConvNotification;
 #endif /* (STD_ON == ADC_SAR_IP_EOC_ENABLED) */
-#if (STD_ON == ADC_SAR_IP_WDG_ENABLED)
     Adc_Sar_Ip_WdgNotificationType * WdgOutOfRangeNotification;
-#endif /* (STD_ON == ADC_SAR_IP_WDG_ENABLED) */
 } Adc_Sar_Ip_ConfigType;
 
 /*!
@@ -535,9 +507,7 @@ typedef struct
 #if (ADC_SAR_IP_SET_RESOLUTION == STD_ON)
     boolean BypassResolution;                       /*!< Adc raw data result */
 #endif /* (ADC_SAR_IP_SET_RESOLUTION == STD_ON) */
-#if (STD_ON == ADC_SAR_IP_WDG_ENABLED)
     uint32 ChanWdgThresholdIndex[ADC_SAR_IP_CDR_COUNT]; /*!< Channel index to threshold index mapping */
-#endif /* (STD_ON == ADC_SAR_IP_WDG_ENABLED) */
 
     /* General notifications */
 #if (STD_ON == ADC_SAR_IP_ECH_ENABLED)
@@ -556,9 +526,7 @@ typedef struct
 #if (STD_ON == ADC_SAR_IP_EOC_ENABLED)
     Adc_Sar_Ip_ChanNotificationType * EndOfConvNotification;
 #endif /* (STD_ON == ADC_SAR_IP_EOC_ENABLED) */
-#if (STD_ON == ADC_SAR_IP_WDG_ENABLED)
     Adc_Sar_Ip_WdgNotificationType * WdgOutOfRangeNotification;
-#endif /* (STD_ON == ADC_SAR_IP_WDG_ENABLED) */
 } Adc_Sar_Ip_StateStructType;
 
 #ifdef __cplusplus

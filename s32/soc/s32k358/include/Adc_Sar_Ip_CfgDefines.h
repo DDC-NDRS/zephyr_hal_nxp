@@ -111,9 +111,10 @@ extern "C"{
 #define FEATURE_ADC_SAR_DECODE_DELAY          (1U)
 #define FEATURE_ADC_HAS_AVERAGING             (1U)
 
-#define FEATURE_ADC_SAF8544_CHANNEL_WORKAROUND             (0U)
-#define ADC_SAR_IP_DEF_SAMPLE_TIME             (22U)
-#define ADC_SAR_IP_NUM_GROUP_CHAN_INIT_VAL   {0U, 0U, 0U}
+#define FEATURE_ADC_SAF8544_CHANNEL_WORKAROUND (0U)
+#define ADC_SAR_IP_DEF_SAMPLE_TIME            (22U)
+#define ADC_SAR_IP_NUM_GROUP_CHAN_INIT_VAL    {0U, 0U, 0U}
+
 /*==================================================================================================
 *                                       LOCAL CONSTANTS
 ==================================================================================================*/

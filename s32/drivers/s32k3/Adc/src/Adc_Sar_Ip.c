@@ -224,8 +224,8 @@ static Adc_Sar_Ip_StateStructType Adc_Sar_Ip_axAdcSarState[ADC_SAR_IP_INSTANCE_C
 
 static const uint8 Adc_Sar_Ip_au8AdcGroupCount[ADC_SAR_IP_INSTANCE_COUNT] = FEATURE_ADC_MAX_GROUP_COUNT;
 
-static const uint32 Adc_Sar_Ip_au32AdcChanBitmap[ADC_SAR_IP_INSTANCE_COUNT][ADC_SAR_IP_NUM_GROUP_CHAN] =
-    FEATURE_ADC_CHN_AVAIL_BITMAP;
+static const uint32 Adc_Sar_Ip_au32AdcChanBitmap[ADC_SAR_IP_INSTANCE_COUNT]
+                                                [ADC_SAR_IP_NUM_GROUP_CHAN] = FEATURE_ADC_CHN_AVAIL_BITMAP;
 
 static const uint32 Adc_Sar_Ip_au32AdcFeatureBitmap[ADC_SAR_IP_INSTANCE_COUNT] = FEATURE_ADC_FEAT_AVAIL_BITMAP;
 
@@ -261,7 +261,8 @@ static inline uint32 Adc_Sar_GetIsrFlags(uint32 const Instance);
 static inline uint32 Adc_Sar_GetADCLKSELValue(Adc_Sar_Ip_ClockSelType ClockSel);
 static inline uint32 Adc_Sar_CollectMcrMasks(const uint32 Instance, const Adc_Sar_Ip_ConfigType* const Config,
                                              uint32 InitialMcr);
-static inline void   Adc_Sar_ConfigChannels(uint32 const Instance, Adc_Sar_Ip_ChanConfigType const* ChannelConfigsPtr,
+static inline void   Adc_Sar_ConfigChannels(uint32 const Instance,
+                                            Adc_Sar_Ip_ChanConfigType const* ChannelConfigsPtr,
                                             uint8 NumChannels);
 static inline Adc_Sar_Ip_StatusType Adc_Sar_CheckSelfTestProgress(const uint32 Instance);
 static inline void Adc_Sar_ConfigSelftestThreshold(uint32 const Instance,
@@ -312,6 +313,7 @@ static inline uint8 Adc_Sar_GetResolution(uint32 const Instance) {
     static uint8 const ResolutionArray[] = {14U, 12U, 10U, 8U}; /* maps each register bit value to resolution bit number */
     ADC_Type const* const AdcBasePtr = Adc_Sar_Ip_apxAdcBase[Instance];
     uint32 Calbistreg = AdcBasePtr->CALBISTREG;
+
     /* ResolutionArray can be used only for 2 bits resolutions. On S32K3 platforms only 2 bits are used so "& 3U"
      * operation is needed */
     uint8 ResolutionBits = (uint8)(((Calbistreg & ADC_CALBISTREG_RESN_MASK) >> ADC_CALBISTREG_RESN_SHIFT) & 3U);
@@ -451,12 +453,12 @@ static inline uint16 Adc_Sar_GetMaskedResult(uint32 const Instance, uint32 const
     if (Adc_Sar_Ip_axAdcSarState[Instance].DataAlign == ADC_SAR_IP_DATA_ALIGNED_LEFT) {
         /* Assumption: the width of the register is less than 16 */
         CdrMask = (uint32)ADC_CDR_CDATA_MASK << (16u - Resolution);
-        Result = ((uint16)(Cdr & CdrMask)) >> ADC_CDR_CDATA_SHIFT;
+        Result  = ((uint16)(Cdr & CdrMask)) >> ADC_CDR_CDATA_SHIFT;
     }
     else {
         CdrMask = ((uint32)ADC_CDR_CDATA_MASK >> 1U) &
                   ((uint32)ADC_CDR_CDATA_MASK << (ADC_SAR_IP_RESULT_RESOLUTION - Resolution));
-        Result = ((uint16)(Cdr & CdrMask)) >> (ADC_SAR_IP_RESULT_RESOLUTION - Resolution + ADC_CDR_CDATA_SHIFT);
+        Result  = ((uint16)(Cdr & CdrMask)) >> (ADC_SAR_IP_RESULT_RESOLUTION - Resolution + ADC_CDR_CDATA_SHIFT);
     }
 
     return Result;
@@ -476,8 +478,8 @@ static inline uint32 Adc_Sar_GetMsrFlags(uint32 const Instance) {
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[Instance];
     Msr = AdcBasePtr->MSR;
 
-    Flags  = ((Msr & ADC_MSR_CALIBRTD_MASK) != 0U) ? ADC_SAR_IP_STATUS_FLAG_CALIBRATED : 0U;
-    Flags |= ((Msr & ADC_MSR_NSTART_MASK  ) != 0U) ? ADC_SAR_IP_STATUS_FLAG_NORMAL_STARTED : 0U;
+    Flags  = ((Msr & ADC_MSR_CALIBRTD_MASK) != 0U) ? ADC_SAR_IP_STATUS_FLAG_CALIBRATED       : 0U;
+    Flags |= ((Msr & ADC_MSR_NSTART_MASK  ) != 0U) ? ADC_SAR_IP_STATUS_FLAG_NORMAL_STARTED   : 0U;
     Flags |= ((Msr & ADC_MSR_JABORT_MASK  ) != 0U) ? ADC_SAR_IP_STATUS_FLAG_INJECTED_ABORTED : 0U;
     Flags |= ((Msr & ADC_MSR_JSTART_MASK  ) != 0U) ? ADC_SAR_IP_STATUS_FLAG_INJECTED_STARTED : 0U;
     if (ADC_SAR_IP_INST_HAS_CTU(Instance)) {
@@ -502,9 +504,9 @@ static inline uint32 Adc_Sar_GetIsrFlags(uint32 const Instance) {
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[Instance];
     Isr = AdcBasePtr->ISR;
 
-    Flags  = ((Isr & ADC_ISR_EOC_MASK ) != 0U) ? ADC_SAR_IP_NOTIF_FLAG_NORMAL_EOC : 0U;
-    Flags |= ((Isr & ADC_ISR_ECH_MASK ) != 0U) ? ADC_SAR_IP_NOTIF_FLAG_NORMAL_ENDCHAIN : 0U;
-    Flags |= ((Isr & ADC_ISR_JEOC_MASK) != 0U) ? ADC_SAR_IP_NOTIF_FLAG_INJECTED_EOC : 0U;
+    Flags  = ((Isr & ADC_ISR_EOC_MASK ) != 0U) ? ADC_SAR_IP_NOTIF_FLAG_NORMAL_EOC        : 0U;
+    Flags |= ((Isr & ADC_ISR_ECH_MASK ) != 0U) ? ADC_SAR_IP_NOTIF_FLAG_NORMAL_ENDCHAIN   : 0U;
+    Flags |= ((Isr & ADC_ISR_JEOC_MASK) != 0U) ? ADC_SAR_IP_NOTIF_FLAG_INJECTED_EOC      : 0U;
     Flags |= ((Isr & ADC_ISR_JECH_MASK) != 0U) ? ADC_SAR_IP_NOTIF_FLAG_INJECTED_ENDCHAIN : 0U;
     if (ADC_SAR_IP_INST_HAS_CTU(Instance)) {
         Flags |= ((Isr & ADC_ISR_EOCTU_MASK) != 0U) ? ADC_SAR_IP_NOTIF_FLAG_CTU_EOC : 0U;
@@ -547,16 +549,16 @@ static inline uint32 Adc_Sar_CollectMcrMasks(uint32 const Instance, Adc_Sar_Ip_C
     Mcr |= ADC_MCR_WLSIDE(Config->DataAlign);
 
     if (ADC_SAR_IP_INST_HAS_CTU(Instance)) {
-        Mcr &= ~(ADC_MCR_CTUEN_MASK | ADC_MCR_CTU_MODE_MASK); /* Clear CTU_MODE bit of MCR*/
+        Mcr &= ~(ADC_MCR_CTUEN_MASK | ADC_MCR_CTU_MODE_MASK);   /* Clear CTU_MODE bit of MCR*/
 
         switch (Config->CtuMode) {
             case ADC_SAR_IP_CTU_MODE_CONTROL :
-                Mcr |= ADC_MCR_CTUEN(1U); /* Enable CTU */
+                Mcr |= ADC_MCR_CTUEN(1U);                       /* Enable CTU */
                 break;
 
             case ADC_SAR_IP_CTU_MODE_TRIGGER :
-                Mcr |= ADC_MCR_CTU_MODE(1U); /* Set CTU to Trigger Mode CTU_MODE = 1 */
-                Mcr |= ADC_MCR_CTUEN(1U);    /* Enable CTU */
+                Mcr |= ADC_MCR_CTU_MODE(1U);                    /* Set CTU to Trigger Mode CTU_MODE = 1 */
+                Mcr |= ADC_MCR_CTUEN(1U);                       /* Enable CTU */
                 break;
 
             case ADC_SAR_IP_CTU_MODE_DISABLED :
@@ -571,7 +573,7 @@ static inline uint32 Adc_Sar_CollectMcrMasks(uint32 const Instance, Adc_Sar_Ip_C
         case ADC_SAR_IP_EXT_TRIG_EDGE_FALLING :
             /* Already on falling edge JEDGE = 0 */
             Mcr &= ~(ADC_MCR_JTRGEN_MASK);
-            Mcr |= ADC_MCR_JTRGEN_MASK; /* enable Injected trigger */
+            Mcr |= ADC_MCR_JTRGEN_MASK;                         /* Enable Injected trigger */
             break;
 
         case ADC_SAR_IP_EXT_TRIG_EDGE_RISING :
@@ -611,7 +613,8 @@ static inline uint32 Adc_Sar_CollectMcrMasks(uint32 const Instance, Adc_Sar_Ip_C
  * Description   : Configure a list of channels by enabling channel notifications
  * and setting presampling.
  *END*************************************************************************/
-static inline void Adc_Sar_ConfigChannels(uint32 const Instance, Adc_Sar_Ip_ChanConfigType const* ChannelConfigsPtr,
+static inline void Adc_Sar_ConfigChannels(uint32 const Instance,
+                                          Adc_Sar_Ip_ChanConfigType const* ChannelConfigsPtr,
                                           uint8 NumChannels) {
     uint32 VectAdr;
     uint32 VectBit;
@@ -639,11 +642,12 @@ static inline void Adc_Sar_ConfigChannels(uint32 const Instance, Adc_Sar_Ip_Chan
 
         VectAdr = ADC_SAR_IP_CHAN_2_VECT((uint32)ChnConfig->ChanIndex);
         VectBit = ADC_SAR_IP_CHAN_2_BIT((uint32)ChnConfig->ChanIndex);
+
         /* Collect bit-mask for WDG, EOC, DMA and Presample */
         CimrMask[VectAdr]  |= Adc_Sar_GetValueFromBool(ChnConfig->EndOfConvNotification, (1UL << VectBit), 0UL);
-        CwenrMask[VectAdr] |= Adc_Sar_GetValueFromBool(ChnConfig->WdgNotificationEn, (1UL << VectBit), 0UL);
-        DmarMask[VectAdr]  |= Adc_Sar_GetValueFromBool(ChnConfig->EndOfConvDmaEnable, (1UL << VectBit), 0UL);
-        PsrMask[VectAdr]   |= Adc_Sar_GetValueFromBool(ChnConfig->PresamplingEnable, (1UL << VectBit), 0UL);
+        CwenrMask[VectAdr] |= Adc_Sar_GetValueFromBool(ChnConfig->WdgNotificationEn    , (1UL << VectBit), 0UL);
+        DmarMask[VectAdr]  |= Adc_Sar_GetValueFromBool(ChnConfig->EndOfConvDmaEnable   , (1UL << VectBit), 0UL);
+        PsrMask[VectAdr]   |= Adc_Sar_GetValueFromBool(ChnConfig->PresamplingEnable    , (1UL << VectBit), 0UL);
     }
 
     /* Enable WDG, EOC, DMA and Presample */
@@ -665,7 +669,6 @@ static inline void Adc_Sar_ConfigChannels(uint32 const Instance, Adc_Sar_Ip_Chan
  *END*************************************************************************/
 static inline Adc_Sar_Ip_StatusType Adc_Sar_CheckSelfTestProgress(uint32 const Instance) {
     Adc_Sar_Ip_StatusType Status = ADC_SAR_IP_STATUS_SUCCESS;
-    uint32 Reg;
     uint32 TimeoutTicks = OsIf_MicrosToTicks(ADC_SAR_IP_TIMEOUT_VAL, ADC_SAR_IP_TIMEOUT_TYPE);
     uint32 CurrentTicks = OsIf_GetCounter(ADC_SAR_IP_TIMEOUT_TYPE);
     uint32 ElapsedTicks;
@@ -714,8 +717,8 @@ static inline Adc_Sar_Ip_StatusType Adc_Sar_CheckSelfTestProgress(uint32 const I
     }
 
     if (Status != ADC_SAR_IP_STATUS_TIMEOUT) {
-        Reg  = ADC_STSR1_ERR_S0_MASK;
-        Reg |= ADC_STSR1_ERR_S1_MASK | ADC_STSR1_ERR_S2_MASK | ADC_STSR1_ERR_C_MASK;
+        uint32 Reg = (ADC_STSR1_ERR_S0_MASK | ADC_STSR1_ERR_S1_MASK |
+                      ADC_STSR1_ERR_S2_MASK | ADC_STSR1_ERR_C_MASK);
         if (((*STSR1Addr) & Reg) != 0UL) {
             Status = ADC_SAR_IP_STATUS_ERROR;
         }
@@ -745,9 +748,6 @@ static uint32 Adc_Sar_GetConvResults(uint32 const Instance, Adc_Sar_Ip_ConvChain
     uint32 Index = 0U;
     boolean LengthExceeded = FALSE;
     ADC_Type* AdcBasePtr;
-    uint32 VectAdr;
-    uint32 VectBit;
-    uint8  ChnIdx;
     uint32 Cdr;
     volatile uint32* CEOCFRAddr;
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[Instance];
@@ -756,12 +756,12 @@ static uint32 Adc_Sar_GetConvResults(uint32 const Instance, Adc_Sar_Ip_ConvChain
     DevAssert((ResultsRaw != NULL_PTR) || (ResultsStruct != NULL_PTR));
 
     /* Go through each channel group */
-    for (VectAdr = 0U; VectAdr < Adc_Sar_Ip_au8AdcGroupCount[Instance]; VectAdr++) {
+    for (uint32 VectAdr = 0U; VectAdr < Adc_Sar_Ip_au8AdcGroupCount[Instance]; VectAdr++) {
         CEOCFRAddr = &CEOCFR(AdcBasePtr, VectAdr);
 
         /* go through each bit in the group, check if there is a completed conversion */
-        for (VectBit = 0U; VectBit < AdcChanCount[Instance][VectAdr]; VectBit++) {
-            ChnIdx = (uint8)((VectAdr * 32U) + VectBit);
+        for (uint32 VectBit = 0U; VectBit < AdcChanCount[Instance][VectAdr]; VectBit++) {
+            size_t ChnIdx = ((VectAdr * 32U) + VectBit);
             if (!(ADC_SAR_IP_INST_HAS_CDRn(Instance, ChnIdx))) {
                 continue; /* skip if the CDR register is not available */
             }
@@ -775,14 +775,15 @@ static uint32 Adc_Sar_GetConvResults(uint32 const Instance, Adc_Sar_Ip_ConvChain
                 if (ResultsRaw != NULL_PTR) {
                     ResultsRaw[Index] = Adc_Sar_GetMaskedResult(Instance, Cdr);
                 }
+
                 if (ResultsStruct != NULL_PTR) {
                     ResultsStruct[Index].ConvData        = Adc_Sar_GetMaskedResult(Instance, Cdr);
-                    ResultsStruct[Index].AdcChnIdx       = ChnIdx;
+                    ResultsStruct[Index].AdcChnIdx       = (uint8)ChnIdx;
                     ResultsStruct[Index].ValidFlag       = ((Cdr & ADC_CDR_VALID_MASK) != 0U) ? TRUE : FALSE;
                     ResultsStruct[Index].OverWrittenFlag = ((Cdr & ADC_CDR_OVERW_MASK) != 0U) ? TRUE : FALSE;
                 }
                 /* Increment the current Index and reset the CEOCFR flag */
-                *CEOCFRAddr = ((uint32)1UL << VectBit); /* w1c bit */
+                *CEOCFRAddr = (1UL << VectBit); /* w1c bit */
                 Index++;
                 if (Index >= Length) {
                     /* We have filled the output buffer, exit the loop.
@@ -828,6 +829,7 @@ static void Adc_Sar_ResetWdog(uint32 const Instance) {
         if (!(ADC_SAR_IP_INST_HAS_CWSELRn(Instance, Index))) {
             continue; /* skip register if it's not available */
         }
+
         Adc_Sar_ResetWdogCWSELR(Instance, (uint8)Index);
     }
 }
@@ -868,7 +870,7 @@ static inline void Adc_Sar_CheckAndCallEocNotification(uint32 Instance, uint16 C
                                                        boolean* CeocfrFlag) {
     ADC_Type* AdcBasePtr;
     const uint32 Mask = (uint32)1UL << ADC_SAR_IP_CHAN_2_BIT(ChanIdx);
-    uint32 Ceocfr = 0U;
+    uint32 Ceocfr;
     uint32 Cimr;
     volatile uint32* CEOCFRAddr;
 
@@ -1137,10 +1139,10 @@ void Adc_Sar_Ip_IRQHandler(uint32 const Instance) {
     }
     else {
         /* CPR_RTD_00011 */
-        Isr      = *ISRAddr;
+        Isr = *ISRAddr;
         *ISRAddr = Isr;
 
-        Wtisr      = *WTISRAddr;
+        Wtisr = *WTISRAddr;
         *WTISRAddr = Wtisr;
     }
 }
@@ -1378,9 +1380,10 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_Deinit(uint32 const u32Instance) {
         /* Deinit watchdog interrupts */
         Adc_Sar_ResetWdog(u32Instance);
         AdcBasePtr->WTIMR = 0U;
-        /* Deinit channel configuration */
 
+        /* Deinit channel configuration */
         Adc_Sar_Ip_ClearStatusFlags(u32Instance, ADC_SAR_IP_NOTIF_FLAG_ALL);
+
         /* Set default resolution */
         Adc_Sar_Ip_SetResolution(u32Instance, ADC_SAR_IP_RESOLUTION_12);
 
@@ -1623,8 +1626,8 @@ void Adc_Sar_Ip_ClearStatusFlags(uint32 const u32Instance, uint32 const u32Mask)
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
     ISRAddr    = &AdcBasePtr->ISR;
 
-    IsrFlags  = ((u32Mask & ADC_SAR_IP_NOTIF_FLAG_NORMAL_EOC)        != 0U) ? ADC_ISR_EOC(1U) : 0U;
-    IsrFlags |= ((u32Mask & ADC_SAR_IP_NOTIF_FLAG_NORMAL_ENDCHAIN)   != 0U) ? ADC_ISR_ECH(1U) : 0U;
+    IsrFlags  = ((u32Mask & ADC_SAR_IP_NOTIF_FLAG_NORMAL_EOC)        != 0U) ? ADC_ISR_EOC(1U)  : 0U;
+    IsrFlags |= ((u32Mask & ADC_SAR_IP_NOTIF_FLAG_NORMAL_ENDCHAIN)   != 0U) ? ADC_ISR_ECH(1U)  : 0U;
     IsrFlags |= ((u32Mask & ADC_SAR_IP_NOTIF_FLAG_INJECTED_EOC)      != 0U) ? ADC_ISR_JEOC(1U) : 0U;
     IsrFlags |= ((u32Mask & ADC_SAR_IP_NOTIF_FLAG_INJECTED_ENDCHAIN) != 0U) ? ADC_ISR_JECH(1U) : 0U;
     if (ADC_SAR_IP_INST_HAS_CTU(u32Instance)) {
@@ -1776,7 +1779,7 @@ uint32 Adc_Sar_Ip_GetConvResultsToArray(uint32 const u32Instance, Adc_Sar_Ip_Con
  * @implements      Adc_Sar_Ip_GetConvData_Activity
  * END**************************************************************************/
 uint16 Adc_Sar_Ip_GetConvData(uint32 const u32Instance, uint32 const u32ChnIdx) {
-    uint16 Result = 0U;
+    uint16 Result;
     uint32 VectAdr;
     uint32 VectBit;
     uint32 Cdr;
@@ -1791,11 +1794,15 @@ uint16 Adc_Sar_Ip_GetConvData(uint32 const u32Instance, uint32 const u32ChnIdx) 
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
     Cdr = CDR(AdcBasePtr, u32ChnIdx);
-    /* check if the conversion data is valid */
+
+    /* Check if the conversion data is valid */
     if (((Cdr & ADC_CDR_VALID_MASK) != 0U)) {
         /* the data is correct, store the result in and clear the flag */
         Result = Adc_Sar_GetMaskedResult(u32Instance, Cdr);
         CEOCFR(AdcBasePtr, VectAdr) = ((uint32)1UL << VectBit); /* w1c bit */
+    }
+    else {
+        Result = 0U;
     }
 
     return Result;
@@ -1810,7 +1817,8 @@ uint16 Adc_Sar_Ip_GetConvData(uint32 const u32Instance, uint32 const u32ChnIdx) 
  * @implements      Adc_Sar_Ip_GetConvResult_Activity
  * END**************************************************************************/
 void Adc_Sar_Ip_GetConvResult(uint32 const u32Instance, uint32 const u32ChnIdx,
-                              Adc_Sar_Ip_ConvChainType const pChainType, Adc_Sar_Ip_ChanResultType* const pResult) {
+                              Adc_Sar_Ip_ConvChainType const pChainType,
+                              Adc_Sar_Ip_ChanResultType* const pResult) {
     uint32 VectAdr;
     uint32 VectBit;
     uint32 Cdr;
@@ -1935,7 +1943,7 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_Powerup(uint32 const u32Instance) {
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
     MSRAddr    = &AdcBasePtr->MSR;
 
-    MsrStatus = (*MSRAddr) & ADC_MSR_ADCSTATUS_MASK;
+    MsrStatus = (*MSRAddr & ADC_MSR_ADCSTATUS_MASK);
 
     SchM_Enter_Adc_ADC_EXCLUSIVE_AREA_13();
     Adc_Sar_Powerup(u32Instance);
@@ -1943,7 +1951,7 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_Powerup(uint32 const u32Instance) {
 
     /* Wait for the device to power up */
     while ((MsrStatus != ExpectedStatus) && (ElapsedTicks < TimeoutTicks)) {
-        MsrStatus = (*MSRAddr) & ADC_MSR_ADCSTATUS_MASK;
+        MsrStatus = (*MSRAddr & ADC_MSR_ADCSTATUS_MASK);
         ElapsedTicks += OsIf_GetElapsed(&CurrentTicks, ADC_SAR_IP_TIMEOUT_TYPE);
     }
 
@@ -1978,7 +1986,7 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_Powerdown(uint32 const u32Instance) {
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
     MSRAddr    = &AdcBasePtr->MSR;
 
-    MsrStatus = (*MSRAddr) & ADC_MSR_ADCSTATUS_MASK;
+    MsrStatus = (*MSRAddr & ADC_MSR_ADCSTATUS_MASK);
 
     SchM_Enter_Adc_ADC_EXCLUSIVE_AREA_14();
     Adc_Sar_Powerdown(u32Instance);
@@ -1986,7 +1994,7 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_Powerdown(uint32 const u32Instance) {
 
     /* Wait for the device to power down */
     while ((MsrStatus != ExpectedStatus) && (ElapsedTicks < TimeoutTicks)) {
-        MsrStatus = (*MSRAddr) & ADC_MSR_ADCSTATUS_MASK;
+        MsrStatus = (*MSRAddr & ADC_MSR_ADCSTATUS_MASK);
         ElapsedTicks += OsIf_GetElapsed(&CurrentTicks, ADC_SAR_IP_TIMEOUT_TYPE);
 
         #if (__GTEST == 1)
@@ -2017,9 +2025,9 @@ void Adc_Sar_Ip_EnableNotifications(uint32 const u32Instance, uint32 const u32No
     DevAssert(u32Instance < ADC_SAR_IP_INSTANCE_COUNT);
     DevAssert((u32NotificationMask & (~ADC_SAR_IP_NOTIF_FLAG_ALL)) == 0UL);
 
-    ImrFlags  = ((u32NotificationMask & ADC_SAR_IP_NOTIF_FLAG_NORMAL_EOC)        != 0U) ? ADC_IMR_MSKEOC(1U) : 0U;
+    ImrFlags  = ((u32NotificationMask & ADC_SAR_IP_NOTIF_FLAG_NORMAL_EOC)        != 0U) ? ADC_IMR_MSKEOC(1U)  : 0U;
     ImrFlags |= ((u32NotificationMask & ADC_SAR_IP_NOTIF_FLAG_INJECTED_EOC)      != 0U) ? ADC_IMR_MSKJEOC(1U) : 0U;
-    ImrFlags |= ((u32NotificationMask & ADC_SAR_IP_NOTIF_FLAG_NORMAL_ENDCHAIN)   != 0U) ? ADC_IMR_MSKECH(1U) : 0U;
+    ImrFlags |= ((u32NotificationMask & ADC_SAR_IP_NOTIF_FLAG_NORMAL_ENDCHAIN)   != 0U) ? ADC_IMR_MSKECH(1U)  : 0U;
     ImrFlags |= ((u32NotificationMask & ADC_SAR_IP_NOTIF_FLAG_INJECTED_ENDCHAIN) != 0U) ? ADC_IMR_MSKJECH(1U) : 0U;
     if (ADC_SAR_IP_INST_HAS_CTU(u32Instance)) {
         ImrFlags |= ((u32NotificationMask & ADC_SAR_IP_NOTIF_FLAG_CTU_EOC) != 0U) ? ADC_IMR_MSKEOCTU(1U) : 0U;
@@ -2046,9 +2054,9 @@ void Adc_Sar_Ip_DisableNotifications(uint32 const u32Instance, uint32 const u32N
     DevAssert(u32Instance < ADC_SAR_IP_INSTANCE_COUNT);
     DevAssert((u32NotificationMask & (~ADC_SAR_IP_NOTIF_FLAG_ALL)) == 0UL);
 
-    ImrFlags  = ((u32NotificationMask & ADC_SAR_IP_NOTIF_FLAG_NORMAL_EOC)        != 0U) ? ADC_IMR_MSKEOC(1U) : 0U;
+    ImrFlags  = ((u32NotificationMask & ADC_SAR_IP_NOTIF_FLAG_NORMAL_EOC)        != 0U) ? ADC_IMR_MSKEOC(1U)  : 0U;
     ImrFlags |= ((u32NotificationMask & ADC_SAR_IP_NOTIF_FLAG_INJECTED_EOC)      != 0U) ? ADC_IMR_MSKJEOC(1U) : 0U;
-    ImrFlags |= ((u32NotificationMask & ADC_SAR_IP_NOTIF_FLAG_NORMAL_ENDCHAIN)   != 0U) ? ADC_IMR_MSKECH(1U) : 0U;
+    ImrFlags |= ((u32NotificationMask & ADC_SAR_IP_NOTIF_FLAG_NORMAL_ENDCHAIN)   != 0U) ? ADC_IMR_MSKECH(1U)  : 0U;
     ImrFlags |= ((u32NotificationMask & ADC_SAR_IP_NOTIF_FLAG_INJECTED_ENDCHAIN) != 0U) ? ADC_IMR_MSKJECH(1U) : 0U;
     if (ADC_SAR_IP_INST_HAS_CTU(u32Instance)) {
         ImrFlags |= ((u32NotificationMask & ADC_SAR_IP_NOTIF_FLAG_CTU_EOC) != 0U) ? ADC_IMR_MSKEOCTU(1U) : 0U;
@@ -2147,7 +2155,7 @@ void Adc_Sar_Ip_DisableChannelNotifications(uint32 const u32Instance, uint32 con
  *
  * @implements      Adc_Sar_Ip_SetClockMode_Activity
  * END**************************************************************************/
-Adc_Sar_Ip_StatusType Adc_Sar_Ip_SetClockMode(uint32 const                            u32Instance,
+Adc_Sar_Ip_StatusType Adc_Sar_Ip_SetClockMode(uint32 const u32Instance,
                                               Adc_Sar_Ip_ClockConfigType const* const pConfig) {
     Adc_Sar_Ip_StatusType Status = ADC_SAR_IP_STATUS_SUCCESS;
     uint32 Mcr;
@@ -2310,7 +2318,8 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_AbortChain(uint32 const u32Instance, boolean co
  *
  * @implements      Adc_Sar_Ip_SetPresamplingSource_Activity
  * END**************************************************************************/
-void Adc_Sar_Ip_SetPresamplingSource(uint32 const u32Instance, Adc_Sar_Ip_ChanGroupType const pChanGroup,
+void Adc_Sar_Ip_SetPresamplingSource(uint32 const u32Instance,
+                                     Adc_Sar_Ip_ChanGroupType const pChanGroup,
                                      Adc_Sar_Ip_PresamplingSourceType const pPresampleSource) {
     uint32 Pscr;
     ADC_Type* AdcBasePtr;
@@ -2508,7 +2517,7 @@ void Adc_Sar_Ip_EnableChannelDma(uint32 const u32Instance, uint32 const u32ChnId
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
     SchM_Enter_Adc_ADC_EXCLUSIVE_AREA_46();
-    DMAR(AdcBasePtr, VectAdr) |= 1UL << VectBit;
+    DMAR(AdcBasePtr, VectAdr) |= (1UL << VectBit);
     SchM_Exit_Adc_ADC_EXCLUSIVE_AREA_46();
 }
 
@@ -2673,11 +2682,11 @@ void Adc_Sar_Ip_SetConversionMode(uint32 const u32Instance, Adc_Sar_Ip_ConvModeT
     SchM_Enter_Adc_ADC_EXCLUSIVE_AREA_19();
     switch (eConvMode) {
         case ADC_SAR_IP_CONV_MODE_ONESHOT :
-            *MCRAddr &= ~(ADC_MCR_MODE(1U)); /* MODE = 0 */
+            *MCRAddr &= ~(ADC_MCR_MODE(1U));                    /* MODE = 0 */
             break;
 
         case ADC_SAR_IP_CONV_MODE_SCAN :
-            *MCRAddr |= ADC_MCR_MODE(1U); /* MODE = 1 */
+            *MCRAddr |= ADC_MCR_MODE(1U);                       /* MODE = 1 */
             break;
 
         default : /* no-op */
@@ -2718,8 +2727,8 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_SetCtuMode(uint32 const u32Instance, Adc_Sar_Ip
             SchM_Enter_Adc_ADC_EXCLUSIVE_AREA_20();
             switch (eCtuMode) {
                 case ADC_SAR_IP_CTU_MODE_CONTROL :
-                    *MCRAddr &= ~(ADC_MCR_CTU_MODE(1U)); /* CTU_MODE = 0 */
-                    *MCRAddr |= ADC_MCR_CTUEN(1U);       /* CTUEN = 1 */
+                    *MCRAddr &= ~(ADC_MCR_CTU_MODE(1U));        /* CTU_MODE = 0 */
+                    *MCRAddr |= ADC_MCR_CTUEN(1U);              /* CTUEN = 1 */
                     break;
 
                 case ADC_SAR_IP_CTU_MODE_TRIGGER :
@@ -2831,7 +2840,7 @@ uint16 Adc_Sar_Ip_TempSenseCalculateTemp(uint32 const u32AdcInstance, uint32 con
         Tets = (sint32)(Adc_Sar_TempsenseConvFp2Int(Tca0));
     }
 
-    Vets      = (uint32)((Vref * Result) / ADC_SAR_IP_TEMPSENSE_RESOLUTION_12B);
+    Vets = (uint32)((Vref * Result) / ADC_SAR_IP_TEMPSENSE_RESOLUTION_12B);
     TempValue = (Adc_Sar_TempsenseConvFp2Int(Tca1) * Vets) / ADC_SAR_IP_TEMPSENSE_MULTIPLIER;
 
     if ((Tca1 & ADC_SAR_IP_TEMPSENSE_SIGN_MASK) != 0U) {
@@ -2841,7 +2850,7 @@ uint16 Adc_Sar_Ip_TempSenseCalculateTemp(uint32 const u32AdcInstance, uint32 con
         Tets += (sint32)(TempValue);
     }
 
-    Vets      = (Vets * Vets) / ADC_SAR_IP_TEMPSENSE_MULTIPLIER;
+    Vets = (Vets * Vets) / ADC_SAR_IP_TEMPSENSE_MULTIPLIER;
     TempValue = (Adc_Sar_TempsenseConvFp2Int(Tca2) * Vets) / ADC_SAR_IP_TEMPSENSE_MULTIPLIER;
 
     if ((Tca2 & ADC_SAR_IP_TEMPSENSE_SIGN_MASK) != 0U) {
@@ -2880,7 +2889,7 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_TempSenseGetTemp(uint32 const u32AdcInstance, u
     ADC_Type* const AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32AdcInstance];
     uint32 Cimr[ADC_SAR_IP_NUM_GROUP_CHAN];
     uint32 Cwenr[ADC_SAR_IP_NUM_GROUP_CHAN];
-    const uint32 Imr   = AdcBasePtr->IMR;
+    const uint32 Imr = AdcBasePtr->IMR;
     uint32 const Wtimr = AdcBasePtr->WTIMR;
 
     DevAssert(u32AdcInstance < ADC_SAR_IP_INSTANCE_COUNT);
@@ -2892,10 +2901,10 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_TempSenseGetTemp(uint32 const u32AdcInstance, u
     AdcBasePtr->IMR   = 0UL;
     AdcBasePtr->WTIMR = 0UL;
     for (VectAdr = 0U; VectAdr < Adc_Sar_Ip_au8AdcGroupCount[u32AdcInstance]; VectAdr++) {
-        Cimr[VectAdr]             = CIMR(AdcBasePtr, VectAdr);
+        Cimr[VectAdr] = CIMR(AdcBasePtr, VectAdr);
         CIMR(AdcBasePtr, VectAdr) = 0UL;
 
-        Cwenr[VectAdr]             = CWENR(AdcBasePtr, VectAdr);
+        Cwenr[VectAdr] = CWENR(AdcBasePtr, VectAdr);
         CWENR(AdcBasePtr, VectAdr) = 0UL;
     }
 
@@ -2921,6 +2930,7 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_TempSenseGetTemp(uint32 const u32AdcInstance, u
         ConvFlagStatus = CEOCFR(AdcBasePtr, VectAdr) & (1UL << VectBit);
         ElapsedTicks += OsIf_GetElapsed(&CurrentTicks, ADC_SAR_IP_TIMEOUT_TYPE);
     }
+
     if (ElapsedTicks >= TimeoutTicks) {
         ReturnStatus = ADC_SAR_IP_STATUS_TIMEOUT;
     }
@@ -2987,6 +2997,7 @@ void Adc_Sar_Ip_TempSenseEnable(uint32 const u32Instance) {
  * END**************************************************************************/
 void Adc_Sar_Ip_TempSenseDisable(uint32 const u32Instance) {
     DevAssert(u32Instance < TEMPSENSE_INSTANCE_COUNT);
+
     TEMPSENSE_Type* const TempSenseBasePtr = Adc_Sar_Ip_apxTempsenseBase[u32Instance];
 
     SchM_Enter_Adc_ADC_EXCLUSIVE_AREA_50();

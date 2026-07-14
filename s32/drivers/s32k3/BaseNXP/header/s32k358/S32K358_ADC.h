@@ -168,21 +168,34 @@ typedef struct {
 /** Number of instances of the ADC module. */
 #define ADC_INSTANCE_COUNT                       (3)
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#include "mcu_reg_stub.h"
+#endif
+
 /* ADC - Peripheral instance base addresses */
-/** Peripheral ADC_0 base address */
+/** Peripheral ADC_0/1/2 base address */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define IP_ADC_0_BASE                            (uintptr_t)&ut_mcu_adc_0_area[0]
+#define IP_ADC_1_BASE                            (uintptr_t)&ut_mcu_adc_1_area[0]
+#define IP_ADC_2_BASE                            (uintptr_t)&ut_mcu_adc_2_area[0]
+#else
 #define IP_ADC_0_BASE                            (0x400A0000u)
+#define IP_ADC_1_BASE                            (0x400A4000u)
+#define IP_ADC_2_BASE                            (0x400A8000u)
+#endif
+
 /** Peripheral ADC_0 base pointer */
 #define IP_ADC_0                                 ((ADC_Type *)IP_ADC_0_BASE)
-/** Peripheral ADC_1 base address */
-#define IP_ADC_1_BASE                            (0x400A4000u)
+
 /** Peripheral ADC_1 base pointer */
 #define IP_ADC_1                                 ((ADC_Type *)IP_ADC_1_BASE)
-/** Peripheral ADC_2 base address */
-#define IP_ADC_2_BASE                            (0x400A8000u)
+
 /** Peripheral ADC_2 base pointer */
 #define IP_ADC_2                                 ((ADC_Type *)IP_ADC_2_BASE)
+
 /** Array initializer of ADC peripheral base addresses */
 #define IP_ADC_BASE_ADDRS                        { IP_ADC_0_BASE, IP_ADC_1_BASE, IP_ADC_2_BASE }
+
 /** Array initializer of ADC peripheral base pointers */
 #define IP_ADC_BASE_PTRS                         { IP_ADC_0, IP_ADC_1, IP_ADC_2 }
 

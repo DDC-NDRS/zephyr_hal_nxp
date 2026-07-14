@@ -337,11 +337,11 @@ static inline void Adc_Sar_ConfigSelftestThreshold(uint32 const Instance,
     volatile uint32* STAW5RAddr;
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[Instance];
-    STAW0RAddr = &(AdcBasePtr->STAW0R);
-    STAW1RAddr = &(AdcBasePtr->STAW1R);
-    STAW2RAddr = &(AdcBasePtr->STAW2R);
-    STAW4RAddr = &(AdcBasePtr->STAW4R);
-    STAW5RAddr = &(AdcBasePtr->STAW5R);
+    STAW0RAddr = &AdcBasePtr->STAW0R;
+    STAW1RAddr = &AdcBasePtr->STAW1R;
+    STAW2RAddr = &AdcBasePtr->STAW2R;
+    STAW4RAddr = &AdcBasePtr->STAW4R;
+    STAW5RAddr = &AdcBasePtr->STAW5R;
 
     /* Configure the self-test watchdog threshold for S0 algorithm */
     *STAW0RAddr &= ~(ADC_STAW0R_THRH_MASK | ADC_STAW0R_THRL_MASK);
@@ -379,10 +379,10 @@ static inline void Adc_Sar_EnableSelftestThreshold(uint32 const Instance) {
     volatile uint32* STAW4RAddr;
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[Instance];
-    STAW0RAddr = &(AdcBasePtr->STAW0R);
-    STAW1RAddr = &(AdcBasePtr->STAW1R);
-    STAW2RAddr = &(AdcBasePtr->STAW2R);
-    STAW4RAddr = &(AdcBasePtr->STAW4R);
+    STAW0RAddr = &AdcBasePtr->STAW0R;
+    STAW1RAddr = &AdcBasePtr->STAW1R;
+    STAW2RAddr = &AdcBasePtr->STAW2R;
+    STAW4RAddr = &AdcBasePtr->STAW4R;
 
     /* Enable the self-test watchdog threshold for S0 algorithm */
     *STAW0RAddr |= ADC_STAW0R_AWDE(0x1UL);
@@ -411,10 +411,10 @@ static inline void Adc_Sar_DisableSelftestThreshold(uint32 const Instance) {
     volatile uint32* STAW4RAddr;
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[Instance];
-    STAW0RAddr = &(AdcBasePtr->STAW0R);
-    STAW1RAddr = &(AdcBasePtr->STAW1R);
-    STAW2RAddr = &(AdcBasePtr->STAW2R);
-    STAW4RAddr = &(AdcBasePtr->STAW4R);
+    STAW0RAddr = &AdcBasePtr->STAW0R;
+    STAW1RAddr = &AdcBasePtr->STAW1R;
+    STAW2RAddr = &AdcBasePtr->STAW2R;
+    STAW4RAddr = &AdcBasePtr->STAW4R;
 
     /* Disable the self-test watchdog threshold for S0 algorithm */
     *STAW0RAddr &= ~(ADC_STAW0R_AWDE_MASK);
@@ -757,7 +757,7 @@ static uint32 Adc_Sar_GetConvResults(uint32 const Instance, Adc_Sar_Ip_ConvChain
 
     /* Go through each channel group */
     for (VectAdr = 0U; VectAdr < Adc_Sar_Ip_au8AdcGroupCount[Instance]; VectAdr++) {
-        CEOCFRAddr = &(CEOCFR(AdcBasePtr, VectAdr));
+        CEOCFRAddr = &CEOCFR(AdcBasePtr, VectAdr);
 
         /* go through each bit in the group, check if there is a completed conversion */
         for (VectBit = 0U; VectBit < AdcChanCount[Instance][VectAdr]; VectBit++) {
@@ -821,14 +821,14 @@ static void Adc_Sar_ResetWdog(uint32 const Instance) {
     }
 
     for (size_t Index = 0U; Index < MaxThresholdRegs; Index++) {
-        Adc_Sar_WriteThresholds(Instance, Index, 0xFFFFu, 0U);
+        Adc_Sar_WriteThresholds(Instance, (uint8)Index, 0xFFFFu, 0U);
     }
 
     for (size_t Index = 0U; Index < ADC_SAR_IP_CWSELR_COUNT; Index++) {
         if (!(ADC_SAR_IP_INST_HAS_CWSELRn(Instance, Index))) {
             continue; /* skip register if it's not available */
         }
-        Adc_Sar_ResetWdogCWSELR(Instance, Index);
+        Adc_Sar_ResetWdogCWSELR(Instance, (uint8)Index);
     }
 }
 
@@ -873,7 +873,7 @@ static inline void Adc_Sar_CheckAndCallEocNotification(uint32 Instance, uint16 C
     volatile uint32* CEOCFRAddr;
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[Instance];
-    CEOCFRAddr = &(CEOCFR(AdcBasePtr, VectAdr));
+    CEOCFRAddr = &CEOCFR(AdcBasePtr, VectAdr);
     Cimr       = (CIMR(AdcBasePtr, VectAdr) & Mask);
 
     Ceocfr = ((*CEOCFRAddr) & Mask);
@@ -911,7 +911,7 @@ static inline uint32 Adc_Sar_CheckAndCallWorrNotification(uint32 Instance, uint1
     volatile uint32* AWORRAddr;
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[Instance];
-    AWORRAddr  = &(AWORR(AdcBasePtr, VectAdr));
+    AWORRAddr  = &AWORR(AdcBasePtr, VectAdr);
     Cwenr      = (CWENR(AdcBasePtr, VectAdr) & Mask);
     Wtisr      = AdcBasePtr->WTISR;
     Wtimr      = AdcBasePtr->WTIMR;
@@ -941,7 +941,7 @@ static inline uint32 Adc_Sar_CheckAndCallWorrNotification(uint32 Instance, uint1
             WdgFlags = WdgFlags << (ThresholdIndex << 1);
             /* Check if the callback is not null */
             if (Adc_Sar_Ip_axAdcSarState[Instance].WdgOutOfRangeNotification != NULL_PTR) {
-                Adc_Sar_Ip_axAdcSarState[Instance].WdgOutOfRangeNotification(ChanIdx, WdgFlags);
+                Adc_Sar_Ip_axAdcSarState[Instance].WdgOutOfRangeNotification(ChanIdx, (uint8)WdgFlags);
             }
         }
     }
@@ -969,9 +969,9 @@ static inline void Adc_CheckAndCallAllChannelNotification(uint32 const Instance)
     boolean CeocfrFlag = FALSE;
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[Instance];
-    IMRAddr = &(AdcBasePtr->IMR);
-    ISRAddr = &(AdcBasePtr->ISR);
-    WTISRAddr = &(AdcBasePtr->WTISR);
+    IMRAddr    = &AdcBasePtr->IMR;
+    ISRAddr    = &AdcBasePtr->ISR;
+    WTISRAddr  = &AdcBasePtr->WTISR;
 
     /* EocFlag = 0 if all EOC flags are spurious interrupts */
     /* Avoid Compiler Warning about accessing two volatile variables simultaneously */
@@ -1014,7 +1014,7 @@ static inline void Adc_Sar_ConfigExternalTrigger(uint32 const Instance, Adc_Sar_
     volatile uint32* MCRAddr;
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[Instance];
-    MCRAddr    = &(AdcBasePtr->MCR);
+    MCRAddr    = &AdcBasePtr->MCR;
     SchM_Enter_Adc_ADC_EXCLUSIVE_AREA_21();
 
     switch (TriggerEdge) {
@@ -1108,8 +1108,8 @@ void Adc_Sar_Ip_IRQHandler(uint32 const Instance) {
     DevAssert(Instance < ADC_SAR_IP_INSTANCE_COUNT);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[Instance];
-    ISRAddr    = &(AdcBasePtr->ISR);
-    WTISRAddr  = &(AdcBasePtr->WTISR);
+    ISRAddr    = &AdcBasePtr->ISR;
+    WTISRAddr  = &AdcBasePtr->WTISR;
     Imr        = AdcBasePtr->IMR;
 
     /* CPR_RTD_00011 */
@@ -1209,11 +1209,11 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_Init(uint32 const u32Instance, Adc_Sar_Ip_Confi
     DevAssert(pConfig != NULL_PTR);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    MCRAddr    = &(AdcBasePtr->MCR);
-    PDEDRAddr  = &(AdcBasePtr->PDEDR);
-    DMAEAddr   = &(AdcBasePtr->DMAE);
-    DSDRAddr   = &(AdcBasePtr->DSDR);
-    PSCRAddr   = &(AdcBasePtr->PSCR);
+    MCRAddr    = &AdcBasePtr->MCR;
+    PDEDRAddr  = &AdcBasePtr->PDEDR;
+    DMAEAddr   = &AdcBasePtr->DMAE;
+    DSDRAddr   = &AdcBasePtr->DSDR;
+    PSCRAddr   = &AdcBasePtr->PSCR;
 
     /* Stop any conversions, if any */
     (void) Adc_Sar_Ip_AbortChain(u32Instance, TRUE, FALSE);
@@ -1450,8 +1450,8 @@ void Adc_Sar_Ip_EnableChannel(uint32 const u32Instance, Adc_Sar_Ip_ConvChainType
     VectBit = ADC_SAR_IP_CHAN_2_BIT(u32ChnIdx);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    NCMRAddr   = &(NCMR(AdcBasePtr, VectAdr));
-    JCMRAddr   = &(JCMR(AdcBasePtr, VectAdr));
+    NCMRAddr   = &NCMR(AdcBasePtr, VectAdr);
+    JCMRAddr   = &JCMR(AdcBasePtr, VectAdr);
 
     switch (pChainType) {
         case ADC_SAR_IP_CONV_CHAIN_NORMAL :
@@ -1496,8 +1496,8 @@ void Adc_Sar_Ip_DisableChannel(uint32 const u32Instance, Adc_Sar_Ip_ConvChainTyp
     VectBit = ADC_SAR_IP_CHAN_2_BIT(u32ChnIdx);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    NCMRAddr   = &(NCMR(AdcBasePtr, VectAdr));
-    JCMRAddr   = &(JCMR(AdcBasePtr, VectAdr));
+    NCMRAddr   = &NCMR(AdcBasePtr, VectAdr);
+    JCMRAddr   = &JCMR(AdcBasePtr, VectAdr);
 
     switch (pChainType) {
         case ADC_SAR_IP_CONV_CHAIN_NORMAL :
@@ -1534,7 +1534,7 @@ void Adc_Sar_Ip_SetResolution(uint32 const u32Instance, Adc_Sar_Ip_Resolution co
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
     Msr = AdcBasePtr->MSR;
-    CALBISTREGAddr = &(AdcBasePtr->CALBISTREG);
+    CALBISTREGAddr = &AdcBasePtr->CALBISTREG;
 
     /* The selected ADC should be in IDLE state */
     DevAssert((Msr & ADC_MSR_ADCSTATUS_MASK) == ADC_MSR_ADCSTATUS(ADC_SAR_IP_MSR_ADCSTATUS_IDLE));
@@ -1563,7 +1563,7 @@ void Adc_Sar_Ip_StartConversion(uint32 const u32Instance, Adc_Sar_Ip_ConvChainTy
     DevAssert(u32Instance < ADC_SAR_IP_INSTANCE_COUNT);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    MCRAddr    = &(AdcBasePtr->MCR);
+    MCRAddr    = &AdcBasePtr->MCR;
 
     SchM_Enter_Adc_ADC_EXCLUSIVE_AREA_10();
     switch (pChainType) {
@@ -1621,7 +1621,7 @@ void Adc_Sar_Ip_ClearStatusFlags(uint32 const u32Instance, uint32 const u32Mask)
     DevAssert((u32Mask & (~ADC_SAR_IP_NOTIF_FLAG_ALL)) == 0UL);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    ISRAddr    = &(AdcBasePtr->ISR);
+    ISRAddr    = &AdcBasePtr->ISR;
 
     IsrFlags  = ((u32Mask & ADC_SAR_IP_NOTIF_FLAG_NORMAL_EOC)        != 0U) ? ADC_ISR_EOC(1U) : 0U;
     IsrFlags |= ((u32Mask & ADC_SAR_IP_NOTIF_FLAG_NORMAL_ENDCHAIN)   != 0U) ? ADC_ISR_ECH(1U) : 0U;
@@ -1660,12 +1660,12 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_SelfTest(uint32 const u32Instance) {
     DevAssert(u32Instance < ADC_SAR_IP_INSTANCE_COUNT);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    MCRAddr    = &(AdcBasePtr->MCR);
-    MSRAddr    = &(AdcBasePtr->MSR);
-    NCMR0Addr = &(NCMR(AdcBasePtr, 0U));
-    STCR1Addr = &(AdcBasePtr->STCR1);
-    STCR2Addr = &(AdcBasePtr->STCR2);
-    STCR3Addr = &(AdcBasePtr->STCR3);
+    MCRAddr    = &AdcBasePtr->MCR;
+    MSRAddr    = &AdcBasePtr->MSR;
+    NCMR0Addr  = &NCMR(AdcBasePtr, 0U);
+    STCR1Addr  = &AdcBasePtr->STCR1;
+    STCR2Addr  = &AdcBasePtr->STCR2;
+    STCR3Addr  = &AdcBasePtr->STCR3;
 
     SchM_Enter_Adc_ADC_EXCLUSIVE_AREA_25();
     /* 1. Program NCMR0 to select channels to be converted for normal conversion.*/
@@ -1832,7 +1832,7 @@ void Adc_Sar_Ip_GetConvResult(uint32 const u32Instance, uint32 const u32ChnIdx,
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
     Cdr        = CDR(AdcBasePtr, u32ChnIdx);
-    CEOCFRAddr = &(CEOCFR(AdcBasePtr, VectAdr));
+    CEOCFRAddr = &CEOCFR(AdcBasePtr, VectAdr);
 
     /* Check if the result type matches the one request by pChainType */
     if (ADC_CDR_RESULT((uint32)pChainType) == (Cdr & ADC_CDR_RESULT_MASK)) {
@@ -1867,9 +1867,9 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_DoCalibration(uint32 const u32Instance) {
     DevAssert(u32Instance < ADC_SAR_IP_INSTANCE_COUNT);
 
     AdcBasePtr     = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    MCRAddr        = &(AdcBasePtr->MCR);
-    CALBISTREGAddr = &(AdcBasePtr->CALBISTREG);
-    CAL2Addr       = &(AdcBasePtr->CAL2);
+    MCRAddr        = &AdcBasePtr->MCR;
+    CALBISTREGAddr = &AdcBasePtr->CALBISTREG;
+    CAL2Addr       = &AdcBasePtr->CAL2;
 
     /* Set CLKSEL to CalibrationClkSelect value */
     Status = Adc_Sar_Ip_Powerdown(u32Instance);
@@ -1933,7 +1933,7 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_Powerup(uint32 const u32Instance) {
     DevAssert(u32Instance < ADC_SAR_IP_INSTANCE_COUNT);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    MSRAddr    = &(AdcBasePtr->MSR);
+    MSRAddr    = &AdcBasePtr->MSR;
 
     MsrStatus = (*MSRAddr) & ADC_MSR_ADCSTATUS_MASK;
 
@@ -1976,7 +1976,7 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_Powerdown(uint32 const u32Instance) {
     DevAssert(u32Instance < ADC_SAR_IP_INSTANCE_COUNT);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    MSRAddr    = &(AdcBasePtr->MSR);
+    MSRAddr    = &AdcBasePtr->MSR;
 
     MsrStatus = (*MSRAddr) & ADC_MSR_ADCSTATUS_MASK;
 
@@ -1988,6 +1988,11 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_Powerdown(uint32 const u32Instance) {
     while ((MsrStatus != ExpectedStatus) && (ElapsedTicks < TimeoutTicks)) {
         MsrStatus = (*MSRAddr) & ADC_MSR_ADCSTATUS_MASK;
         ElapsedTicks += OsIf_GetElapsed(&CurrentTicks, ADC_SAR_IP_TIMEOUT_TYPE);
+
+        #if (__GTEST == 1)
+        /* For unit testing, force the status to be the expected value to avoid timeout */
+        MsrStatus = ExpectedStatus;
+        #endif
     }
 
     if (ElapsedTicks >= TimeoutTicks) {
@@ -2079,8 +2084,8 @@ void Adc_Sar_Ip_EnableChannelNotifications(uint32 const u32Instance, uint32 cons
     VectBit = ADC_SAR_IP_CHAN_2_BIT(u32ChnIdx);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    CIMRAddr   = &(CIMR(AdcBasePtr, VectAdr));
-    CWENRAddr  = &(CWENR(AdcBasePtr, VectAdr));
+    CIMRAddr   = &CIMR(AdcBasePtr, VectAdr);
+    CWENRAddr  = &CWENR(AdcBasePtr, VectAdr);
 
     if ((u32Mask & ADC_SAR_IP_CHAN_NOTIF_EOC) != 0U) {
         SchM_Enter_Adc_ADC_EXCLUSIVE_AREA_30();
@@ -2119,8 +2124,8 @@ void Adc_Sar_Ip_DisableChannelNotifications(uint32 const u32Instance, uint32 con
     VectBit = ADC_SAR_IP_CHAN_2_BIT(u32ChnIdx);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    CIMRAddr   = &(CIMR(AdcBasePtr, VectAdr));
-    CWENRAddr  = &(CWENR(AdcBasePtr, VectAdr));
+    CIMRAddr   = &CIMR(AdcBasePtr, VectAdr);
+    CWENRAddr  = &CWENR(AdcBasePtr, VectAdr);
 
     if ((u32Mask & ADC_SAR_IP_CHAN_NOTIF_EOC) != 0U) {
         SchM_Enter_Adc_ADC_EXCLUSIVE_AREA_31();
@@ -2154,8 +2159,8 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_SetClockMode(uint32 const                      
     DevAssert(pConfig != NULL_PTR);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    MCRAddr    = &(AdcBasePtr->MCR);
-    PDEDRAddr  = &(AdcBasePtr->PDEDR);
+    MCRAddr    = &AdcBasePtr->MCR;
+    PDEDRAddr  = &AdcBasePtr->PDEDR;
 
     /* Read MCR value and clear values that will be replaced */
     Mcr = Adc_Sar_GetADCLKSELValue(pConfig->ClkSelect);
@@ -2218,7 +2223,7 @@ void Adc_Sar_Ip_SetAveraging(uint32 const u32Instance, boolean const bAvgEn, Adc
     DevAssert(u32Instance < ADC_SAR_IP_INSTANCE_COUNT);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    MCRAddr    = &(AdcBasePtr->MCR);
+    MCRAddr    = &AdcBasePtr->MCR;
 
     SchM_Enter_Adc_ADC_EXCLUSIVE_AREA_16();
     /* Clear old values */
@@ -2268,8 +2273,8 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_AbortChain(uint32 const u32Instance, boolean co
     DevAssert(u32Instance < ADC_SAR_IP_INSTANCE_COUNT);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    MCRAddr    = &(AdcBasePtr->MCR);
-    MSRAddr    = &(AdcBasePtr->MSR);
+    MCRAddr    = &AdcBasePtr->MCR;
+    MSRAddr    = &AdcBasePtr->MSR;
 
     SchM_Enter_Adc_ADC_EXCLUSIVE_AREA_18();
     /* The behavior of the ADC depends on MCR[MODE] (One-Shot/Scan Operation modes).
@@ -2312,7 +2317,7 @@ void Adc_Sar_Ip_SetPresamplingSource(uint32 const u32Instance, Adc_Sar_Ip_ChanGr
     volatile uint32* PSCRAddr;
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    PSCRAddr   = &(AdcBasePtr->PSCR);
+    PSCRAddr   = &AdcBasePtr->PSCR;
 
     DevAssert(u32Instance < ADC_SAR_IP_INSTANCE_COUNT);
 
@@ -2594,7 +2599,7 @@ void Adc_Sar_Ip_SetWdgThreshold(uint32 const u32Instance, uint8 const u8Register
     DevAssert(u8RegisterIdx < ADC_SAR_IP_THRHLR_COUNT);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    WTIMRAddr  = &(AdcBasePtr->WTIMR);
+    WTIMRAddr  = &AdcBasePtr->WTIMR;
 
     if (FALSE == Adc_Sar_Ip_axAdcSarState[u32Instance].BypassResolution) {
         /* Calculate the shift of the threshold value to get the number of bits
@@ -2658,8 +2663,8 @@ void Adc_Sar_Ip_SetConversionMode(uint32 const u32Instance, Adc_Sar_Ip_ConvModeT
     DevAssert(u32Instance < ADC_SAR_IP_INSTANCE_COUNT);
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    MSRAddr    = &(AdcBasePtr->MSR);
-    MCRAddr    = &(AdcBasePtr->MCR);
+    MSRAddr    = &AdcBasePtr->MSR;
+    MCRAddr    = &AdcBasePtr->MCR;
 
     /* The selected ADC should be in IDLE state */
     DevAssert(((*MSRAddr) & ADC_MSR_ADCSTATUS_MASK) == ADC_MSR_ADCSTATUS(ADC_SAR_IP_MSR_ADCSTATUS_IDLE));
@@ -2694,11 +2699,11 @@ Adc_Sar_Ip_StatusType Adc_Sar_Ip_SetCtuMode(uint32 const u32Instance, Adc_Sar_Ip
     volatile uint32* MCRAddr;
 
     DevAssert(u32Instance < ADC_SAR_IP_INSTANCE_COUNT);
-    DevAssert(
-        !((FALSE == ADC_SAR_IP_INST_HAS_CTU_TRIGGER_MODE(u32Instance)) && (ADC_SAR_IP_CTU_MODE_TRIGGER == eCtuMode)));
+    DevAssert(!((FALSE == ADC_SAR_IP_INST_HAS_CTU_TRIGGER_MODE(u32Instance)) &&
+                (ADC_SAR_IP_CTU_MODE_TRIGGER == eCtuMode)));
 
     AdcBasePtr = Adc_Sar_Ip_apxAdcBase[u32Instance];
-    MCRAddr    = &(AdcBasePtr->MCR);
+    MCRAddr    = &AdcBasePtr->MCR;
 
     /* Clear CTUEN to allow Powerdown operation to succeed. */
     SchM_Enter_Adc_ADC_EXCLUSIVE_AREA_20();

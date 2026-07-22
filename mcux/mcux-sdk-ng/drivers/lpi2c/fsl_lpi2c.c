@@ -858,7 +858,7 @@ status_t LPI2C_MasterStop(LPI2C_Type *base)
     /* Wait until there is room in the fifo. */
     status_t result = LPI2C_MasterWaitForTxReady(base);
 
-    /* Send the STOP signal */
+    /* Write I2C STOP CMD to TX FIFO */
     base->MTDR = (uint32_t)kStopCmd;
 
     /* Wait for the stop detected flag to set, indicating the transfer has completed on the bus. */
@@ -879,6 +879,11 @@ status_t LPI2C_MasterStop(LPI2C_Type *base)
 
         /* Check for error flags. */
         result = LPI2C_MasterCheckAndClearError(base, status);
+        if (result != kStatus_Success)
+        {
+            /* Write I2C STOP CMD to the TX FIFO again because the FIFOs were reset */
+            base->MTDR = (uint32_t)kStopCmd;
+        }
 
         /* Check if the stop was sent successfully. */
         if ((0U != (status & (uint32_t)kLPI2C_MasterStopDetectFlag)) &&
@@ -936,8 +941,8 @@ status_t LPI2C_MasterReceive(LPI2C_Type *base, void *rxBuff, size_t rxSize)
                 return result;
             }
 
-            uint16_t tmpChunk = MIN((uint16_t)rxSize - chunkSize, LPI2C_MAX_RX_SIZE);
-            base->MTDR = (uint32_t)kRxDataCmd | LPI2C_MTDR_DATA(tmpChunk - 1U);
+            uint16_t tmpChunk = (uint16_t)MIN(rxSize - chunkSize, LPI2C_MAX_RX_SIZE);
+            base->MTDR = (uint32_t)kRxDataCmd | LPI2C_MTDR_DATA((uint32_t)tmpChunk - 1U);
             chunkSize += tmpChunk;
         }
 
@@ -1264,7 +1269,7 @@ static void LPI2C_TransferStateMachineReadCommand(LPI2C_Type *base,
     stateParams->txCount--;
 
     uint16_t tmpChunk = MIN(handle->remainingBytes - handle->chunkSize, LPI2C_MAX_RX_SIZE);
-    base->MTDR = (uint32_t)kRxDataCmd | LPI2C_MTDR_DATA(tmpChunk - 1U);
+    base->MTDR = (uint32_t)kRxDataCmd | LPI2C_MTDR_DATA((uint32_t)tmpChunk - 1U);
     handle->chunkSize += tmpChunk;
 
     /* Move to transfer state. */

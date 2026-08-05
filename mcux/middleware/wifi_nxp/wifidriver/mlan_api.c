@@ -835,7 +835,7 @@ int wifi_set_packet_filters(wifi_flt_cfg_t *flt_cfg)
             }
         }
         if (filter_buf != NULL)
-            entry_hdr->len = (t_u32)filter_buf - (t_u32)entry_hdr - sizeof(mef_entry_header);
+            entry_hdr->len = (uintptr_t)filter_buf - (uintptr_t)entry_hdr - sizeof(mef_entry_header);
     }
 
     cmd->size = wlan_cpu_to_le16(buf_len);
@@ -3138,6 +3138,105 @@ int wifi_get_antenna(t_u32 *ant_mode, t_u16 *evaluate_time, t_u8 *evaluate_mode,
 }
 #endif
 
+#if CONFIG_EXT_ANT_GAIN
+int wifi_set_ext_ant_gain(const int8_t *ext_ant_gain, const uint8_t num_subbands)
+{
+    mlan_private *pmpriv = (mlan_private *)mlan_adap->priv[0];
+    HostCmd_DS_EXT_ANT_GAIN_CFG cfg;
+
+    if (ext_ant_gain == NULL || num_subbands == 0U ||
+        num_subbands > WIFI_EXT_ANT_GAIN_MAX_SUBBAND)
+    {
+        return -WM_FAIL;
+    }
+
+    (void)memset(&cfg, 0x00, sizeof(HostCmd_DS_EXT_ANT_GAIN_CFG));
+
+    cfg.action = HostCmd_ACT_GEN_SET;
+    (void)memcpy(cfg.ext_ant_gain, ext_ant_gain,
+                 (size_t)num_subbands * sizeof(t_s8));
+
+    (void)wifi_get_command_lock();
+    HostCmd_DS_COMMAND *cmd = wifi_get_command_buffer();
+
+    (void)memset(cmd, 0x00, S_DS_GEN + sizeof(HostCmd_DS_EXT_ANT_GAIN_CFG));
+
+    cmd->seq_num = 0x0;
+    cmd->result  = 0x0;
+
+    mlan_status rv =
+        wlan_ops_sta_prepare_cmd(pmpriv, HostCmd_CMD_EXT_ANT_GAIN_CONFIG, HostCmd_ACT_GEN_SET, 0, NULL, &cfg, cmd);
+    if (rv != MLAN_STATUS_SUCCESS)
+    {
+        (void)wifi_put_command_lock();
+        return -WM_FAIL;
+    }
+
+    (void)wifi_wait_for_cmdresp(NULL);
+    return wm_wifi.cmd_resp_status;
+}
+
+int wifi_get_ext_ant_gain(const uint8_t band, const uint8_t channel, int8_t *net_ant_gain)
+{
+    mlan_private *pmpriv = (mlan_private *)mlan_adap->priv[0];
+    HostCmd_DS_EXT_ANT_GAIN_CFG cfg;
+
+    if (net_ant_gain == NULL)
+    {
+        return -WM_FAIL;
+    }
+
+    if (band == BAND_2GHZ)
+    {
+        if (wlan_find_cfp_by_band_and_channel(mlan_adap, BAND_G, channel) == NULL)
+        {
+            wifi_e("Channel %d is not valid for band 2.4GHz", channel);
+            return -WM_E_INVAL;
+        }
+    }
+#if CONFIG_5GHz_SUPPORT
+    else if (band == BAND_5GHZ)
+    {
+        if (wlan_find_cfp_by_band_and_channel(mlan_adap, BAND_A, channel) == NULL)
+        {
+            wifi_e("Channel %d is not valid for band 5GHz", channel);
+            return -WM_E_INVAL;
+        }
+    }
+#endif
+    else
+    {
+        wifi_e("Invalid band");
+        return -WM_E_INVAL;
+    }
+
+    (void)memset(&cfg, 0x00, sizeof(HostCmd_DS_EXT_ANT_GAIN_CFG));
+
+    cfg.action  = HostCmd_ACT_GEN_GET;
+    cfg.band    = band;
+    cfg.channel = channel;
+
+    (void)wifi_get_command_lock();
+    HostCmd_DS_COMMAND *cmd = wifi_get_command_buffer();
+
+    (void)memset(cmd, 0x00, S_DS_GEN + sizeof(HostCmd_DS_EXT_ANT_GAIN_CFG));
+
+    cmd->seq_num = 0x0;
+    cmd->result  = 0x0;
+
+    mlan_status rv =
+        wlan_ops_sta_prepare_cmd(pmpriv, HostCmd_CMD_EXT_ANT_GAIN_CONFIG, HostCmd_ACT_GEN_GET, 0, NULL, &cfg, cmd);
+    if (rv != MLAN_STATUS_SUCCESS)
+    {
+        (void)wifi_put_command_lock();
+        return -WM_FAIL;
+    }
+
+    (void)wifi_wait_for_cmdresp(net_ant_gain);
+    return wm_wifi.cmd_resp_status;
+}
+#endif
+
 #ifdef STREAM_2X2
 int wifi_set_11n_cfg(uint16_t httxcfg)
 {
@@ -3516,7 +3615,7 @@ int wifi_get_cal_data(wifi_cal_data_t *cal_data)
 
     cmd->command = wlan_cpu_to_le16(HostCmd_CMD_CFG_DATA);
 
-    HostCmd_DS_802_11_CFG_DATA *cfg_data_cmd = (HostCmd_DS_802_11_CFG_DATA *)((uint32_t)cmd + S_DS_GEN);
+    HostCmd_DS_802_11_CFG_DATA *cfg_data_cmd = (HostCmd_DS_802_11_CFG_DATA *)((uintptr_t)cmd + S_DS_GEN);
 
     cfg_data_cmd->action   = HostCmd_ACT_GEN_GET;
     cfg_data_cmd->type     = 0x02;
@@ -4955,7 +5054,7 @@ int wifi_set_smart_mode_cfg(char *ssid,
     HostCmd_DS_COMMAND *cmd = wifi_get_command_buffer();
 
     cmd->command                          = wlan_cpu_to_le16(HOST_CMD_SMART_MODE_CFG);
-    HostCmd_DS_SYS_CONFIG *sys_config_cmd = (HostCmd_DS_SYS_CONFIG *)((uint32_t)cmd + S_DS_GEN);
+    HostCmd_DS_SYS_CONFIG *sys_config_cmd = (HostCmd_DS_SYS_CONFIG *)((uintptr_t)cmd + S_DS_GEN);
     sys_config_cmd->action                = HostCmd_ACT_GEN_SET;
     uint8_t *tlv                          = (uint8_t *)sys_config_cmd->tlv_buffer;
 
@@ -5044,7 +5143,7 @@ int wifi_get_smart_mode_cfg(void)
     HostCmd_DS_COMMAND *cmd = wifi_get_command_buffer();
 
     cmd->command                          = wlan_cpu_to_le16(HOST_CMD_SMART_MODE_CFG);
-    HostCmd_DS_SYS_CONFIG *sys_config_cmd = (HostCmd_DS_SYS_CONFIG *)((uint32_t)cmd + S_DS_GEN);
+    HostCmd_DS_SYS_CONFIG *sys_config_cmd = (HostCmd_DS_SYS_CONFIG *)((uintptr_t)cmd + S_DS_GEN);
     sys_config_cmd->action                = HostCmd_ACT_GEN_GET;
 
     cmd->size    = size;
@@ -5063,7 +5162,7 @@ int wifi_start_smart_mode(void)
     HostCmd_DS_COMMAND *cmd = wifi_get_command_buffer();
 
     cmd->command                          = wlan_cpu_to_le16(HOST_CMD_SMART_MODE_CFG);
-    HostCmd_DS_SYS_CONFIG *sys_config_cmd = (HostCmd_DS_SYS_CONFIG *)((uint32_t)cmd + S_DS_GEN);
+    HostCmd_DS_SYS_CONFIG *sys_config_cmd = (HostCmd_DS_SYS_CONFIG *)((uintptr_t)cmd + S_DS_GEN);
     sys_config_cmd->action                = HostCmd_ACT_GEN_START;
 
     cmd->size    = size;
@@ -5082,7 +5181,7 @@ int wifi_stop_smart_mode(void)
     HostCmd_DS_COMMAND *cmd = wifi_get_command_buffer();
 
     cmd->command                          = wlan_cpu_to_le16(HOST_CMD_SMART_MODE_CFG);
-    HostCmd_DS_SYS_CONFIG *sys_config_cmd = (HostCmd_DS_SYS_CONFIG *)((uint32_t)cmd + S_DS_GEN);
+    HostCmd_DS_SYS_CONFIG *sys_config_cmd = (HostCmd_DS_SYS_CONFIG *)((uintptr_t)cmd + S_DS_GEN);
     sys_config_cmd->action                = HostCmd_ACT_GEN_STOP;
 
     cmd->size    = size;
@@ -6456,7 +6555,7 @@ int wifi_get_channel_load(wlan_802_11_chan_load_t *cfg)
     chan_load->ch_load = mlan_adap->ch_load_param;
     chan_load->rx_quality = mlan_adap->rx_quality;
 
-    PRINTF("SIZEOF MLANADAPT %d\r\n", sizeof(mlan_adap));
+    PRINTF("SIZEOF MLANADAPT %zu\r\n", sizeof(mlan_adap));
 
     return WM_SUCCESS;
 }

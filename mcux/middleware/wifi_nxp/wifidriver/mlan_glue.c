@@ -886,6 +886,17 @@ static mlan_status do_wlan_ret_11n_addba_resp(HostCmd_DS_COMMAND *resp)
         mlan_private *pmpriv = (mlan_private *)mlan_adap->priv[0];
         rv                   = wlan_ret_11n_addba_resp(pmpriv, resp);
     }
+
+    /* Validate bss_type is within bounds of mlan_adap->priv[] (size MLAN_MAX_BSS_NUM).
+     * HostCmd_GET_BSS_TYPE extracts a 4-bit field (0-15) from seq_num,
+     * but only indices 0 to MLAN_MAX_BSS_NUM-1 are valid.
+     */
+    if (bss_type >= MLAN_MAX_BSS_NUM)
+    {
+        wifi_e("ADDBA RESP: invalid bss_type=%d, ignoring", bss_type);
+        return MLAN_STATUS_FAILURE;
+    }
+
 #ifdef DEBUG_11N_AGGR
     wmprintf("ADDBA RESP RESP: %d\n\r", resp->result);
 #endif /* DEBUG_11N_AGGR */
@@ -913,6 +924,16 @@ static mlan_status do_wlan_ret_11n_addba_req(mlan_private *priv, HostCmd_DS_COMM
     padd_ba_rsp->status_code         = wlan_le16_to_cpu(padd_ba_rsp->status_code);
 
     tid = (padd_ba_rsp->block_ack_param_set & BLOCKACKPARAM_TID_MASK) >> BLOCKACKPARAM_TID_POS;
+
+    /* Validate tid is within bounds of ampdu_stat[] and ampdu_supported[] (size MAX_NUM_TID = 8).
+     * TID field is 4-bit (0-15) but only 0-7 are valid per IEEE 802.11 spec.
+     * Return early if tid is out of range to prevent out-of-bounds access.
+     */
+    if (tid >= MAX_NUM_TID)
+    {
+        PRINTM(MERROR, "ADDBA RSP: invalid tid=%d, ignoring\n", tid);
+        return MLAN_STATUS_SUCCESS;
+    }
 
     if (padd_ba_rsp->status_code == BA_RESULT_SUCCESS)
     {
@@ -2115,7 +2136,7 @@ static int wifi_assoc_pick_security_ie(mlan_private *priv, BSSDescriptor_t *d,
                 }
                 else
                 {
-                    wifi_e("Failed to copy RSNO2 IE len %d, fall through", d->rsno2_ie_buff_len);
+                    wifi_e("Failed to copy RSNO2 IE len %zu, fall through", d->rsno2_ie_buff_len);
                 }
             }
         }
@@ -2136,7 +2157,7 @@ static int wifi_assoc_pick_security_ie(mlan_private *priv, BSSDescriptor_t *d,
                 }
                 else
                 {
-                    wifi_e("Failed to copy RSNO IE len %d, fall through", d->rsno_ie_buff_len);
+                    wifi_e("Failed to copy RSNO IE len %zu, fall through", d->rsno_ie_buff_len);
                 }
             }
         }
@@ -2165,7 +2186,7 @@ static int wifi_assoc_pick_security_ie(mlan_private *priv, BSSDescriptor_t *d,
             }
             else
             {
-                wifi_e("Failed to copy RSN IE len %d, fall through", d->rsn_ie_buff_len);
+                wifi_e("Failed to copy RSN IE len %zu, fall through", d->rsn_ie_buff_len);
             }
         }
     }
@@ -3799,7 +3820,7 @@ int wifi_process_cmd_response(HostCmd_DS_COMMAND *resp)
                 assoc_resp->frame.frame_len = resp->size - S_DS_GEN;
                 if (assoc_resp->frame.frame_len > (int)sizeof(assoc_resp->frame.frame))
                 {
-                    wifi_e("Assocate response payload length (%d) overs the max length(%d), dropping it",
+                    wifi_e("Assocate response payload length (%d) overs the max length(%zu), dropping it",
                            assoc_resp->frame.frame_len, sizeof(assoc_resp->frame.frame));
                     assoc_resp->frame.frame_len = 0;
                     result                      = WIFI_EVENT_REASON_FAILURE;
@@ -5145,6 +5166,29 @@ int wifi_process_cmd_response(HostCmd_DS_COMMAND *resp)
                     wm_wifi.cmd_resp_status = -WM_FAIL;
                 break;
 #endif
+#if CONFIG_EXT_ANT_GAIN
+            case HostCmd_CMD_EXT_ANT_GAIN_CONFIG:
+            {
+                HostCmd_DS_EXT_ANT_GAIN_CFG *ant_gain_cfg = &resp->params.ext_ant_gain_cfg;
+                if (resp->result == HostCmd_RESULT_OK)
+                {
+                    if (ant_gain_cfg->action == HostCmd_ACT_GEN_GET)
+                    {
+                        if (wm_wifi.cmd_resp_priv != NULL)
+                        {
+                            t_s8 *net_gain = (t_s8 *)wm_wifi.cmd_resp_priv;
+                            *net_gain = ant_gain_cfg->net_ant_gain;
+                        }
+                    }
+                    wm_wifi.cmd_resp_status = WM_SUCCESS;
+                }
+                else
+                {
+                    wm_wifi.cmd_resp_status = -WM_FAIL;
+                }
+            }
+            break;
+#endif
             case HostCmd_CMD_802_11_TX_FRAME:
             {
                 if (resp->result == HostCmd_RESULT_OK)
@@ -5823,11 +5867,11 @@ static void wifi_handle_event_tx_status_report(Event_Ext_t *evt)
     {
         if (tx_status->status == 0U)
         {
-            (void)wifi_event_completion(WIFI_EVENT_MGMT_TX_STATUS, WIFI_EVENT_REASON_SUCCESS, (void *)bss_type);
+            (void)wifi_event_completion(WIFI_EVENT_MGMT_TX_STATUS, WIFI_EVENT_REASON_SUCCESS, (void *)(uintptr_t)bss_type);
         }
         else
         {
-            (void)wifi_event_completion(WIFI_EVENT_MGMT_TX_STATUS, WIFI_EVENT_REASON_FAILURE, (void *)bss_type);
+            (void)wifi_event_completion(WIFI_EVENT_MGMT_TX_STATUS, WIFI_EVENT_REASON_FAILURE, (void *)(uintptr_t)bss_type);
         }
         return;
     }

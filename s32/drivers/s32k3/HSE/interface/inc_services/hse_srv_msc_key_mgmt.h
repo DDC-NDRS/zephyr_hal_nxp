@@ -10,21 +10,7 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2022-2024 NXP
-*
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
+*   Copyright 2022 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -91,10 +77,8 @@ typedef uint8_t hseKHTTRestrictFlags_t;
  *         @note
  *         - The "Managed Security Component"(MSC) term is used bellow for any HW accelerator on host-side that uses keys managed by HSE FW.
  *         - Each MSC key inherit the properties of its corresponding key in HSE.
- *         - The only accepted values for keyInfo.keyFlags are HSE_KF_USAGE_ENCRYPT, HSE_KF_USAGE_DECRYPT, HSE_KF_USAGE_SIGN or HSE_KF_USAGE_VERIFY.
- *           Any other key usage flag set beside the accepted ones will lead to the key importing failure with HSE_SRV_RSP_NOT_ALLOWED status.
  *         - If keyInfo.keyFlags is set to any of the HSE_KF_USAGE_VERIFY and HSE_KF_USAGE_SIGN flags, the key can only be used with CMAC operation.
- *           The rest of the key flags are ignored. For SHE RAM keys, they can only be used with CMAC operation.
+ *           The rest of the key flags are ignored.
  *         - If the DID input received over ACE buses is not matching the DID flags configured for the entry, the key can not be used.
  *         - MSC key store must be statically partitioned per host (e.g. each host has its own key slots)
  * */

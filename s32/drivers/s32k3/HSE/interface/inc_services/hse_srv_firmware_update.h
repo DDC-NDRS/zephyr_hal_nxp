@@ -10,21 +10,7 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019 - 2024 NXP.
-*
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
+*   Copyright 2019 - 2022 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -88,22 +74,6 @@ extern "C"{
  *          The re-encrypted image (blue image) is published back on system RAM.
  *          The re-encryption operation can be performed in place by overwriting the pink image
  *          (the application can use the same pink image buffer for the output).
- *          @note
- *          -  The HSE firmware boot can be protected against rollback attack only if it boots a blue image. This protection
- *             at boot does not exist if IVT is pointing to a pink image. It is possible to enforce a boot to blue image via HSE
- *             system attributes (refer to hseOtpRollbackProtectionPolicy_t attribute). As long as the HSE SYS-IMG is
- *             available, it can prevent the HSE executing a pink image, hence bypassing the rollback protection. The HSE
- *             always ensure that the rollback counter value in the blue image is above or equal to the rollback counter in fuse
- *          -  If the OTP rollback protection is not disabled (refer to #hseOtpRollbackProtectionPolicy_t attribute),
- *             to be able to update fuse counter, the VDD_EFUSE supply must be powered before fuses
- *             are written (refer to HSE FW Reference Manual). The anti-rollback counter is incremented in fuses at start-up 
- *             or on demand, depending on the configuration of #hseOtpRollbackProtectionPolicy_t attribute.
- *             After writing the updated current/blue FW image in the external flash, a reset is needed.
- *             The VDD_EFUSE state is checked before the fuse write by reading the NCSPD_STAT register of the on-chip PMC module.
- *             The application shall provide read-only access (xRDC restriction) to HSE to read the NCSPD_STAT register.
- *             The rollback counter is NOT updated in fuses when LC == CUST_DEL and BOOT_SEQ == 0.
- *             If the rollback counter is saturated, the HSE firmware can still be updated, but without rollback protection.
- *
  */
 typedef struct
 {
@@ -128,15 +98,6 @@ typedef struct
     /** @brief  INPUT:    It is the address of the buffer where the encrypted version of HSE_H/M FW file (with a device specific key) will be stored.*/
     HOST_ADDR               pOutFwBuffer;
 } hseFirmwareUpdateSrv_t;
-
-/**
- * @brief   HSE_H/M Firmware Verify Service.
- * @details This service can be used to verify the pink or blue FW image (in SRAM or QSPI flash)*/
-typedef struct
-{
-    /** @brief  INPUT:    The address of HSE Firmware file.  */
-    HOST_ADDR               pInFwFile;
-} hseFirmwareVerifySrv_t;
 #endif /* HSE_SPT_FLASHLESS_DEV */
 
 
@@ -159,14 +120,14 @@ typedef struct
     /** @brief  INPUT:   Specifies the access mode: ONE-PASS, START, UPDATE, FINISH.*/
     hseAccessMode_t          accessMode;
     uint8_t                  reserved[3];
-
+    
     /** @brief  INPUT:   The length in bytes of a chunk. It is used only for STREAMING mode. It must be at least 64 bytes or multiple of 64 bytes;
      *                   otherwise, an HSE error is returned.
      *                   - START mode:  must be multiple of 64bytes.
      *                   - UPDATE mode: must be multiple of 64bytes.
      *                   - FINISH mode: can be any value.*/
     uint32_t                 streamLength;
-
+    
     /** @brief  INPUT:   ONE-PASS  USAGE: The address of new version of HSE Firmware file to be updated into the HSE internal flash memory.<br>
      *                   STREAMING USAGE: The address of chunk to be updated into the HSE internal flash memory. */
     HOST_ADDR                pInFwFile;

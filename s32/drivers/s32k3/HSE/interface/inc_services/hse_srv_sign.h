@@ -10,21 +10,7 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019 - 2024 NXP.
-*
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
+*   Copyright 2019 - 2022 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -124,11 +110,7 @@ typedef struct
 
     /** @brief   INPUT: Specifies that the input is already hashed with the algorithm in specified in the sign scheme.
      *                  Not valid for any signing scheme that does not perform prehashing (i.e. PureEDDSA)
-     *           @note  The hashing algorithm from signScheme and the input length must be:
-     *                  - for RSA scheme:   hashAlgo != HSE_HASH_ALGO_NULL, where the inputLength must be equal to the hash ouput length;
-     *                  - for ECDSA scheme: hashAlgo != HSE_HASH_ALGO_NULL, where the inputLength must be equal to the hash ouput length;
-     *                                      hashAlgo == HSE_HASH_ALGO_NULL, where the inputLength must be within (0, 64];
-     *                  - for EDDSA scheme: hashAlgo is not used and the inputLength should be the output length of the hash associated with the curve;
+     *           @note The hashing algorithm must still be provided as it is included in the signature for various schemes (e.g. RSA)
      *           STREAMING USAGE: Not supported in streaming mode.*/
     bool_t          bInputIsHashed;
 
@@ -141,7 +123,7 @@ typedef struct
      *           STREAMING USAGE: Used in START.*/
     hseKeyHandle_t  keyHandle;
 
-    /** @brief  INPUT: Specify if pInput is provided as hseScatterList_t list (the host address points to a hseScatterList_t list).
+    /** @brief  INPUT: Specify if pInput is provided as hseScatterList_t list (the host address points to a hseScatterList_t list). 
      *                 Ignored if SGT is not supported.
      *                 @note
      *                 - ONLY HSE_SGT_OPTION_INPUT can be used (the rest of the bits are ignored)
@@ -176,11 +158,7 @@ typedef struct
 
     /** @brief   INPUT: The address of the message to be signed/verify.
      *                  For RSA schemes, this is the actual (not pre-hashed) input. <br>
-     *           STREAMING USAGE: Used in all steps.
-     *  @note    If the HOST_ADDR is on 64 bits:
-     *              - For PureEDDSA: the address must fall within the 32-bit address range.
-     *              - If hash algorithm is not supported in HW (#HSE_SPT_HW_SHA3 macro is not defined) and input is not hashed,
-     *                the address must fall within the 32-bit address range. */
+     *           STREAMING USAGE: Used in all steps.*/
     HOST_ADDR       pInput;
 
     /** @brief   INPUT/OUTPUT: An array of two addresses of two uint32_t values containing signature lengths. It is input/output for "generate" and input for "verify".

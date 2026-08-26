@@ -10,21 +10,7 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019 - 2024 NXP.
-*
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
+*   Copyright 2019 - 2022 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -74,7 +60,6 @@ typedef uint32_t  hseSrvResponse_t;
 #define HSE_SRV_RSP_COUNTER_OVERFLOW            ((hseSrvResponse_t)0x33D6D533UL)  /**< @brief The monotonic counter overflows. */
 #define HSE_SRV_RSP_SHE_NO_SECURE_BOOT          ((hseSrvResponse_t)0x33D6D623UL)  /**< @brief HSE did not perform SHE based secure Boot. */
 #define HSE_SRV_RSP_SHE_BOOT_SEQUENCE_ERROR     ((hseSrvResponse_t)0x33D7D83AUL)  /**< @brief Received SHE_BOOT_OK or SHE_BOOT_FAILURE more then one time. */
-#define HSE_SRV_RSP_RNG_INIT_IN_PROGRESS        ((hseSrvResponse_t)0x33D7D92AUL)  /**< @brief This error code is returned if RNG Intialization is in Progress. */
 
 #ifdef HSE_SPT_IPSEC
 #define HSE_SRV_RSP_IPSEC_INVALID_DATA          ((hseSrvResponse_t)0xDD333133UL)  /**< @brief Invalid (malformed) IP packet */

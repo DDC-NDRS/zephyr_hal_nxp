@@ -10,27 +10,13 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019 - 2024 NXP.
+*   Copyright 2019 - 2022 NXP.
 *
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
-*
-*   This software is owned or controlled by NXP and may only be used strictly in accordance with
-*   the applicable license terms. By expressly accepting such terms or by downloading, installing,
-*   activating and/or otherwise using the software, you are agreeing that you have read, and that
-*   you agree to comply with and are bound by, such license terms. If you do not agree to
-*   be bound by the applicable license terms, then you may not retain, install, activate or
+*   This software is owned or controlled by NXP and may only be used strictly in accordance with 
+*   the applicable license terms. By expressly accepting such terms or by downloading, installing, 
+*   activating and/or otherwise using the software, you are agreeing that you have read, and that 
+*   you agree to comply with and are bound by, such license terms. If you do not agree to 
+*   be bound by the applicable license terms, then you may not retain, install, activate or 
 *   otherwise use the software.
 ==================================================================================================*/
 /*==================================================================================================
@@ -82,20 +68,20 @@ extern "C"{
 ==================================================================================================*/
 
 
-/** @brief SHE load key service.
+/** @brief SHE load key service. 
  *  @details Load a SHE key into the HSE according to the SHE memory update protocol.
  *  @note The SHE keys can be used for any supported AES operations (e.g. AES with all block modes, AEAD etc.)
  *        given the proper flags are set. One exception is BOOT_MAC_KEY, which can only be used with CMAC verify operation. */
 typedef struct
 {
-    /** @brief   Group Index for the SHE NVM catalog, ranging from 0 to 4. This parameter also decides the KDF
+    /** @brief   Group Index for the SHE NVM catalog, ranging from 0 to 4. This parameter also decides the KDF 
      *           input constants "CENC" & "CMAC" to be used in memory update protocol operation.
-     *  @details
+     *  @details 
      *           - For (1 <= keyID <= 3), this parameter is ignored and taken as zero to decide "CENC" and "CMAC".
      *           - For (keyID = 14) and (4 <= authID <= 13), this parameter is used to select auth-user-key (authID) group
      *             and to decide "CENC" & "CMAC".
      *           - For (keyID = 14) and (authID = 0), this parameter is ignored & taken as zero to decide "CENC" & "CMAC".
-     *           - For (4 <= keyID <= 13) and (4 <= authID <= 13), given that keyID = authID, this parameter
+     *           - For (4 <= keyID <= 13) and (4 <= authID <= 13), given that keyID = authID, this parameter 
      *             is used to select both user-key (keyID) group & auth-user-key (authID) group and to decide
      *             "CENC" & "CMAC".
      *           - For (4 <= keyID <= 13) and (authID = 1), this parameter is used to select user-key (keyID) group
@@ -115,7 +101,7 @@ typedef struct
 } hseSheLoadKeySrv_t;
 
 
-/** @brief SHE load plain key service.
+/** @brief SHE load plain key service. 
  *  @details Load a SHE RAM key from plain text */
 typedef struct
 {
@@ -124,7 +110,7 @@ typedef struct
 } hseSheLoadPlainKeySrv_t;
 
 
-/** @brief SHE export RAM key service.
+/** @brief SHE export RAM key service. 
  *  @details Export a SHE RAM key in the format used for re-loading with SHE Load key. This export can
  *           happen only if RAM key was loaded using SHE RAM plain key service. */
 typedef struct
@@ -144,9 +130,7 @@ typedef struct
 /** @brief SHE get ID service.
  *  @details Returns the Identity (UID) and the value of the status register protected by a
  *           MAC over a challenge and the data.
- *           If MASTER_ECU_KEY is empty, the returned MAC has to be set to zero.
- *
- *  @note For HSE_H/M, the UID is read by HSE from system fuses. The application must provide read-only access (xRDC restriction) to HSE to read the UID.*/
+ *           If MASTER_ECU_KEY is empty, the returned MAC has to be set to zero. */
 typedef struct
 {
     /** @brief   INPUT: Pointer to 128-bit Challenge */

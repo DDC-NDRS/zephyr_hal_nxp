@@ -28,6 +28,8 @@ extern "C"{
 *                                 SOURCE FILE VERSION INFORMATION
 ==================================================================================================*/
 #define MU_IP_IRQ_VENDOR_ID_C                    43
+#define MU_IP_IRQ_AR_RELEASE_MAJOR_VERSION_C     4
+#define MU_IP_IRQ_AR_RELEASE_MINOR_VERSION_C     7
 #define MU_IP_IRQ_SW_MAJOR_VERSION_C             3
 #define MU_IP_IRQ_SW_MINOR_VERSION_C             0
 #define MU_IP_IRQ_SW_PATCH_VERSION_C             0
@@ -35,17 +37,13 @@ extern "C"{
 /*==================================================================================================
 *                                       FILE VERSION CHECKS
 ==================================================================================================*/
-/* Check if Mu_Ip_Irq source file and Mcal.h header file are of the same vendor */
-#if (MU_IP_IRQ_VENDOR_ID_C != MCAL_VENDOR_ID)
-    #error "Mu_Ip_Irq.c and Mcal.h have different vendor ids"
-#endif
-
-/* Check if Mu_Ip_Irq source file and Mcal.h header file are of the same Software version */
-#if ((MU_IP_IRQ_SW_MAJOR_VERSION_C != MCAL_SW_MAJOR_VERSION) || \
-     (MU_IP_IRQ_SW_MINOR_VERSION_C != MCAL_SW_MINOR_VERSION) || \
-     (MU_IP_IRQ_SW_PATCH_VERSION_C != MCAL_SW_PATCH_VERSION)    \
+#ifndef DISABLE_MCAL_INTERMODULE_ASR_CHECK
+/* Check if the files Mu_Ip_Irq.h and Mcal.h are of the same AutoSar version */
+#if ((MU_IP_IRQ_AR_RELEASE_MAJOR_VERSION_C != MCAL_AR_RELEASE_MAJOR_VERSION) || \
+     (MU_IP_IRQ_AR_RELEASE_MINOR_VERSION_C != MCAL_AR_RELEASE_MINOR_VERSION)    \
     )
     #error "Software Version Numbers of Mu_Ip_Irq.c and Mcal.h are different"
+#endif
 #endif
 
 /* Check if Mu_Ip_Irq source file and Hse_Ip.h header file are of the same vendor */
@@ -96,46 +94,46 @@ extern "C"{
 /*==================================================================================================
 *                                        GLOBAL FUNCTIONS PROTOTYPES
 ==================================================================================================*/
-#define CRYPTO_43_HSE_START_SEC_CODE
-#include "Crypto_43_HSE_MemMap.h"
+#define CRYPTO_START_SEC_CODE
+#include "Crypto_MemMap.h"
 
 ISR(Mu_Ip_Mu0_OredRx_Isr);
 ISR(Mu_Ip_Mu0_OredGP_Isr);
 
-#if (HSE_IP_NUM_OF_MU_INSTANCES > 1U)
+#if (HSE_NUM_OF_MU_INSTANCES > 1U)
     ISR(Mu_Ip_Mu1_OredRx_Isr);
     ISR(Mu_Ip_Mu1_OredGP_Isr);
-#endif /* (HSE_IP_NUM_OF_MU_INSTANCES > 1U) */
+#endif /* (HSE_NUM_OF_MU_INSTANCES > 1U) */
 
-#if (HSE_IP_NUM_OF_MU_INSTANCES > 2U)
+#if (HSE_NUM_OF_MU_INSTANCES > 2U)
     ISR(Mu_Ip_Mu2_OredRx_Isr);
     ISR(Mu_Ip_Mu2_OredGP_Isr);
-#endif /* (HSE_IP_NUM_OF_MU_INSTANCES > 2U) */
+#endif /* (HSE_NUM_OF_MU_INSTANCES > 2U) */
 
-#if (HSE_IP_NUM_OF_MU_INSTANCES > 3U)
+#if (HSE_NUM_OF_MU_INSTANCES > 3U)
     ISR(Mu_Ip_Mu3_OredRx_Isr);
     ISR(Mu_Ip_Mu3_OredGP_Isr);
-#endif /* (HSE_IP_NUM_OF_MU_INSTANCES > 3U) */
+#endif /* (HSE_NUM_OF_MU_INSTANCES > 3U) */
 
-#if (HSE_IP_NUM_OF_MU_INSTANCES > 4U)
+#if (HSE_NUM_OF_MU_INSTANCES > 4U)
     ISR(Mu_Ip_Mu4_OredRx_Isr);
     ISR(Mu_Ip_Mu4_OredGP_Isr);
-#endif /* (HSE_IP_NUM_OF_MU_INSTANCES > 4U) */
+#endif /* (HSE_NUM_OF_MU_INSTANCES > 4U) */
 
-#if (HSE_IP_NUM_OF_MU_INSTANCES > 5U)
+#if (HSE_NUM_OF_MU_INSTANCES > 5U)
     ISR(Mu_Ip_Mu5_OredRx_Isr);
     ISR(Mu_Ip_Mu5_OredGP_Isr);
-#endif /* (HSE_IP_NUM_OF_MU_INSTANCES > 5U) */
+#endif /* (HSE_NUM_OF_MU_INSTANCES > 5U) */
 
-#if (HSE_IP_NUM_OF_MU_INSTANCES > 6U)
+#if (HSE_NUM_OF_MU_INSTANCES > 6U)
     ISR(Mu_Ip_Mu6_OredRx_Isr);
     ISR(Mu_Ip_Mu6_OredGP_Isr);
-#endif /* (HSE_IP_NUM_OF_MU_INSTANCES > 6U) */
+#endif /* (HSE_NUM_OF_MU_INSTANCES > 6U) */
 
-#if (HSE_IP_NUM_OF_MU_INSTANCES > 7U)
+#if (HSE_NUM_OF_MU_INSTANCES > 7U)
     ISR(Mu_Ip_Mu7_OredRx_Isr);
     ISR(Mu_Ip_Mu7_OredGP_Isr);
-#endif /* (HSE_IP_NUM_OF_MU_INSTANCES > 7U) */
+#endif /* (HSE_NUM_OF_MU_INSTANCES > 7U) */
 
 /*==================================================================================================
 *                                        GLOBAL FUNCTIONS
@@ -164,7 +162,7 @@ ISR(Mu_Ip_Mu0_OredGP_Isr)
     Hse_Ip_GeneralPurposeIrqHandler(0U);
 }
 
-#if (HSE_IP_NUM_OF_MU_INSTANCES > 1U)
+#if (HSE_NUM_OF_MU_INSTANCES > 1U)
 /**
 * @brief   Crypto handler for a MU instance RX interrupt.
 * @details This function implements the ISR occurring on an Rx event on the MU instance 1.
@@ -188,10 +186,10 @@ ISR(Mu_Ip_Mu1_OredGP_Isr)
 {
     Hse_Ip_GeneralPurposeIrqHandler(1U);
 }
-#endif /* (HSE_IP_NUM_OF_MU_INSTANCES > 1U) */
+#endif /* (HSE_NUM_OF_MU_INSTANCES > 1U) */
 
 
-#if (HSE_IP_NUM_OF_MU_INSTANCES > 2U)
+#if (HSE_NUM_OF_MU_INSTANCES > 2U)
 /**
 * @brief   Crypto handler for a MU instance RX interrupt.
 * @details This function implements the ISR occurring on an Rx event on the MU instance 2.
@@ -215,10 +213,10 @@ ISR(Mu_Ip_Mu2_OredGP_Isr)
 {
     Hse_Ip_GeneralPurposeIrqHandler(2U);
 }
-#endif /* (HSE_IP_NUM_OF_MU_INSTANCES > 2U) */
+#endif /* (HSE_NUM_OF_MU_INSTANCES > 2U) */
 
 
-#if (HSE_IP_NUM_OF_MU_INSTANCES > 3U)
+#if (HSE_NUM_OF_MU_INSTANCES > 3U)
 /**
 * @brief   Crypto handler for a MU instance RX interrupt.
 * @details This function implements the ISR occurring on an Rx event on the MU instance 3.
@@ -242,10 +240,10 @@ ISR(Mu_Ip_Mu3_OredGP_Isr)
 {
     Hse_Ip_GeneralPurposeIrqHandler(3U);
 }
-#endif /* (HSE_IP_NUM_OF_MU_INSTANCES > 3U) */
+#endif /* (HSE_NUM_OF_MU_INSTANCES > 3U) */
 
 
-#if (HSE_IP_NUM_OF_MU_INSTANCES > 4U)
+#if (HSE_NUM_OF_MU_INSTANCES > 4U)
 /**
 * @brief   Crypto handler for a MU instance RX interrupt.
 * @details This function implements the ISR occurring on an Rx event on the MU instance 4.
@@ -269,10 +267,10 @@ ISR(Mu_Ip_Mu4_OredGP_Isr)
 {
     Hse_Ip_GeneralPurposeIrqHandler(4U);
 }
-#endif /* (HSE_IP_NUM_OF_MU_INSTANCES > 4U) */
+#endif /* (HSE_NUM_OF_MU_INSTANCES > 4U) */
 
 
-#if (HSE_IP_NUM_OF_MU_INSTANCES > 5U)
+#if (HSE_NUM_OF_MU_INSTANCES > 5U)
 /**
 * @brief   Crypto handler for a MU instance RX interrupt.
 * @details This function implements the ISR occurring on an Rx event on the MU instance 5.
@@ -296,10 +294,10 @@ ISR(Mu_Ip_Mu5_OredGP_Isr)
 {
     Hse_Ip_GeneralPurposeIrqHandler(5U);
 }
-#endif /* (HSE_IP_NUM_OF_MU_INSTANCES > 5U) */
+#endif /* (HSE_NUM_OF_MU_INSTANCES > 5U) */
 
 
-#if (HSE_IP_NUM_OF_MU_INSTANCES > 6U)
+#if (HSE_NUM_OF_MU_INSTANCES > 6U)
 /**
 * @brief   Crypto handler for a MU instance RX interrupt.
 * @details This function implements the ISR occurring on an Rx event on the MU instance 6.
@@ -323,10 +321,10 @@ ISR(Mu_Ip_Mu6_OredGP_Isr)
 {
     Hse_Ip_GeneralPurposeIrqHandler(6U);
 }
-#endif /* (HSE_IP_NUM_OF_MU_INSTANCES > 6U) */
+#endif /* (HSE_NUM_OF_MU_INSTANCES > 6U) */
 
 
-#if (HSE_IP_NUM_OF_MU_INSTANCES > 7U)
+#if (HSE_NUM_OF_MU_INSTANCES > 7U)
 /**
 * @brief   Crypto handler for a MU instance RX interrupt.
 * @details This function implements the ISR occurring on an Rx event on the MU instance 7.
@@ -350,10 +348,10 @@ ISR(Mu_Ip_Mu7_OredGP_Isr)
 {
     Hse_Ip_GeneralPurposeIrqHandler(7U);
 }
-#endif /* (HSE_IP_NUM_OF_MU_INSTANCES > 7U) */
+#endif /* (HSE_NUM_OF_MU_INSTANCES > 7U) */
 
-#define CRYPTO_43_HSE_STOP_SEC_CODE
-#include "Crypto_43_HSE_MemMap.h"
+#define CRYPTO_STOP_SEC_CODE
+#include "Crypto_MemMap.h"
 
 
 #ifdef __cplusplus

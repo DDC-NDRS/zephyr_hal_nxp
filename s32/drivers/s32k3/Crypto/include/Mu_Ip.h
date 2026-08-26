@@ -11,7 +11,7 @@
 *   @file
 *
 *   @internal
-*   @addtogroup CRYPTO_43_HSE
+*   @addtogroup CRYPTO
 *   @{
 */
 
@@ -25,14 +25,15 @@ extern "C"{
 * 2) needed interfaces from external units
 * 3) internal and external interfaces from this unit
 ==================================================================================================*/
-
-#include "Mu_Ip_Mask.h"
 #include "Hse_Ip_Cfg.h"
 
 /*==================================================================================================
 *                                 SOURCE FILE VERSION INFORMATION
 ==================================================================================================*/
 #define MU_IP_VENDOR_ID_H                       43
+#define MU_IP_MODULE_ID_H                       114
+#define MU_IP_AR_RELEASE_MAJOR_VERSION_H        4
+#define MU_IP_AR_RELEASE_MINOR_VERSION_H        7
 #define MU_IP_SW_MAJOR_VERSION_H                3
 #define MU_IP_SW_MINOR_VERSION_H                0
 #define MU_IP_SW_PATCH_VERSION_H                0
@@ -53,14 +54,6 @@ extern "C"{
     #error "Software Version Numbers of Mu_Ip.h and Hse_Ip_Cfg.h are different"
 #endif
 
-/* Check if Mu_Ip header file and Mu_Ip_Mask header file are of the same Software version */
-#if ((MU_IP_SW_MAJOR_VERSION_H != MU_IP_MASK_SW_MAJOR_VERSION_H) || \
-     (MU_IP_SW_MINOR_VERSION_H != MU_IP_MASK_SW_MINOR_VERSION_H) || \
-     (MU_IP_SW_PATCH_VERSION_H != MU_IP_MASK_SW_PATCH_VERSION_H)    \
-    )
-    #error "Software Version Numbers of Mu_Ip.h and Mu_Ip_Mask.h are different"
-#endif
-
 /*==================================================================================================
 *                                            CONSTANTS
 ==================================================================================================*/
@@ -68,7 +61,12 @@ extern "C"{
 /*==================================================================================================
 *                                       DEFINES AND MACROS
 ==================================================================================================*/
-
+/*! @brief Mask for valid bits in MU RCR register */
+#define MU_IP_RCR_REG_VALID_BITS_MASK_U32   (0x0000FFFFUL)
+/*! @brief Mask for valid bits in MU RSR register */
+#define MU_IP_RSR_REG_VALID_BITS_MASK_U32   (0x0000FFFFUL)
+/*! @brief Mask for valid bits in MU TSR register */
+#define MU_IP_TSR_REG_VALID_BITS_MASK_U32   (0x0000FFFFUL)
 
 /*==================================================================================================
 *                                              ENUMS
@@ -85,8 +83,8 @@ extern "C"{
 /*==================================================================================================
 *                                       FUNCTION PROTOTYPES
 ==================================================================================================*/
-#define CRYPTO_43_HSE_START_SEC_CODE
-#include "Crypto_43_HSE_MemMap.h"
+#define CRYPTO_START_SEC_CODE
+#include "Crypto_MemMap.h"
 
 /*!
  * @brief Writes the specified TR register.
@@ -171,16 +169,6 @@ static inline uint32 Mu_Ip_GetGlobalIrqFlags(const MU_Type *base)
 }
 
 /*!
- * @brief Configures the General Control Register.
- * @param base      MU base pointer.
- * @param u32Mask   Mask of the bits to be enabled.
- */
-static inline void Mu_Ip_SetGlobalConfigRegister(MU_Type *base, uint32 u32Mask)
-{
-    base->GCR = u32Mask;
-}
-
-/*!
  * @brief Clears the general purpose interrupt flags.
  * @param base MU base pointer.
  * @param u32IrqMask mask of the flags to be cleared.
@@ -233,8 +221,8 @@ static inline uint32 Mu_Ip_GetTxStatusRegister(const MU_Type *base)
     return (base->TSR & MU_IP_TSR_REG_VALID_BITS_MASK_U32);
 }
 
-#define CRYPTO_43_HSE_STOP_SEC_CODE
-#include "Crypto_43_HSE_MemMap.h"
+#define CRYPTO_STOP_SEC_CODE
+#include "Crypto_MemMap.h"
 
 #ifdef __cplusplus
 }

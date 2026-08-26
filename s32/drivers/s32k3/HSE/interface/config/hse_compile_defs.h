@@ -8,21 +8,7 @@
 *   @{
 */
 /*==================================================================================================
-*   Copyright 2019 - 2024 NXP.
-*
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
+*   Copyright 2019 - 2022 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -80,14 +66,11 @@ extern "C"{
 #define HSE_SAF85XX          7U     /**< @brief  SAF85XX platform. */
 #define HSE_S32K3X1          12U    /**< @brief  S32K3X1 platform. */
 #define HSE_S32K3X2          13U    /**< @brief  S32K3X2 platform. */
-#define HSE_S32K358          14U    /**< @brief  S32K3X8 platform renamed to S32K358 platform. */
+#define HSE_S32K3X8          14U    /**< @brief  S32K3X8 platform. */
 #define HSE_S32K3X6          15U    /**< @brief  S32K3X6 platform. */
-#define HSE_S32K388          16U    /**< @brief  S32K388 platform. */
 
 #define HSE_S32G3XX          20U    /**< @brief  S32G3XX platform. */
 #define HSE_S32ZE            30U    /**< @brief  S32ZE   platforms. */
-#define HSE_S32Z1XX          31U    /**< @brief  S32Z1XX platform */
-
 
 /*==================================================================================================
 *                                             ENUMS

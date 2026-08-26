@@ -1,12 +1,29 @@
-/*
- * Copyright 2021-2025 NXP
+/*==================================================================================================
+*   Project              : RTD AUTOSAR 4.7
+*   Platform             : CORTEXM
+*   Peripheral           : 
+*   Dependencies         : none
 *
- * SPDX-License-Identifier: BSD-3-Clause
- */
+*   Autosar Version      : 4.7.0
+*   Autosar Revision     : ASR_REL_4_7_REV_0000
+*   Autosar Conf.Variant :
+*   SW Version           : 3.0.0
+*   Build Version        : S32K3_RTD_3_0_0_D2303_ASR_REL_4_7_REV_0000_20230331
+*
+*   Copyright 2020 - 2023 NXP Semiconductors
+*
+*   NXP Confidential. This software is owned or controlled by NXP and may only be
+*   used strictly in accordance with the applicable license terms. By expressly
+*   accepting such terms or by downloading, installing, activating and/or otherwise
+*   using the software, you are agreeing that you have read, and that you agree to
+*   comply with and are bound by, such license terms. If you do not agree to be
+*   bound by the applicable license terms, then you may not retain, install,
+*   activate or otherwise use the software.
+==================================================================================================*/
 
 /**
-*   @file    SchM_Crypto_43_HSE.c
-*   @version 2.0.1
+*   @file    SchM_Crypto.c
+*   @version 3.0.0
 *
 *   @brief   AUTOSAR Rte - module implementation
 *   @details This module implements stubs for the AUTOSAR Rte
@@ -29,7 +46,7 @@ extern "C"{
 #include "Std_Types.h"
 #include "Mcal.h"
 #include "OsIf.h"
-#include "SchM_Crypto_43_HSE.h"
+#include "SchM_Crypto.h"
 #ifdef MCAL_TESTING_ENVIRONMENT
 #include "EUnit.h" /* EUnit Test Suite */
 #endif
@@ -37,12 +54,12 @@ extern "C"{
 /*==================================================================================================
 *                               SOURCE FILE VERSION INFORMATION
 ==================================================================================================*/
-#define SCHM_CRYPTO_43_HSE_AR_RELEASE_MAJOR_VERSION_C     4
-#define SCHM_CRYPTO_43_HSE_AR_RELEASE_MINOR_VERSION_C     7
-#define SCHM_CRYPTO_43_HSE_AR_RELEASE_REVISION_VERSION_C  0
-#define SCHM_CRYPTO_43_HSE_SW_MAJOR_VERSION_C             3
-#define SCHM_CRYPTO_43_HSE_SW_MINOR_VERSION_C             0
-#define SCHM_CRYPTO_43_HSE_SW_PATCH_VERSION_C             0
+#define SCHM_CRYPTO_AR_RELEASE_MAJOR_VERSION_C     4
+#define SCHM_CRYPTO_AR_RELEASE_MINOR_VERSION_C     7
+#define SCHM_CRYPTO_AR_RELEASE_REVISION_VERSION_C  0
+#define SCHM_CRYPTO_SW_MAJOR_VERSION_C             3
+#define SCHM_CRYPTO_SW_MINOR_VERSION_C             0
+#define SCHM_CRYPTO_SW_PATCH_VERSION_C             0
 
 /*==================================================================================================
 *                                       LOCAL CONSTANTS
@@ -115,6 +132,8 @@ static volatile uint32 msr_CRYPTO_EXCLUSIVE_AREA_10[NUMBER_OF_CORES];
 static volatile uint32 reentry_guard_CRYPTO_EXCLUSIVE_AREA_10[NUMBER_OF_CORES];
 static volatile uint32 msr_CRYPTO_EXCLUSIVE_AREA_11[NUMBER_OF_CORES];
 static volatile uint32 reentry_guard_CRYPTO_EXCLUSIVE_AREA_11[NUMBER_OF_CORES];
+static volatile uint32 msr_CRYPTO_EXCLUSIVE_AREA_12[NUMBER_OF_CORES];
+static volatile uint32 reentry_guard_CRYPTO_EXCLUSIVE_AREA_12[NUMBER_OF_CORES];
 
 #define RTE_STOP_SEC_VAR_CLEARED_32_NO_CACHEABLE
 #include "Rte_MemMap.h"
@@ -144,7 +163,7 @@ static volatile uint32 reentry_guard_CRYPTO_EXCLUSIVE_AREA_11[NUMBER_OF_CORES];
 * @post None
 * 
 */
-uint32 Crypto_43_HSE_schm_read_msr(void); 
+uint32 Crypto_schm_read_msr(void); 
 #endif /*ifndef _COSMIC_C_S32K3XX_*/
 /*==================================================================================================
 *                                       LOCAL FUNCTIONS
@@ -164,17 +183,17 @@ uint32 Crypto_43_HSE_schm_read_msr(void);
 */
 #ifdef MCAL_PLATFORM_ARM
 #if (MCAL_PLATFORM_ARM == MCAL_ARM_AARCH64)
-ASM_KEYWORD uint32 Crypto_43_HSE_schm_read_msr(void)
+ASM_KEYWORD uint32 Crypto_schm_read_msr(void)
 {
     mrs x0, S3_3_c4_c2_1
 }
 #elif  (MCAL_PLATFORM_ARM == MCAL_ARM_RARCH)
-ASM_KEYWORD uint32 Crypto_43_HSE_schm_read_msr(void)
+ASM_KEYWORD uint32 Crypto_schm_read_msr(void)
 {
     mrs r0, CPSR
 }
 #else
-ASM_KEYWORD uint32 Crypto_43_HSE_schm_read_msr(void)
+ASM_KEYWORD uint32 Crypto_schm_read_msr(void)
 {
 #if ((defined MCAL_ENABLE_USER_MODE_SUPPORT)&&(!defined MCAL_PLATFORM_ARM_M0PLUS))
     mrs r0, BASEPRI
@@ -185,12 +204,12 @@ ASM_KEYWORD uint32 Crypto_43_HSE_schm_read_msr(void)
 #endif
 #else
 #ifdef MCAL_PLATFORM_S12
-ASM_KEYWORD uint32 Crypto_43_HSE_schm_read_msr(void)
+ASM_KEYWORD uint32 Crypto_schm_read_msr(void)
 {
    tfr ccr, d6
 }
 #else
-ASM_KEYWORD uint32 Crypto_43_HSE_schm_read_msr(void)
+ASM_KEYWORD uint32 Crypto_schm_read_msr(void)
 {
     mfmsr r3
 }
@@ -211,7 +230,7 @@ ASM_KEYWORD uint32 Crypto_43_HSE_schm_read_msr(void)
 * 
 */
 #ifdef MCAL_PLATFORM_ARM
-uint32 Crypto_43_HSE_schm_read_msr(void)
+uint32 Crypto_schm_read_msr(void)
 {
     register uint32 reg_tmp;
     #if (MCAL_PLATFORM_ARM == MCAL_ARM_AARCH64)
@@ -228,7 +247,7 @@ uint32 Crypto_43_HSE_schm_read_msr(void)
     return (uint32)reg_tmp;
 }
 #else
-ASM_KEYWORD uint32 Crypto_43_HSE_schm_read_msr(void)
+ASM_KEYWORD uint32 Crypto_schm_read_msr(void)
 {
     mfmsr r3
 }    
@@ -251,9 +270,9 @@ ASM_KEYWORD uint32 Crypto_43_HSE_schm_read_msr(void)
 */
 
 #ifdef MCAL_PLATFORM_S12
-    #define Crypto_43_HSE_schm_read_msr()  ASM_KEYWORD("tfr ccr, d6")
+    #define Crypto_schm_read_msr()  ASM_KEYWORD("tfr ccr, d6")
 #else
-    #define Crypto_43_HSE_schm_read_msr() ASM_KEYWORD("mfmsr r3")
+    #define Crypto_schm_read_msr() ASM_KEYWORD("mfmsr r3")
 #endif
 
 #endif  /*Cosmic compiler only*/
@@ -272,7 +291,7 @@ ASM_KEYWORD uint32 Crypto_43_HSE_schm_read_msr(void)
 * @post None
 * 
 */
-uint32 Crypto_43_HSE_schm_read_msr(void)
+uint32 Crypto_schm_read_msr(void)
 {
     uint32 result;
     __asm volatile("mfmsr %0" : "=r" (result) :);
@@ -293,7 +312,7 @@ uint32 Crypto_43_HSE_schm_read_msr(void)
 * @post None
 * 
 */
-uint32 Crypto_43_HSE_schm_read_msr(void)
+uint32 Crypto_schm_read_msr(void)
 {
     register uint32 reg_tmp;
     #if (MCAL_PLATFORM_ARM == MCAL_ARM_AARCH64)
@@ -324,7 +343,7 @@ uint32 Crypto_43_HSE_schm_read_msr(void)
 * @post None
 * 
 */
-uint32 Crypto_43_HSE_schm_read_msr(void)
+uint32 Crypto_schm_read_msr(void)
 {
     register uint32 reg_tmp;
     #if (MCAL_PLATFORM_ARM == MCAL_ARM_AARCH64)
@@ -354,7 +373,7 @@ uint32 Crypto_43_HSE_schm_read_msr(void)
 * @post None
 * 
 */
-uint32 Crypto_43_HSE_schm_read_msr(void)
+uint32 Crypto_schm_read_msr(void)
 {
     register uint32 reg_tmp;
 
@@ -377,7 +396,7 @@ uint32 Crypto_43_HSE_schm_read_msr(void)
 #define RTE_START_SEC_CODE
 #include "Rte_MemMap.h"
 
-void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_00(void)
+void SchM_Enter_Crypto_CRYPTO_EXCLUSIVE_AREA_00(void)
 {
     uint32 msr;
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
@@ -385,9 +404,9 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_00(void)
     if(0UL == reentry_guard_CRYPTO_EXCLUSIVE_AREA_00[u32CoreId])
     {
 #if (defined MCAL_ENABLE_USER_MODE_SUPPORT)
-        msr = OsIf_Trusted_Call_Return(Crypto_43_HSE_schm_read_msr);
+        msr = OsIf_Trusted_Call_Return(Crypto_schm_read_msr);
 #else
-        msr = Crypto_43_HSE_schm_read_msr();  /*read MSR (to store interrupts state)*/
+        msr = Crypto_schm_read_msr();  /*read MSR (to store interrupts state)*/
 #endif /* MCAL_ENABLE_USER_MODE_SUPPORT */
         if (ISR_ON(msr)) /*if MSR[EE] = 0, skip calling Suspend/Resume AllInterrupts*/
         {
@@ -401,7 +420,7 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_00(void)
     reentry_guard_CRYPTO_EXCLUSIVE_AREA_00[u32CoreId]++;
 }
 
-void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_00(void)
+void SchM_Exit_Crypto_CRYPTO_EXCLUSIVE_AREA_00(void)
 {
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
 
@@ -415,7 +434,7 @@ void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_00(void)
     }
 }
 
-void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_01(void)
+void SchM_Enter_Crypto_CRYPTO_EXCLUSIVE_AREA_01(void)
 {
     uint32 msr;
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
@@ -423,9 +442,9 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_01(void)
     if(0UL == reentry_guard_CRYPTO_EXCLUSIVE_AREA_01[u32CoreId])
     {
 #if (defined MCAL_ENABLE_USER_MODE_SUPPORT)
-        msr = OsIf_Trusted_Call_Return(Crypto_43_HSE_schm_read_msr);
+        msr = OsIf_Trusted_Call_Return(Crypto_schm_read_msr);
 #else
-        msr = Crypto_43_HSE_schm_read_msr();  /*read MSR (to store interrupts state)*/
+        msr = Crypto_schm_read_msr();  /*read MSR (to store interrupts state)*/
 #endif /* MCAL_ENABLE_USER_MODE_SUPPORT */
         if (ISR_ON(msr)) /*if MSR[EE] = 0, skip calling Suspend/Resume AllInterrupts*/
         {
@@ -439,7 +458,7 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_01(void)
     reentry_guard_CRYPTO_EXCLUSIVE_AREA_01[u32CoreId]++;
 }
 
-void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_01(void)
+void SchM_Exit_Crypto_CRYPTO_EXCLUSIVE_AREA_01(void)
 {
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
 
@@ -453,7 +472,7 @@ void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_01(void)
     }
 }
 
-void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_02(void)
+void SchM_Enter_Crypto_CRYPTO_EXCLUSIVE_AREA_02(void)
 {
     uint32 msr;
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
@@ -461,9 +480,9 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_02(void)
     if(0UL == reentry_guard_CRYPTO_EXCLUSIVE_AREA_02[u32CoreId])
     {
 #if (defined MCAL_ENABLE_USER_MODE_SUPPORT)
-        msr = OsIf_Trusted_Call_Return(Crypto_43_HSE_schm_read_msr);
+        msr = OsIf_Trusted_Call_Return(Crypto_schm_read_msr);
 #else
-        msr = Crypto_43_HSE_schm_read_msr();  /*read MSR (to store interrupts state)*/
+        msr = Crypto_schm_read_msr();  /*read MSR (to store interrupts state)*/
 #endif /* MCAL_ENABLE_USER_MODE_SUPPORT */
         if (ISR_ON(msr)) /*if MSR[EE] = 0, skip calling Suspend/Resume AllInterrupts*/
         {
@@ -477,7 +496,7 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_02(void)
     reentry_guard_CRYPTO_EXCLUSIVE_AREA_02[u32CoreId]++;
 }
 
-void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_02(void)
+void SchM_Exit_Crypto_CRYPTO_EXCLUSIVE_AREA_02(void)
 {
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
 
@@ -491,7 +510,7 @@ void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_02(void)
     }
 }
 
-void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_03(void)
+void SchM_Enter_Crypto_CRYPTO_EXCLUSIVE_AREA_03(void)
 {
     uint32 msr;
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
@@ -499,9 +518,9 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_03(void)
     if(0UL == reentry_guard_CRYPTO_EXCLUSIVE_AREA_03[u32CoreId])
     {
 #if (defined MCAL_ENABLE_USER_MODE_SUPPORT)
-        msr = OsIf_Trusted_Call_Return(Crypto_43_HSE_schm_read_msr);
+        msr = OsIf_Trusted_Call_Return(Crypto_schm_read_msr);
 #else
-        msr = Crypto_43_HSE_schm_read_msr();  /*read MSR (to store interrupts state)*/
+        msr = Crypto_schm_read_msr();  /*read MSR (to store interrupts state)*/
 #endif /* MCAL_ENABLE_USER_MODE_SUPPORT */
         if (ISR_ON(msr)) /*if MSR[EE] = 0, skip calling Suspend/Resume AllInterrupts*/
         {
@@ -515,7 +534,7 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_03(void)
     reentry_guard_CRYPTO_EXCLUSIVE_AREA_03[u32CoreId]++;
 }
 
-void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_03(void)
+void SchM_Exit_Crypto_CRYPTO_EXCLUSIVE_AREA_03(void)
 {
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
 
@@ -529,7 +548,7 @@ void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_03(void)
     }
 }
 
-void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_04(void)
+void SchM_Enter_Crypto_CRYPTO_EXCLUSIVE_AREA_04(void)
 {
     uint32 msr;
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
@@ -537,9 +556,9 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_04(void)
     if(0UL == reentry_guard_CRYPTO_EXCLUSIVE_AREA_04[u32CoreId])
     {
 #if (defined MCAL_ENABLE_USER_MODE_SUPPORT)
-        msr = OsIf_Trusted_Call_Return(Crypto_43_HSE_schm_read_msr);
+        msr = OsIf_Trusted_Call_Return(Crypto_schm_read_msr);
 #else
-        msr = Crypto_43_HSE_schm_read_msr();  /*read MSR (to store interrupts state)*/
+        msr = Crypto_schm_read_msr();  /*read MSR (to store interrupts state)*/
 #endif /* MCAL_ENABLE_USER_MODE_SUPPORT */
         if (ISR_ON(msr)) /*if MSR[EE] = 0, skip calling Suspend/Resume AllInterrupts*/
         {
@@ -553,7 +572,7 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_04(void)
     reentry_guard_CRYPTO_EXCLUSIVE_AREA_04[u32CoreId]++;
 }
 
-void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_04(void)
+void SchM_Exit_Crypto_CRYPTO_EXCLUSIVE_AREA_04(void)
 {
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
 
@@ -567,7 +586,7 @@ void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_04(void)
     }
 }
 
-void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_05(void)
+void SchM_Enter_Crypto_CRYPTO_EXCLUSIVE_AREA_05(void)
 {
     uint32 msr;
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
@@ -575,9 +594,9 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_05(void)
     if(0UL == reentry_guard_CRYPTO_EXCLUSIVE_AREA_05[u32CoreId])
     {
 #if (defined MCAL_ENABLE_USER_MODE_SUPPORT)
-        msr = OsIf_Trusted_Call_Return(Crypto_43_HSE_schm_read_msr);
+        msr = OsIf_Trusted_Call_Return(Crypto_schm_read_msr);
 #else
-        msr = Crypto_43_HSE_schm_read_msr();  /*read MSR (to store interrupts state)*/
+        msr = Crypto_schm_read_msr();  /*read MSR (to store interrupts state)*/
 #endif /* MCAL_ENABLE_USER_MODE_SUPPORT */
         if (ISR_ON(msr)) /*if MSR[EE] = 0, skip calling Suspend/Resume AllInterrupts*/
         {
@@ -591,7 +610,7 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_05(void)
     reentry_guard_CRYPTO_EXCLUSIVE_AREA_05[u32CoreId]++;
 }
 
-void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_05(void)
+void SchM_Exit_Crypto_CRYPTO_EXCLUSIVE_AREA_05(void)
 {
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
 
@@ -605,7 +624,7 @@ void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_05(void)
     }
 }
 
-void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_10(void)
+void SchM_Enter_Crypto_CRYPTO_EXCLUSIVE_AREA_10(void)
 {
     uint32 msr;
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
@@ -613,9 +632,9 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_10(void)
     if(0UL == reentry_guard_CRYPTO_EXCLUSIVE_AREA_10[u32CoreId])
     {
 #if (defined MCAL_ENABLE_USER_MODE_SUPPORT)
-        msr = OsIf_Trusted_Call_Return(Crypto_43_HSE_schm_read_msr);
+        msr = OsIf_Trusted_Call_Return(Crypto_schm_read_msr);
 #else
-        msr = Crypto_43_HSE_schm_read_msr();  /*read MSR (to store interrupts state)*/
+        msr = Crypto_schm_read_msr();  /*read MSR (to store interrupts state)*/
 #endif /* MCAL_ENABLE_USER_MODE_SUPPORT */
         if (ISR_ON(msr)) /*if MSR[EE] = 0, skip calling Suspend/Resume AllInterrupts*/
         {
@@ -629,7 +648,7 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_10(void)
     reentry_guard_CRYPTO_EXCLUSIVE_AREA_10[u32CoreId]++;
 }
 
-void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_10(void)
+void SchM_Exit_Crypto_CRYPTO_EXCLUSIVE_AREA_10(void)
 {
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
 
@@ -643,7 +662,7 @@ void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_10(void)
     }
 }
 
-void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_11(void)
+void SchM_Enter_Crypto_CRYPTO_EXCLUSIVE_AREA_11(void)
 {
     uint32 msr;
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
@@ -651,9 +670,9 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_11(void)
     if(0UL == reentry_guard_CRYPTO_EXCLUSIVE_AREA_11[u32CoreId])
     {
 #if (defined MCAL_ENABLE_USER_MODE_SUPPORT)
-        msr = OsIf_Trusted_Call_Return(Crypto_43_HSE_schm_read_msr);
+        msr = OsIf_Trusted_Call_Return(Crypto_schm_read_msr);
 #else
-        msr = Crypto_43_HSE_schm_read_msr();  /*read MSR (to store interrupts state)*/
+        msr = Crypto_schm_read_msr();  /*read MSR (to store interrupts state)*/
 #endif /* MCAL_ENABLE_USER_MODE_SUPPORT */
         if (ISR_ON(msr)) /*if MSR[EE] = 0, skip calling Suspend/Resume AllInterrupts*/
         {
@@ -667,12 +686,50 @@ void SchM_Enter_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_11(void)
     reentry_guard_CRYPTO_EXCLUSIVE_AREA_11[u32CoreId]++;
 }
 
-void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_11(void)
+void SchM_Exit_Crypto_CRYPTO_EXCLUSIVE_AREA_11(void)
 {
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
 
     reentry_guard_CRYPTO_EXCLUSIVE_AREA_11[u32CoreId]--;
     if ((ISR_ON(msr_CRYPTO_EXCLUSIVE_AREA_11[u32CoreId]))&&(0UL == reentry_guard_CRYPTO_EXCLUSIVE_AREA_11[u32CoreId]))         /*if interrupts were enabled*/
+    {
+        OsIf_ResumeAllInterrupts();
+#ifdef _ARM_DS5_C_S32K3XX_
+        ASM_KEYWORD(" nop ");/* Compiler fix - forces the CSPID instruction to be generated with -02, -Ospace are selected*/
+#endif
+    }
+}
+
+void SchM_Enter_Crypto_CRYPTO_EXCLUSIVE_AREA_12(void)
+{
+    uint32 msr;
+    uint32 u32CoreId = (uint32)OsIf_GetCoreID();
+
+    if(0UL == reentry_guard_CRYPTO_EXCLUSIVE_AREA_12[u32CoreId])
+    {
+#if (defined MCAL_ENABLE_USER_MODE_SUPPORT)
+        msr = OsIf_Trusted_Call_Return(Crypto_schm_read_msr);
+#else
+        msr = Crypto_schm_read_msr();  /*read MSR (to store interrupts state)*/
+#endif /* MCAL_ENABLE_USER_MODE_SUPPORT */
+        if (ISR_ON(msr)) /*if MSR[EE] = 0, skip calling Suspend/Resume AllInterrupts*/
+        {
+            OsIf_SuspendAllInterrupts();
+#ifdef _ARM_DS5_C_S32K3XX_
+            ASM_KEYWORD(" nop ");/* Compiler fix - forces the CSPID instruction to be generated with -02, -Ospace are selected*/
+#endif
+        }
+        msr_CRYPTO_EXCLUSIVE_AREA_12[u32CoreId] = msr;
+    }
+    reentry_guard_CRYPTO_EXCLUSIVE_AREA_12[u32CoreId]++;
+}
+
+void SchM_Exit_Crypto_CRYPTO_EXCLUSIVE_AREA_12(void)
+{
+    uint32 u32CoreId = (uint32)OsIf_GetCoreID();
+
+    reentry_guard_CRYPTO_EXCLUSIVE_AREA_12[u32CoreId]--;
+    if ((ISR_ON(msr_CRYPTO_EXCLUSIVE_AREA_12[u32CoreId]))&&(0UL == reentry_guard_CRYPTO_EXCLUSIVE_AREA_12[u32CoreId]))         /*if interrupts were enabled*/
     {
         OsIf_ResumeAllInterrupts();
 #ifdef _ARM_DS5_C_S32K3XX_
@@ -698,7 +755,7 @@ void SchM_Exit_Crypto_43_HSE_CRYPTO_EXCLUSIVE_AREA_11(void)
 @remarks Covers 
 @remarks Implements 
 */
-void SchM_Check_crypto_43_hse(void)
+void SchM_Check_crypto(void)
 {
     uint32 u32CoreId = (uint32)OsIf_GetCoreID();
 
@@ -725,6 +782,9 @@ void SchM_Check_crypto_43_hse(void)
 
     EU_ASSERT(0UL == reentry_guard_CRYPTO_EXCLUSIVE_AREA_11[u32CoreId]);
     reentry_guard_CRYPTO_EXCLUSIVE_AREA_11[u32CoreId] = 0UL; /*reset reentry_guard_CRYPTO_EXCLUSIVE_AREA_11 for the next test in the suite*/
+
+    EU_ASSERT(0UL == reentry_guard_CRYPTO_EXCLUSIVE_AREA_12[u32CoreId]);
+    reentry_guard_CRYPTO_EXCLUSIVE_AREA_12[u32CoreId] = 0UL; /*reset reentry_guard_CRYPTO_EXCLUSIVE_AREA_12 for the next test in the suite*/
 
 
 }

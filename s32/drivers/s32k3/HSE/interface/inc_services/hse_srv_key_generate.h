@@ -10,21 +10,7 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019-2024 NXP
-*
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
+*   Copyright 2019 - 2022 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -166,7 +152,7 @@ typedef struct
  *           - The hseKeyGenerateSrv_t#keyInfo must have the following key flags set: #HSE_KF_USAGE_DERIVE, #HSE_KF_ACCESS_EXPORTABLE.
  *           - The rfc5246 specification is used:
  *                  - keyInfo#keyBitLen must be 384bits (48bytes)
- *                  - The pre-master secret is computed as ProtocolVersion (2bytes) concatenated with 46 byte random number. The ProtocolVersion = {3,3} for TLS 1.2.
+ *                  - The premaster secret is computed as ProtocolVersion (2bytes) concatenated with 46 byte random number. The ProtocolVersion = {3,3} for TLS 1.2.
  *           - To encrypt the generated pre-master secret, the #hseExportKeySrv_t service with (the proper RSA scheme) must be used.
  *             The encrypted pre-master secret is sent to the peer node.
  *           - To decrypt an encrypted pre-master secret, the #hseImportKeySrv_t service (with the proper RSA scheme) must be used. The destination key slot
@@ -203,10 +189,10 @@ typedef struct
  *  @note
  *  - Key flags (of key properties) are always applied.
  *  - The keys can be generated as follow:
- *  1. Restrictions for SuperUser rights:
+ *  1. SuperUser key restrictions:
  *      - NVM keys can only be generated in empty slots (an erase shall be performed in advance)
  *      - RAM keys can always be generated (RAM keys can be overwritten)
- *  2. Restrictions for User rights:
+ *  2. User key restrictions:
  *      - NVM keys can NOT be generated.
  *      - RAM keys can always be generated (RAM keys can be overwritten)
  *  */
@@ -277,8 +263,8 @@ typedef struct
 /** @brief HSE Burmester-Desmedt steps.
  */
 typedef uint8_t hseBDStep_t;
-#define HSE_BD_STEP_COMPUTE_SECOND_PUBLIC_KEY     0U /**< @brief Burmester-Desmedt second public key computation step, as described by the service. */
-#define HSE_BD_STEP_COMPUTE_SHARED_SECRET         1U /**< @brief Burmester-Desmedt shared secret generation step, as described by the service. */
+#define HSE_BD_STEP_COMPUTE_SECOND_PUBLIC_KEY     0U /**< @brief Burmester-Desmedt second public key computation step, as descrived by the service. */
+#define HSE_BD_STEP_COMPUTE_SHARED_SECRET         1U /**< @brief Burmester-Desmedt shared secret generation step, as descrived by the service. */
 
 /** @brief   The ECC variant Burmester-Desmedt Protocol service to compute a share secret.
  *  @details The Burmester-Desmedt Protocol protocol is an extention to the Diffie-Hellman key-agreement protocol.

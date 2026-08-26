@@ -2,7 +2,7 @@
 *   @file    hse_srv_ipsec.h
 *
 *   @brief   HSE IPSEC acceleration service
-*   @details This file contains the definition for the HSE IPSEC stateful protocol acceleration
+*   @details This file contains the definition for the HSE IPSEC stateful protocol acceleration 
 *            service
 *
 *   @addtogroup hse_srv_ipsec HSE IPSEC Acceleration Service
@@ -11,27 +11,13 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019 - 2024 NXP.
+*   Copyright 2019 - 2022 NXP.
 *
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
-*
-*   This software is owned or controlled by NXP and may only be used strictly in accordance with
-*   the applicable license terms. By expressly accepting such terms or by downloading, installing,
-*   activating and/or otherwise using the software, you are agreeing that you have read, and that
-*   you agree to comply with and are bound by, such license terms. If you do not agree to
-*   be bound by the applicable license terms, then you may not retain, install, activate or
+*   This software is owned or controlled by NXP and may only be used strictly in accordance with 
+*   the applicable license terms. By expressly accepting such terms or by downloading, installing, 
+*   activating and/or otherwise using the software, you are agreeing that you have read, and that 
+*   you agree to comply with and are bound by, such license terms. If you do not agree to 
+*   be bound by the applicable license terms, then you may not retain, install, activate or 
 *   otherwise use the software.
 ==================================================================================================*/
 /*==================================================================================================
@@ -73,7 +59,7 @@ extern "C"{
 ==================================================================================================*/
 
 /** @brief IPSEC security association ID type.
-  * @details The IPSEC security association ID identifies an internal IPSEC context used to
+  * @details The IPSEC security association ID identifies an internal IPSEC context used to 
   * hold the state of any established IPSEC security association, managed by the HSE IPSEC acceleration service. */
 typedef uint32_t hseIpsecSaId_t;
 
@@ -127,7 +113,7 @@ typedef uint16_t hseIpsecSuite_t;
 #define HSE_IPSEC_SUITE_AES_NULL_GMAC               ((hseIpsecSuite_t)0x1500U)
 
 
-/** @brief    HSE IPSEC security association type: transport/tunnel,
+/** @brief    HSE IPSEC security association type: transport/tunnel, 
  *            encapsulation/decapsulation */
 typedef uint8_t hseIpsecType_t;
 #define HSE_IPSEC_TYPE_TRANSPORT_ENCAP              ((hseIpsecType_t)0U)
@@ -142,8 +128,7 @@ typedef uint32_t hseIpsecOptionFlags_t;
 /** @brief    Create an IPv6 SA. Without this flag and IPv4 SA will be created */
 #define HSE_IPSEC_OPTION_IPV6                       ((hseIpsecOptionFlags_t)1U << 1U)
 
-/** @brief    Use extended sequence numbers
- *  @note: This option is not supported.*/
+/** @brief    Use extended sequence numbers */
 #define HSE_IPSEC_OPTION_EXTENDED_SEQNUM            ((hseIpsecOptionFlags_t)1U << 2U)
 
 /** @brief    Use fully random IVs. Otherwise the IVs are chained from frame to frame */
@@ -167,7 +152,7 @@ typedef uint32_t hseIpsecOptionFlags_t;
 /** @details    Set the IP header source, if any: context, frame or external.
  *            Use only one of the following 4 flags:
  *             - #HSE_IPSEC_OPTION_IP_HDR_SRC_NONE
- *             - #HSE_IPSEC_OPTION_IP_HDR_SRC_CONTEXT
+ *             - #HSE_IPSEC_OPTION_IP_HDR_SRC_CONTEXT 
  *             - #HSE_IPSEC_OPTION_IP_HDR_SRC_FRAME
  *             - #HSE_IPSEC_OPTION_IP_HDR_SRC_EXTERNAL
  *
@@ -211,7 +196,7 @@ typedef uint32_t hseIpsecOptionFlags_t;
 
 /**
 * @brief          HSE IPSEC acceleration initialization service.
-* @details
+* @details        
 */
 typedef struct
 {
@@ -270,7 +255,7 @@ typedef struct
     /** @brief   INPUT: IPSEC type - Transport/Tunnel, Encap/Decap.*/
     hseIpsecType_t              ipsecType;
 
-    /** @brief   INPUT: Anti-replay window size. 0 - disables anti-replay protection.
+    /** @brief   INPUT: Anti-replay window size. 0 - disables anti-replay protection. 
      *                  Any other number is rounded up to the next power of two. Numbers
      *                  higher than 128 are rounded down to 128.*/
     uint8_t                     antiReplayWindowSize;
@@ -294,7 +279,7 @@ typedef struct
     /** @brief   INPUT: Whether to override SA params set at init, for this frame only.*/
     bool_t                      bOverrideInitParams;
 
-    /** @brief  INPUT: Specify if #pInputFrame/#pOutputFrame are provided as hseScatterList_t list (the host address points to a hseScatterList_t list).
+    /** @brief  INPUT: Specify if #pInputFrame/#pOutputFrame are provided as hseScatterList_t list (the host address points to a hseScatterList_t list). 
      *                 Ignored if SGT is not supported.
      *                 @note
      *                 - If scatter option is selected (set), the length (e.g. #inputFrameLength) shall specified the entire message length
@@ -312,7 +297,7 @@ typedef struct
     HOST_ADDR                   pOutputFrame;
 
     /** @brief   INPUT: The override parameter values.
-     *  @note
+     *  @note 
      * - Not all parameters are relevant for all IPSEC types. The relevant params for each IPSEC type are:
      *       - HSE_IPSEC_TRANSPORT_ENCAP:  nextHeader, nextHeaderOffset, ipHeaderLen, bOverrideEcn, ecn
      *       - HSE_IPSEC_TRANSPORT_DECAP:  nextHeaderOffset, ipHeaderLen, bOverrideEcn, ecn
@@ -362,9 +347,7 @@ typedef struct
     /** @brief   INPUT: Specifies the context to use to store the IPSEC state of this SA.*/
     hseIpsecSaId_t              saId;
 
-    /** @brief   INPUT: Whether we are managing the extended sequence number. 0 - regular SN, 1 - ESN
-     *  @note The extended sequence number is not supported.
-    */
+    /** @brief   INPUT: Whether we are managing the extended sequence number. 0 - regular SN, 1 - ESN */
     bool_t                      bExtendedSeqNum;
 
     uint8_t                     reserved[3];
@@ -384,9 +367,7 @@ typedef struct
     /** @brief   INPUT: Specifies the context to use to store the IPSEC state of this SA.*/
     hseIpsecSaId_t              saId;
 
-    /** @brief   INPUT: Whether we are managing the extended sequence number. 0 - regular SN, 1 - ESN
-     *  @note The extended sequence number is not supported.
-     */
+    /** @brief   INPUT: Whether we are managing the extended sequence number. 0 - regular SN, 1 - ESN */
     bool_t                      bExtendedSeqNum;
 
     uint8_t                     reserved[3];

@@ -10,21 +10,7 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019 - 2024 NXP.
-*
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
+*   Copyright 2019 - 2022 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -134,8 +120,7 @@ typedef uint8_t hseDigestLen_t;
 #define HSE_MAX_DIGEST_LEN                ((hseDigestLen_t)64U)  /**<  @brief Max digest buffer in bytes */
 
 typedef uint8_t hseBlockLen_t;
-
-#define HSE_AES_BLOCK_LEN                 ((hseBlockLen_t)16U)   /**<  @brief AES block length in bytes  */
+#define HSE_AES_BLOCK_LEN                 ((hseBlockLen_t)16U)                    /**<  @brief AES block length in bytes  */
 
 /** @brief  The capabilities indices for each enabled algorithm */
 typedef uint8_t hseAlgoCapIdx_t;

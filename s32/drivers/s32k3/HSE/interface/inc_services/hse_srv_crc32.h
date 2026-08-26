@@ -10,21 +10,7 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019 - 2024 NXP.
-*
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
+*   Copyright 2019 - 2022 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -97,8 +83,8 @@ typedef uint32_t hseCrc32Mode_t;
 * @details      CRC32 is an error-detecting code commonly used in network protocols(such as IPsec).
                 Can be used as an separate service. <br>
 *               This service support two standards:
-*                   - #HSE_CRC32_MODE_IEEE_802; Polynomial: 0x04c11db7 (names IEEE 802.3 or CRC-32)
-*                   - #HSE_CRC32_MODE_IETF_3385; Polynomial: 0x1edc6f41 (names iSCSI, CRC-32C or CRC-32/4)
+*                   - #HSE_CRC32_MODE_IEEE_802
+*                   - #HSE_CRC32_MODE_IETF_3385
 
 *               With additional flags depending on the format of input/output/desired CRC variant:
 *                   - #HSE_CRC32_MODE_DONT_INPUT_SWAP

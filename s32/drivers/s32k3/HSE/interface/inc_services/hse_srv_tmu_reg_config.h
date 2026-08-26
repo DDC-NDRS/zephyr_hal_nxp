@@ -10,21 +10,7 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2022-2024 NXP
-*
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
+*   Copyright 2022 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -109,28 +95,28 @@ typedef uint16_t hseTmuRegOp_t;
 *  Lower  Threshold : -45C + 273Kelvin    = E4h <br>
 *  Higher Threshold : 155C + 273Kelvin    = 1ACh
 *
-*  |Register Name     | Reg Addr   |                                    Remark                                                                                              |
-*  |-----------------:|:----------:|:--------------------------------------------------------------------------------------------------------------------------------------:|
-*  | TMR              | 0x4008C000 |   Allowed OP: HSE_TMU_REG_WRITE32; <br> Changeable bits: bit[25,24] (the rest of the bit are ignored)                                  |
-*  | TSR              | 0x4008C004 |   NA                                                                                                                                   |
-*  | TIER             | 0x4008C020 |   Allowed OP: HSE_TMU_REG_WRITE32; <br> Changeable bits: bit[31,30], [28,27], [25,24] (the rest of the bit are ignored)                |
-*  | TIDR             | 0x4008C024 |   NA                                                                                                                                   |
-*  | TIISCR           | 0x4008C030 |   NA                                                                                                                                   |
-*  | TIASCR           | 0x4008C034 |   NA                                                                                                                                   |
-*  | TMHTCR           | 0x4008C040 |   NA                                                                                                                                   |
-*  | TMLTCR           | 0x4008C044 |   NA                                                                                                                                   |
-*  | TMRTRCR          | 0x4008C048 |   NA                                                                                                                                   |
-*  | TMFTRCR          | 0x4008C04C |   NA                                                                                                                                   |
-*  | TMHTITR          | 0x4008C050 |   NA                                                                                                                                   |
-*  | TMHTATR          | 0x4008C054 |   NA                                                                                                                                   |
-*  | TMHTACTR         | 0x4008C058 |  Allowed OP: HSE_TMU_REG_WRITE32; <br> SAF85XX: Min: F580h(-42C), Max: 2600h(152C), bit[0,15]; <br> S32R41: Min: E4h  (-45C), Max: 1ACh (155C), bit[0,8]; <br> (the rest of the bit are ignored)   |
-*  | TMLTITR          | 0x4008C060 |   NA                                                                                                                                   |
-*  | TMLTATR          | 0x4008C064 |   NA                                                                                                                                   |
-*  | TMLTACTR         | 0x4008C068 |  Allowed OP: HSE_TMU_REG_WRITE32; <br> SAF85XX: Min: F580h(-42C), Max: 2600h(152C), bit[0,15]; <br> S32R41: Min: E4h  (-45C), Max: 1ACh (155C), bit[0,8]; <br> (the rest of the bit are ignored)   |
-*  | TMRTRCTR         | 0x4008C070 |  Allowed OP: HSE_TMU_REG_WRITE32                                                                                                       |
-*  | TMFTRCTR         | 0x4008C074 |  Allowed OP: HSE_TMU_REG_WRITE32                                                                                                       |
-*  | TMCFG0R          | 0x4008C400 |  Only Valid for SAF85XX; <br> Allowed OP : HSE_TMU_REG_WRITE32; <br> Changeable bits: bit[0,1] (the rest of the bit are ignored)       |
-*  | TTCFGR           | 0x4008C080 |  Only Valid for HSE_S32R41X; <br> Allowed OP : HSE_TMU_REG_WRITE32; <br> Changeable bits: [0,3] (the rest of the bit are ignored)   
+*  |Register Name     | Reg Addr   |                                    Remark                                        |
+*  |-----------------:|:----------:|:--------------------------------------------------------------------------------:|
+*  | TMR              | 0x4008C000 |   Allowed OP : HSE_TMU_REG_WRITE32; <br> Changeable bits: bit[25,24] (the rest of the bit are ignored)                   | 
+*  | TSR              | 0x4008C004 |   NA                                                                             |
+*  | TIER             | 0x4008C020 |   Allowed OP : HSE_TMU_REG_WRITE32; <br> Changeable bits: bit[31,30], [28,27], [25,24] (the rest of the bit are ignored) |
+*  | TIDR             | 0x4008C024 |   NA                                                                             |
+*  | TIISCR           | 0x4008C030 |   NA                                                                             |
+*  | TIASCR           | 0x4008C034 |   NA                                                                             |
+*  | TMHTCR           | 0x4008C040 |   NA                                                                             |
+*  | TMLTCR           | 0x4008C044 |   NA                                                                             |
+*  | TMRTRCR          | 0x4008C048 |   NA                                                                             |
+*  | TMFTRCR          | 0x4008C04C |   NA                                                                             |
+*  | TMHTITR          | 0x4008C050 |   NA                                                                             |
+*  | TMHTATR          | 0x4008C054 |   NA                                                                             |
+*  | TMHTACTR         | 0x4008C058 |  Allowed OP  : HSE_TMU_REG_WRITE32; <br> SAF85XX: Min: F580h(-42C), Max: 2600h(152C); <br> S32R41 : Min: E4h  (-45C), Max: 1ACh (155C)|
+*  | TMLTITR          | 0x4008C060 |   NA                                                                             |
+*  | TMLTATR          | 0x4008C064 |   NA                                                                             |
+*  | TMLTACTR         | 0x4008C068 |  Allowed OP  : HSE_TMU_REG_WRITE32; <br> SAF85XX: Min: F580h(-42C), Max: 2600h(152C); <br> - S32R41 : Min: E4h  (-45C), Max: 1ACh (155C) |
+*  | TMRTRCTR         | 0x4008C070 |  Allowed OP  : HSE_TMU_REG_WRITE32                                               |
+*  | TMFTRCTR         | 0x4008C074 |  Allowed OP  : HSE_TMU_REG_WRITE32                                               |
+*  | TMCFG0R          | 0x4008C400 |  Only Valid for SAF85XX; <br> Allowed OP : HSE_TMU_REG_WRITE32; <br> Changeable bits: bit[0,1] (the rest of the bit are ignored) |
+*
 */
 typedef struct
 {

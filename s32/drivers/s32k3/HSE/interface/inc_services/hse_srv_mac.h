@@ -10,21 +10,7 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019-2024 NXP
-*
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
+*   Copyright 2019 - 2022 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -124,11 +110,9 @@ typedef struct
     /** @brief  INPUT: Specify if pInput is provided as hseScatterList_t list (the host address points to a hseScatterList_t list).
      *                 Ignored if SGT is not supported.
      *                 @note
+     *                 - For HSE_B devices, the SGT for the HMAC scheme is not available for the following hash algorithms (the parameter is ignored):
+     *                      - SHA2_384/512 (not available in HW)
      *                 - ONLY HSE_SGT_OPTION_INPUT can be used.
-     *                 - For HSE_B devices:
-     *                      - The SGT for the HMAC scheme is not available for the following hash algorithms:
-     *                          - SHA2_384/512 (not available in HW)
-     *                      - If the HMAC is requested with above hash algorithms, the #HSE_SRV_RSP_NOT_SUPPORTED error is returned.
      *                 - If scatter option is selected (set), the length (e.g. #inputLength) shall specified the entire message length
      *                 (sum of all hseScatterList_t lengths).
      *                 - The number for SGT entries shall be less then #HSE_MAX_NUM_OF_SGT_ENTRIES.<br>

@@ -10,21 +10,7 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019-2024 NXP
-*
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
+*   Copyright 2019 - 2022 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -197,8 +183,7 @@ typedef struct
     uint32_t             saltLength;
     /** @brief INPUT: The salt. Used only if #saltKeyHandle == #HSE_INVALID_KEY_HANDLE. <br>
                If #pSalt is not passed (#pSalt is NULL), default_salt will be used
-               (the default_salt is all-zero byte array of length determined by input block).
-        @note  If the HOST_ADDR is on 64 bits, the address must fall within the 32-bit address range. */
+               (the default_salt is all-zero byte array of length determined by input block). */
     HOST_ADDR            pSalt;
 } hseKdfSalt_t;
 
@@ -394,9 +379,7 @@ typedef struct
     hseKeyHandle_t       targetKeyHandle;
     /** @brief   INPUT: The key material length to be derived (it must be <= slot size). */
     uint16_t             keyMatLen;
-    /** @brief INPUT: The hash algorithm for HMAC PRF.
-     *  @note HSE_M platforms do not support SHA2_384/512 hash algorithms for PBKDF2. */
-    hseHmacPrfAlgo_t     hmacHash;
+    hseHmacPrfAlgo_t     hmacHash;        /**< @brief INPUT: The hash algorithm for HMAC PRF. */
     uint8_t              reserved;
     /** @brief  INPUT: The number of iterations to be performed.
      *                 Should take a value higher than 100. */
@@ -731,10 +714,10 @@ typedef struct
  *           in a temporary shared secret slot (#HSE_KEY_TYPE_SHARED_SECRET).
  *
  *  The key(s) can be copied in NVM/RAM slots as follow:
- *  1. Restrictions for SuperUser rights:
+ *  1. SuperUser key restrictions:
  *        - keys can be copied in NVM key store from the derived key material only in empty slots (an erase shall be performed in advance if needed).
  *        - keys can be copied in RAM key store from the derived key material (RAM keys can be overwritten).
- *  2. Restrictions for User rights:
+ *  2. User key restrictions:
  *        - keys can NOT be copied in NVM key store from the derived key material.
  *        - keys can be copied in RAM key store from the derived key material (RAM keys can be overwritten).
  */

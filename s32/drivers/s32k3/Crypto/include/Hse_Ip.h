@@ -32,11 +32,12 @@ extern "C"{
 *                                 SOURCE FILE VERSION INFORMATION
 ==================================================================================================*/
 #define HSE_IP_VENDOR_ID_H                       43
+#define HSE_IP_MODULE_ID_H                       114
+#define HSE_IP_AR_RELEASE_MAJOR_VERSION_H        4
+#define HSE_IP_AR_RELEASE_MINOR_VERSION_H        7
 #define HSE_IP_SW_MAJOR_VERSION_H                3
 #define HSE_IP_SW_MINOR_VERSION_H                0
 #define HSE_IP_SW_PATCH_VERSION_H                0
-#define HSE_IP_AR_RELEASE_MAJOR_VERSION_H        4
-#define HSE_IP_AR_RELEASE_MINOR_VERSION_H        7
 
 /*==================================================================================================
 *                                       FILE VERSION CHECKS
@@ -70,6 +71,31 @@ extern "C"{
 /*==================================================================================================
 *                                       DEFINES AND MACROS
 ==================================================================================================*/
+/* --- Zephyr integration compatibility (not upstream NXP content) ---
+ * drivers/crypto/crypto_nxp_s32_hse.c and drivers/entropy/entropy_nxp_s32_hse_trng.c (zephyr_rtos)
+ * were written against an older HSE Ip release that spelled these HSE_IP_NUM_OF_* (with an "_IP_"
+ * infix) and used the S32Z/E device header's IP_MU<n>__MUB_BASE naming (no underscore before the
+ * instance digit). This RTD 3.0.0 drop renamed the former to HSE_NUM_OF_* and S32K358's own device
+ * header spells the latter IP_MU_<n>__MUB_BASE (underscore before the digit). Alias both here
+ * rather than patching the two (otherwise-unmodified) Zephyr driver files.
+ */
+/* LISTIFY() token-pastes this value into Z_UTIL_LISTIFY_<n> and needs a bare integer literal;
+ * HSE_NUM_OF_MU_INSTANCES/HSE_NUM_OF_CHANNELS_PER_MU carry a U suffix ((2U), (4U)), which breaks
+ * that token-paste ("Z_UTIL_LISTIFY_2U" doesn't exist). Alias to bare literals instead, with a
+ * build-time check that they stay in sync if a future HSE/RTD update changes either count. */
+#define HSE_IP_NUM_OF_MU_INSTANCES               (2)
+#define HSE_IP_NUM_OF_CHANNELS_PER_MU            (4)
+
+#if (HSE_IP_NUM_OF_MU_INSTANCES != HSE_NUM_OF_MU_INSTANCES)
+    #error "HSE_IP_NUM_OF_MU_INSTANCES (Zephyr compat alias) is out of sync with HSE_NUM_OF_MU_INSTANCES"
+#endif
+
+#if (HSE_IP_NUM_OF_CHANNELS_PER_MU != HSE_NUM_OF_CHANNELS_PER_MU)
+    #error "HSE_IP_NUM_OF_CHANNELS_PER_MU (Zephyr compat alias) is out of sync with HSE_NUM_OF_CHANNELS_PER_MU"
+#endif
+
+#define IP_MU0__MUB_BASE                         IP_MU_0__MUB_BASE
+#define IP_MU1__MUB_BASE                         IP_MU_1__MUB_BASE
 
 /*==================================================================================================
 *                                              ENUMS
@@ -139,9 +165,9 @@ typedef struct
  */
 typedef struct
 {
-    Hse_Ip_ReqType*                     apChannelRequest[HSE_IP_NUM_OF_CHANNELS_PER_MU];   /*!< Reference to channel request */
-    volatile boolean                    abChannelAllocated[HSE_IP_NUM_OF_CHANNELS_PER_MU]; /*!< Channel allocated flag */
-    Hse_Ip_pfGenericPurposeCallbackType pfGenericPurposeCallback;                          /*!< General purpose callback */
+    Hse_Ip_ReqType*                     apChannelRequest[HSE_NUM_OF_CHANNELS_PER_MU];    /*!< Reference to channel request */
+    volatile boolean                    abChannelAllocated[HSE_NUM_OF_CHANNELS_PER_MU];  /*!< Channel allocated flag */
+    Hse_Ip_pfGenericPurposeCallbackType pfGenericPurposeCallback;                        /*!< General purpose callback */
 } Hse_Ip_MuStateType;
 
 /*==================================================================================================
@@ -151,8 +177,8 @@ typedef struct
 /*==================================================================================================
 *                                       FUNCTION PROTOTYPES
 ==================================================================================================*/
-#define CRYPTO_43_HSE_START_SEC_CODE
-#include "Crypto_43_HSE_MemMap.h"
+#define CRYPTO_START_SEC_CODE
+#include "Crypto_MemMap.h"
 
 /*!
  * @brief       Initializes the HSE Host driver.
@@ -211,19 +237,6 @@ void Hse_Ip_ReleaseChannel
 (
     uint8 u8MuInstance,
     uint8 u8MuChannel
-);
-
-/**
-* @brief           Function translates an address to HSE host address
-* @details         Function translates an address to HSE host address; if Hse TCM support is enabled, address offset for specific processor is added
-*
-* @param[in]       Address:  Address to be converted
-*
-* @returns         HOST_ADDR: Hse Host Address
-*/
-HOST_ADDR Hse_Ip_ToAHBAddress
-(
-    HOST_ADDR Address
 );
 
 /*!
@@ -301,19 +314,6 @@ void Hse_Ip_RegisterGenericCallback
 );
 
 /*!
- * @brief       Sends one or more events to Hse Firmware.
- * @details     This function helps the host application sending to the Hse Firmware one or more of the events defined in hse_status_and_errors.h header file.
- *
- * @param[in]   HseHostEvent    Bit map of events that can be sent to Hse (see definition of hseHostEvent_t in hse_status_and_errors.h header file).
- *
- * @return      void
- */
-void Hse_Ip_SendHseEvent
-(
-    hseHostEvent_t HseHostEvent
-);
-
-/*!
  * @brief       Rx interrupt handler.
  * @details     This function processes the RX related interrupts from MU Ip layer
  *
@@ -340,8 +340,8 @@ void Hse_Ip_GeneralPurposeIrqHandler
 );
 
 
-#define CRYPTO_43_HSE_STOP_SEC_CODE
-#include "Crypto_43_HSE_MemMap.h"
+#define CRYPTO_STOP_SEC_CODE
+#include "Crypto_MemMap.h"
 
 #ifdef __cplusplus
 }

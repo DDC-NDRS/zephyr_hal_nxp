@@ -10,21 +10,7 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019 - 2024 NXP.
-*
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
+*   Copyright 2019 - 2022 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -82,7 +68,7 @@ extern "C"{
 /** @brief HSE ECC key format
  *  @details Additional info for Ecc key format for import and export
  *    For Weierstrass curve public keys:
- *    - the raw format is the X coordinate concatenated with the Y coordinate ( X || Y ), in big endian
+ *    - the raw format is the X coordinate concatenated with the Y cordinate ( X || Y ), in big endian
  *    - the uncompressed  format is a byte of 0x04, concatenated with the X coordinate and Y coordinates ( 0x04 || X || Y )
  *    - the compressed format is a byte of 0x02 or 0x03, depending on the (lsb) of Y, concatenated with the X coordinate
  *          - ( 0x02 || X ) if the lsb of Y is 0
@@ -121,7 +107,7 @@ typedef union
  *     - To import an encrypted/authenticated NVM key, the provided provision key(s) must have the same group owner as the imported NVM key.
  *     - To import an encrypted/authenticated NVM symmetric key using AEAD, the pointer to key info must be in the additional data
  *     - The key properties (keyInfo) along with the public key values are always imported in plain format.
- *  2. Restrictions for SuperUser rights:
+ *  2. SuperUser key restrictions:
  *     - NVM keys:
  *         - In empty slots, an encrypted key can be imported only authenticated, and a plain key can be imported
  *           with/without authentication (public keys must be imported in plain).
@@ -129,7 +115,7 @@ typedef union
  *     - RAM keys:
  *         - An encrypted key can be imported only authenticated. A plain key can be imported with/without authentication.
  *           Exception: RAM provision keys can be imported only authenticated.
- *  3. Restrictions for User rights:
+ *  3. User key restrictions:
  *     - NVM keys:
  *         - NVM secrets (symmetric keys and key pairs) can be imported only encrypted and authenticated.
  *           For key pair, private value must be encrypted and public value(s) unencrypted.
@@ -165,10 +151,7 @@ typedef struct
      *                        - For RAM keys the key counter is ignored (keyInfo may not be in the key container). */
     HOST_ADDR           pKeyInfo;
     /** @brief   INPUT: Pointer to key values.
-     *           A RSA private key should always be imported together with the public key.
-     *           An ECC private key can be imported standalone if the public key (pKey[0]) is NULL and
-     *           the public key length (keyLen[0]) is zero. The public key will be computed internally from
-     *           the private key.
+     *           A asymmetric private key should always be imported together with the public key.
      *           - pKey[0]:
      *              - RSA public modulus n (big-endian).
      *              - ECC depends on the key format
@@ -243,7 +226,7 @@ typedef struct
          *                   - Both lengths are used for (R,S) (ECC or ED25519).
          *                   - The MAC tag size must be minimum 16 bytes.
          *                   - RSA signature size must be #HSE_BITS_TO_BYTES(keyBitLength);
-         *                   - R or S size for ECDSA/EdDSA signature must be #HSE_BITS_TO_BYTES(keyBitLength) */
+         *                   - R or S size for ECDSA/EDDSA signature must be #HSE_BITS_TO_BYTES(keyBitLength) */
         uint16_t          authLen[2];
         /** @brief   INPUT: Address(es) to authentication tag.
          *                   @note

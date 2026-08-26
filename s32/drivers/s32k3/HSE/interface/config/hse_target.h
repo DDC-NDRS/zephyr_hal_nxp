@@ -10,25 +10,11 @@
 */
 /*==================================================================================================
 *
-*   Platform             : HSE_S32ZE
+*   Platform             : HSE_S32K3X8
 *   FW Type              : STANDARD
-*   SW Version           : 2.37.0
+*   SW Version           : 2.12.0
 *
-*   Copyright 2019-2024 NXP
-*
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
+*   Copyright 2019-2022 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -79,29 +65,22 @@ extern "C"{
 /* ***********************************************
 * Define HSE FW type
 **************************************************/
-#define HSE_STANDARD_FW 0
+#define STANDARD 0
 
 /* ***********************************************
 * Define current configuration
 **************************************************/
-#define HSE_PLATFORM       HSE_S32ZE              /**< @brief  HSE Platform. */
-#define HSE_FWTYPE         HSE_STANDARD_FW         /**< @brief  HSE FW Type. */
+#define HSE_PLATFORM       HSE_S32K3X8              /**< @brief  HSE Platform. */
+#define HSE_FWTYPE         STANDARD                /**< @brief  HSE FW Type. */
 
 /** @brief    HSE Firmware Version */
-#define HSE_FW_VERSION { \
-    0U,     /* reserved */ \
-    30U,     /* socTypeId */ \
-    0U,     /* fwTypeId */ \
-    2U,     /* majorVersion */ \
-    37U,     /* minorVersion */ \
-    0U      /* patchVersion */ \
-}
-
-/** @brief    HSE Firmware Build Information */
-#define HSE_FW_BUILD_INFO { \
-    0x7334ca80eb18d330ULL,     /* build unique identifier*/ \
-    20240531UL,                   /* build date */ \
-    82312UL                    /* build time */  \
+#define HSE_FW_VERSION {        \
+    0U,     /* reserved */      \
+    14U,    /* socTypeId */     \
+    0U,     /* fwTypeId */      \
+    2U,     /* majorVersion */  \
+    12U,    /* minorVersion */  \
+    0U      /* patchVersion */  \
 }
 
 /*==================================================================================================

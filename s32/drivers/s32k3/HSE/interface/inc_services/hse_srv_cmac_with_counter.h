@@ -6,29 +6,11 @@
  *
  *   @addtogroup hse_srv_cmac_with_counter HSE CMAC With Counter Service
  *   @ingroup class_crypto_services
- *
- *   @note    For HSE_B (devices with internal flash), the first service request after reset that depends on Monotonic Counters,
- *            i.e., #hseConfigSecCounterSrv_t, #hseReadCounterSrv_t, #hseIncrementCounterSrv_t and #hseCmacWithCounterSrv_t
- *            will take more time because of Monotonic Counters Initialization. Further requests will take usual time.
  *   @{
  */
 
 /*==================================================================================================
- *   Copyright 2019 - 2024 NXP
- *
- *   Redistribution and use in source and binary forms, with or without modification,
- *   are permitted provided that the following conditions are met:
- *
- *   1. Redistributions of source code must retain the above copyright notice, this list
- *      of conditions and the following disclaimer.
- *
- *   2. Redistributions in binary form must reproduce the above copyright notice, this
- *      list of conditions and the following disclaimer in the documentation and/or
- *      other materials provided with the distribution.
- *
- *   3. Neither the name of the copyright holder nor the names of its
- *      contributors may be used to endorse or promote products derived from this
- *      software without specific prior written permission.
+ *   Copyright 2019 - 2022 NXP
  *
  *   This software is owned or controlled by NXP and may only be used strictly in accordance with
  *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -97,7 +79,7 @@ extern "C" {
  *                     - "||" means concatenation
  *                     - VCI is the Volatile Counter provide as input parameter by the service (#pVolatileCounter parameter)
  *                     - RPO is the Rollover Protection Offset (#RPOffset parameter for CMAC verify) added to Rollover Protection value to adjust the RP bits.
- *                     - ISC - the implied value of the SC computed by HSE concatenating the optionally adjusted RP bits with the VCI bits
+ *                     - ISC - the implied value of the SC computed by HSE concatenating the optionally adjusted RP bits with the VCI bits 
  *                       (refer to CMAC verify sequence below)
  *
  *                 For CMAC generate, the HSE firmware performs the following sequence: <br>
@@ -130,15 +112,15 @@ typedef struct
 {
     /** @brief   INPUT: Specifies the direction: generate/verify. */
     hseAuthDir_t   authDir;
-
+    
     uint8_t        reserved1[3U];
-
+    
     /** @brief   INPUT: The key to be used for the operation. */
     hseKeyHandle_t keyHandle;
 
     /** @brief   INPUT: The counter Index of the secure counter */
     uint32_t       counterIdx;
-
+    
     /** @brief   INPUT: The Rollover protection offset used to adjust the Rollover protection bits of the secure counter in the CMAC verify operation.
      *                  It is ignored for CMAC generate.
      *                  If the CMAC verification fails, the application can try with a different RPOffset. */
@@ -154,7 +136,7 @@ typedef struct
     hseSGTOption_t   sgtOption;
 
     uint8_t        reserved2[2U];
-
+    
     /** @brief   INPUT: Length of the input message.(in bits) */
     uint32_t       inputBitLength;
 

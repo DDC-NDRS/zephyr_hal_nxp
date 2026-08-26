@@ -12,21 +12,7 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019-2024 NXP
-*
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
+*   Copyright 2019 - 2022 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -92,18 +78,12 @@ typedef uint8_t hseOtfadInstance_t;
 /*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
 ==================================================================================================*/
-/** @brief   OTFAD/IEE_DDR context activation flag. */
+/** @brief   OTFAD context activation flag. */
 typedef uint16_t hseOtfadActivateFlag_t;
 #define HSE_OTFAD_CTX_ACTIVE_ON_BOOT      ((hseOtfadActivateFlag_t)0xAB65U)    /**< @brief Activate context on boot. */
 #define HSE_OTFAD_CTX_INACTIVE_ON_BOOT    ((hseOtfadActivateFlag_t)0x375AU)    /**< @brief Inactive context on boot. */
 
-/** @brief Define the parameters of OTFAD/IEE_DDR context entry
- *
- * @note
- *  - The OTFAD/IEE_DDR configuration is part of SYS-IMG. Once configured, the host must publish and save the SYS_IMG to Flash.
- *  - The OTFAD/IEE_DDR cannot be used for IVT, DCD/ST-DCD, FW_IMG/FW_IMG* and SYS-IMG images: these images must be
- *    stored unencrypted in external Flash.
-*/
+/** @brief Define the parameters of OTFAD/IEE_DDR context entry */
 typedef struct
 {
     hseKeyHandle_t           keyHandle;            /**< @brief  The key handle of the OTFAD key (AES 128bit), the OTFAD key handle must always and only have #HSE_KF_USAGE_OTFAD_DECRYPT flag set. */
@@ -115,14 +95,16 @@ typedef struct
                                                                                        and a lower half formed from the ((address - startAddress) >> 3) (e.g offset in the defined memory region)
                                                                                        at which Ciphertext data is stored in memory. This counter value increments for each 8-byte block of encrypted data.
                                                                                        @note The lower half of the counter always starts at 0 for a block of encrypted data that starts from startAddress. */
-    uint32_t                 startAddress;         /**< @brief  - OTFAD Instance[0, 1]: The start address of the memory region. Must be aligned on a 1KB boundary. <br>
-                                                                - IEE_DDR Instance[2]: The start address of the memory region. Must be aligned on a 1MB boundary. */
-    uint32_t                 endAddress;           /**< @brief  - OTFAD Instance[0, 1]: The end address of the memory region. Must be aligned on a 1KB boundary. <br>
-                                                                - IEE_DDR Instance[2]: The end address of the memory region. Must be aligned on a 1MB boundary.  */
-    hseSmrFlags_t            smrFlags;             /**< @brief   - When BOOT_SEQ == 1 (Secure boot), it specifies the SMR entries (bit field) that should be verified before the activation of the OTFAD/IEE_DDR entry.
+    uint32_t                 startAddress;         /**< @brief  - OTFAD Instance[0, 1]: Defines the most significant bits of the 0-modulo-1024 byte start address of the memory region. <br>
+                                                                - IEE_DDR Instance[2]: Defines the most significant bits of the 0-module-1,048,576 byte start address of the memory region. */
+    uint32_t                 endAddress;           /**< @brief  - OTFAD Instance[0, 1]: Defines the most significant bits of the 1023-modulo-1024 byte end address of the memory region. <br>
+                                                                - IEE_DDR Instance[2]: Defines the most significant bits of the 1,048,575-modulo-1,048,576 byte end address of the memory region. */
+    hseSmrFlags_t            smrFlags;             /**< @brief   - When BOOT_SEQ == 1 (Secure boot), it specifies the SMR entries (bit field) that should be verified before the activation of the
+                                                                                                      otfad/IEE_DDR entry.
                                                                  - When BOOT_SEQ == 0 (Un-secure boot), if there is any SMR linked with OTFAD/IEE_DDR entry,
-                                                                   the application should trigger the verification at run-time (activate the OTFAD/IEE_DDR context using the service structure hseActivateOtfadContextSrv_t);
-                                                                   in this case, the SMR must NOT be in the QSPI flash region configured using OTFAD/IEE_DDR.*/
+                                                                                                        the application should trigger the verification at run-time
+                                                                (activate the otfad/IEE_DDR context using the service structure hseActivateOtfadContextSrv_t); in this case, the SMR must NOT be in the QSPI flash
+                                                                region configured using OTFADi/IEE_DDR.*/
     hseOtfadActivateFlag_t   activateOnBoot;       /**< @brief  If #activateOnBoot == #HSE_OTFAD_CTX_ACTIVE_ON_BOOT, the configured OTFAD/IEE_DDR context will automatically activate while booting.
                                                                 otherwise, the hseOtfadActivateContextSrv_t service must be called to activate the OTFAD/IEE_DDR context. */
     uint8_t                  reserved[2];
@@ -132,12 +114,7 @@ typedef struct
 
 /** @brief HSE OTFAD/IEE_DDR Install Context service (update or add new entry).
  *  @details This service installs an existing OTFAD/IEE_DDR context or add a new one.
- *  @note
- *  - SuperUser rights (for NVM Configuration) are needed to perform this service.
- *  - For S32ZE devices that have more than one instance (see #hseOtfadInstance_t):
- *      - Either OTFAD0 (QSPI flash) or OTFAD1/IEE (LPDDR flash) can be configured and used.
- *      - If external memory is QSPI flash (quad, octal, hyper modes), then OTFAD0 (QSPI0 interface) entry can be configured.
- *      - If external memory is LPDDR flash, then either IEE (LPDDR interface) or/and OTFAD1 (QSPI1 interface) can be configured.
+ *  @note SuperUser rights (for NVM Configuration) are needed to perform this service.
  */
 typedef struct
 {
@@ -145,9 +122,10 @@ typedef struct
                       I can be defined up to #HSE_NUM_OF_OTFAD_ENTRIES contexts (per OTFAD instance) and up to #HSE_NUM_OF_IEE_DDR_ENTRIES for IEE_DDR instance (if supported) */
     uint8_t              otfadIdx ;
     /** @brief INPUT: Identifies the OTFAD or IEE_DDR instance (refer to #hseOtfadInstance_t). it shall be between 0 and #HSE_NUM_OF_OTFAD_INSTANCES.
-     *                If IEE_DDR for flash decrypt is supported (see #HSE_SPT_IEE_DDR_FLASH), the last instance (see #HSE_IEE_DDR_INSTANCE_2)
-     *                is used to configure the IEE_DDR. This instance contains #HSE_NUM_OF_IEE_DDR_ENTRIES contexts.
-     */
+     *                @note
+     *                - S32ZE devices have more than one OTFAD instances.
+     *                - If IEE_DDR for flash decrypt is supported (see #HSE_SPT_IEE_DDR_FLASH), the last instance (see #HSE_IEE_DDR_INSTANCE_2) 
+     *                  is used to configure the IEE DDR. This instance contains #HSE_NUM_OF_IEE_DDR_ENTRIES contexts.*/
     hseOtfadInstance_t   otfadInstance;
     uint8_t              reserved[2];
     /** @brief INPUT: Address to hseOtfadContext_t that contains the configuration properties of OTFAD/IEE_DDR context */
@@ -173,7 +151,7 @@ typedef struct
     /** @brief INPUT: Identifies the OTFAD or IEE_DDR instance (refer to #hseOtfadInstance_t). it shall be between 0 and #HSE_NUM_OF_OTFAD_INSTANCES.
      *                @note
      *                - S32ZE devices have more than one OTFAD instances.
-     *                - if IEE_DDR for flash decrypt is supported (see #HSE_SPT_IEE_DDR_FLASH), the last instance (see #HSE_IEE_DDR_INSTANCE_2)
+     *                - if IEE_DDR for flash decrypt is supported (see #HSE_SPT_IEE_DDR_FLASH), the last instance (see #HSE_IEE_DDR_INSTANCE_2) 
      *                  is used to configure the IEE_DDR. .*/
     hseOtfadInstance_t   otfadInstance;
     uint8_t              reserved[2];
@@ -193,7 +171,7 @@ typedef struct
     /** @brief INPUT: Identifies the OTFAD or IEE_DDR instance (refer to #hseOtfadInstance_t). it shall be between 0 and #HSE_NUM_OF_OTFAD_INSTANCES.
      *                @note
      *                - S32ZE devices have more than one OTFAD instances.
-     *                - if IEE DDR for flash decrypt is supported (see #HSE_SPT_IEE_DDR_FLASH), the last instance (see #HSE_IEE_DDR_INSTANCE_2)
+     *                - if IEE DDR for flash decrypt is supported (see #HSE_SPT_IEE_DDR_FLASH), the last instance (see #HSE_IEE_DDR_INSTANCE_2) 
      *                  is used to configure the IEE DDR. */
     hseOtfadInstance_t   otfadInstance;
     uint8_t              reserved[2];

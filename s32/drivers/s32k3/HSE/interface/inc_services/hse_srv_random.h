@@ -10,27 +10,13 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019 - 2024 NXP.
+*   Copyright 2019 - 2022 NXP.
 *
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
-*
-*   This software is owned or controlled by NXP and may only be used strictly in accordance with
-*   the applicable license terms. By expressly accepting such terms or by downloading, installing,
-*   activating and/or otherwise using the software, you are agreeing that you have read, and that
-*   you agree to comply with and are bound by, such license terms. If you do not agree to
-*   be bound by the applicable license terms, then you may not retain, install, activate or
+*   This software is owned or controlled by NXP and may only be used strictly in accordance with 
+*   the applicable license terms. By expressly accepting such terms or by downloading, installing, 
+*   activating and/or otherwise using the software, you are agreeing that you have read, and that 
+*   you agree to comply with and are bound by, such license terms. If you do not agree to 
+*   be bound by the applicable license terms, then you may not retain, install, activate or 
 *   otherwise use the software.
 ==================================================================================================*/
 /*==================================================================================================
@@ -98,14 +84,8 @@ typedef uint8_t hseRngClass_t;
 /*==================================================================================================
                                  STRUCTURES AND OTHER TYPEDEFS
 ==================================================================================================*/
-/** @brief Get random number service.
- *  @note 
- *      - When the HSE_STATUS_RNG_INIT_OK status flag is cleared (failed), the call of any service
- *        that requires a random number (e.g. Get Random Number, ECDSA signature generate etc.)
- *        triggers a RNG re-initialization before requesting the random number.
- *        If the RNG re-initialization is executed successfully, the HSE_STATUS_RNG_INIT_OK status flag is set to 1.
- *      - If the HSE_SRV_RSP_RNG_INIT_IN_PROGRESS status is received (RNG initialization is in progress), 
- *        the application must try when the HSE_STATUS_RNG_INIT_OK status is set in the FSR register. 
+/** @brief Get random number service. 
+ * @note This command can be performed only when the #HSE_STATUS_RNG_INIT_OK bit is set.
  * */
 typedef struct
 {

@@ -6,29 +6,11 @@
 *
 *   @addtogroup hse_srv_monotonic_counters HSE Monotonic Counters
 *   @ingroup class_monotonic_counters
-*
-*   @note    For HSE_B (devices with internal flash), the first service request after reset that depends on Monotonic Counters,
-*            i.e., #hseConfigSecCounterSrv_t, #hseReadCounterSrv_t, #hseIncrementCounterSrv_t and #hseCmacWithCounterSrv_t
-*            will take more time because of Monotonic Counters Initialization. Further requests will take usual time.
 *   @{
 */
 /*==================================================================================================
 *
-*   Copyright 2019 - 2024 NXP.
-*
-*   Redistribution and use in source and binary forms, with or without modification,
-*   are permitted provided that the following conditions are met:
-*
-*   1. Redistributions of source code must retain the above copyright notice, this list
-*      of conditions and the following disclaimer.
-*
-*   2. Redistributions in binary form must reproduce the above copyright notice, this
-*      list of conditions and the following disclaimer in the documentation and/or
-*      other materials provided with the distribution.
-*
-*   3. Neither the name of the copyright holder nor the names of its
-*      contributors may be used to endorse or promote products derived from this
-*      software without specific prior written permission.
+*   Copyright 2019 - 2022 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -156,8 +138,8 @@ typedef struct
  *              - The secure counter configuration is stored in data flash each time hseConfigSecCounterSrv_t is called.
  *              - If RPBitSize = 64bits, the HSE stores the SC in flash each time is updated.
  *         - For HSE_H/M (flashless devices)
- *              - The RPBitSize is configured for all the enabled secure counters. If the RP of a counter is updated, a warning event is trigger
- *                called #HSE_WA_PUBLISH_COUNTER_TBL through MUB_GSR register. The application shall clear the warning bit (W1C) and
+ *              - The RPBitSize is configured for all the enabled secure counters. If the RP of a counter is updated, a warning event is trigger 
+ *                called #HSE_WA_PUBLISH_COUNTER_TBL through MUB_GSR register. The application shall clear the warning bit (W1C) and 
  *                use the #hsePublishLoadCntTblSrv_t service to publish and store the counter table in the external flash.
  *                Note that the counter table must be loaded at initialization time by the application (anti-rollback protection is not supported).
  *

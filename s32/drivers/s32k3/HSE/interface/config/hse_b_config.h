@@ -10,7 +10,7 @@
 */
 /*==================================================================================================
 *
-*    Copyright 2019 - 2022 NXP.
+*    Copyright 2019-2024 NXP
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -89,7 +89,7 @@ extern "C"{
     #define HSE_SPT_SHA2_512                  /**< @brief Support for SHA2_512 in FIPS PUB 180-4. Scatter gather feature is not supported. */
     #define HSE_SPT_SHA2_512_224              /**< @brief Support for SHA2_512_224 in FIPS PUB 180-4. Scatter gather feature is not supported. */
     #define HSE_SPT_SHA2_512_256              /**< @brief Support for SHA2_512_256 in FIPS PUB 180-4. Scatter gather feature is not supported. */
-    /**< \defdisable{#define,HSE_SPT_SHA3}*/  /**< @brief Support for SHA3_(224, 256, 384, 512) as defined  in FIPS PUB 202. */
+    #define HSE_SPT_SHA3                      /**< @brief Support for SHA3_(224, 256, 384, 512) as defined  in FIPS PUB 202. */
     #define HSE_SPT_MIYAGUCHI_PRENEEL         /**< @brief Miyaguchi-Preneel compression function (SHE spec support)*/
 #endif /* ifdef HSE_SPT_HASH */
 
@@ -102,9 +102,6 @@ extern "C"{
     #define HSE_SPT_GMAC                          /**< @brief Support for AES GMAC as defined  in NIST SP 800-38D. */
     /**< \defdisable{#define,HSE_SPT_XCBC_MAC}*/  /**< @brief Support for AES XCBC_MAC_96 as defined  in RFC-3566. */
 #endif /* ifdef HSE_SPT_MAC */
-
-    /*-------------------------------------------------------*/
-    #define HSE_SPT_CMAC_WITH_COUNTER             /**< @brief Support for CMAC with counter */
 
     /*-------------------------------------------------------*/
     /**< \defdisable{#define,HSE_SPT_SIPHASH}*/   /**< @brief Support for SipHash */
@@ -121,7 +118,7 @@ extern "C"{
 
     /*-------------------------------------------------------*/
     #define HSE_SPT_ECC                                   /**< @brief Support for ECC */
-    #define HSE_SPT_CLASSIC_DH                            /**< @brief Support for generate key pair, DH share secret computation as defined in FIPS 186-4 */
+    /**< \defdisable{#define HSE_SPT_CLASSIC_DH}*/                            /**< @brief Support for generate key pair, DH share secret computation as defined in FIPS 186-4 */
 #ifdef HSE_SPT_ECC
     #define HSE_SPT_ECDH                                  /**< @brief ECDH support */
     #define HSE_SPT_ECDSA                                 /**< @brief ECDSA support */
@@ -139,7 +136,7 @@ extern "C"{
     /**< \defdisable{#define,HSE_SPT_EC_448_ED448} */     /**< @brief Twisted Edwards ED448 curve support (used with EdDSA )*/
     #define HSE_SPT_EC_25519_CURVE25519                   /**< @brief Montgomery X25519 curve support (used with MONTDH) */
     /**< \defdisable{#define,HSE_SPT_EC_448_CURVE448}*/   /**< @brief Montgomery X448 curve support (used with MONTDH) */
-    #define HSE_SPT_BURMESTER_DESMEDT                     /**< @brief Burmester-Desmedt Protocol support */
+    /**< \defdisable{#define HSE_SPT_BURMESTER_DESMEDT}*/                     /**< @brief Burmester-Desmedt Protocol support */
 #endif /*ifdef HSE_SPT_ECC */
 
     /*-------------------------------------------------------*/
@@ -185,7 +182,7 @@ extern "C"{
 #endif
 
     #define HSE_SPT_FORMAT_KEY_CATALOGS     /**< @brief Support Format Key Catalogs service */
-    #define HSE_SPT_EXTEND_KEY_CATALOG      /**< @brief Support Format Key Catalogs Extend service */
+    /**< \defdisable{#define HSE_SPT_EXTEND_KEY_CATALOG}*/      /**< @brief Support Format Key Catalogs Extend service */
     #define HSE_SPT_GET_KEY_INFO            /**< @brief Support Get Key Info Service. */
     #define HSE_SPT_KEY_VERIFY              /**< @brief Support Key Verify Service. */
     #define HSE_SPT_IMPORT_KEY              /**< @brief Support Import Key Service. */
@@ -194,7 +191,7 @@ extern "C"{
 
     /*-------------------------------------------------------*/
     #define HSE_SPT_PUBLISH_NVM_KEYSTORE_RAM_TO_FLASH                /**< @brief Support Publishing the keystore from RAM to data flash */
-    
+
     /*-------------------------------------------------------*/
     #define HSE_SPT_MONOTONIC_COUNTERS            /**< @brief Monotonic Counter support */
 #ifdef HSE_SPT_MONOTONIC_COUNTERS
@@ -210,11 +207,20 @@ extern "C"{
 #endif
 
     /*-------------------------------------------------------*/
+    #ifdef HSE_SPT_MONOTONIC_COUNTERS
+    /**< \defdisable{#define HSE_SPT_CMAC_WITH_COUNTER}*/            /**< @brief Support for CMAC with counter */
+    #endif /* HSE_SPT_MONOTONIC_COUNTERS */
+
+    /*-------------------------------------------------------*/
 
     #define HSE_SPT_SMR_CR                           /**< @brief Advance Secure Booting(ASB) Secure memory regions verification (SMR) & Core Reset(CR) Table Support */
 #ifdef HSE_SPT_SMR_CR
     #define HSE_NUM_OF_SMR_ENTRIES          (8U)                  /**< @brief   The supported number of SMR entries*/
+    #if (HSE_PLATFORM == HSE_S32K388)
+    #define HSE_NUM_OF_CORE_RESET_ENTRIES   (4U)                  /**< @brief   The supported number of CORE RESET entries*/
+    #else
     #define HSE_NUM_OF_CORE_RESET_ENTRIES   (3U)                  /**< @brief   The supported number of CORE RESET entries*/
+    #endif /* (HSE_PLATFORM == HSE_S32K388) */
     #define HSE_SPT_SMR_DECRYPT                                   /**< @brief   Support encrypted SMRs. */
 #endif
     /*-------------------------------------------------------*/
@@ -239,14 +245,14 @@ extern "C"{
 
     #define HSE_SPT_OTA_FIRMWARE_UPDATE            /**< @brief Support OTA Firmware Update */
     #define HSE_SPT_OTA_SBAF_UPDATE                /**< @brief Support SBAF update */
-    #define HSE_SPT_FW_BACKUP_ENABLE               /**< @brief Support BACKUP Feature. */
     #define HSE_SPT_FW_INTEGRITY_CHECK             /**< @brief Support HSE flash memory integrity check. */
+    #define HSE_SPT_ERASE_FW                       /**< @brief Erase Active HSE FW, Backup (if present) and SYS-IMG from internal secure flash memory in CUST_DEL lifecycle */
 
     #define HSE_SPT_SGT_OPTION                     /**< @brief Enable support for Scatter Gatter Table */
 #ifdef HSE_SPT_SGT_OPTION
     #define HSE_MAX_NUM_OF_SGT_ENTRIES  (8U)        /**< @brief Maximum number for SGT entries */
 #endif
-    #define HSE_SPT_APP_SPECIFIC_DATA_ATTR          /**< @brief Enable support for "Application Specific Data" attribute. */
+    /**< \defdisable{#define HSE_SPT_APP_SPECIFIC_DATA_ATTR}*/          /**< @brief Enable support for "Application Specific Data" attribute. */
     /*-------------------------------------------------------*/
     #define HSE_NUM_OF_MU_INSTANCES       (2U)      /**< @brief  The maxim number of MU interfaces */
     #define HSE_NUM_OF_CHANNELS_PER_MU    (4U)      /**< @brief  The maxim number of channels per MU interface  */
@@ -254,11 +260,19 @@ extern "C"{
 
 #ifdef HSE_SPT_ECC_USER_CURVES
     #define HSE_NUM_OF_USER_ECC_CURVES    (1U)      /**< @brief The number of ECC curves the user can load into the HSE */
-#endif
+#endif /* HSE_SPT_ECC_USER_CURVES */
 
     #define HSE_TOTAL_NUM_OF_KEY_GROUPS   (32U)     /**< @brief  The total number of catalog configuration entries for both NVM and RAM catalogs.*/
+    #ifdef HSE_SPT_MSC_KEYSTORE
+    #define HSE_ACE_KEYSTORE_MAX_SLOTS    (80U)
+    #endif /* HSE_SPT_MSC_KEYSTORE */
+    #ifdef HSE_SPT_MSC_KEYSTORE
+    #define HSE_MAX_NVM_STORE_SIZE              ((7768U) + ((HSE_SPT_NXP_KEY_STORE_NO_OF_SECTORS - 1U) * HSE_SECTOR_SIZE)) /**< @brief  NVM key store size (in bytes) */
+    #else
+    #define HSE_MAX_NVM_STORE_SIZE              (7768U + ((HSE_SPT_NXP_KEY_STORE_NO_OF_SECTORS - 1U) * HSE_SECTOR_SIZE)) /**< @brief  NVM key store size (in bytes) */
+    #endif
+
     #define HSE_MAX_RAM_STORE_SIZE        (6144U)   /**< @brief  RAM key store size (in bytes) */
-    #define HSE_MAX_NVM_STORE_SIZE        (7768U + ((HSE_SPT_NXP_KEY_STORE_NO_OF_SECTORS - 1U) * HSE_SECTOR_SIZE))   /**< @brief  NVM key store size (in bytes) */
 
     #define HSE_AES_KEY_BITS_LENS         {128U, 192U, 256U}   /**< @brief  AES key bit length (set to zero to disable a AES key size)*/
 
@@ -286,7 +300,7 @@ extern "C"{
 #endif
 
 #ifdef HSE_SPT_FAST_CMAC
-    #define HSE_DEFAULT_MIN_FAST_CMAC_TAG_BITLEN   (64U)         /**< @brief  FAST CMAC default min bit length*/
+    #define HSE_DEFAULT_MIN_FAST_CMAC_TAG_BITLEN   (32U)         /**< @brief  FAST CMAC default min bit length*/
 #endif
 
 #ifdef HSE_SPT_SIPHASH

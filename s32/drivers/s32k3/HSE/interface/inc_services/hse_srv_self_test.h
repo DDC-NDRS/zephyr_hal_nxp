@@ -10,7 +10,7 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019 - 2022 NXP.
+*   Copyright 2019-2024 NXP
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -91,24 +91,26 @@ typedef uint64_t hseSelfTestMask_t;
 ==================================================================================================*/
 /** @brief Self Test service.
  *  @details Performs a self-test on a specific security block or a full self-test.
- *  @note - During the self-test operation, the hse firmware cannot be interrupted by another request
+ *  @note - During the self-test operation, the HSE firmware cannot be interrupted by another request
  *         (until the operation is completed).
  *        - The requested self-tests must be supported; otherwise, the self-test service returns the
  *          #HSE_SRV_RSP_NOT_ALLOWED status (no requested self-tests will be executed).
- *        - The #HSE_ST_FW_INTEGRITY flag checks the integrity of HSE FW and SYS-IMG inside HSE.
- *          If the integrity fails, the HSE firmware returns #HSE_SRV_RSP_GENERAL_ERROR and goes to
+ *        - If one of the check fails, the HSE firmware returns #HSE_SRV_RSP_GENERAL_ERROR and goes to
  *          shutdown (a fatal error occurred). In this case, the application must perform a system reset.
- *        - At first request for #HSE_ST_FW_INTEGRITY the hash over HSE FW will be computed, verification being done in the subsequent requests. */
+ *        - The #HSE_ST_FW_INTEGRITY flag checks the integrity of HSE FW and runtime SYS-IMG (if present) inside HSE.
+ *        - At first request for #HSE_ST_FW_INTEGRITY the hash over HSE FW will be computed,
+ *          verification being done in the subsequent requests. */
 typedef struct
 {
-    /** @brief   INPUT: Select bits to run a specific self-test.
-     *                  (note that the selected bits should map the supported self-tests).
-     *                  All bits zero means that a full self-test will be performed */
-    hseSelfTestMask_t           selfTest;
-    /** @brief   OUTPUT: The address where the self-tests results bit mask is returned (points to
-     *                   #hseSelfTestMask_t value).
-     *                   If a bit is set (1), the self-test of the corresponding capability failed. */
-    HOST_ADDR                   pTestResultsBitMask;
+    /** @brief   INPUT:  Select bits to run a specific self-test.
+     *                   (note that the selected bits should map the supported self-tests).
+     *                   All bits zero means that a full self-test will be performed. */
+    hseSelfTestMask_t    selfTest;
+    /** @brief   OUTPUT: The address where the self-tests results bit mask is returned (points to a #hseSelfTestMask_t type).
+     *                   If one of the requested self-tests failed, HSE returns #HSE_SRV_RSP_GENERAL_ERROR
+     *                   and the corresponding bit for the failing test is set to one.
+     *                   If all the self-tests passed, HSE returns #HSE_SRV_RSP_OK and this field can be ignored. */
+    HOST_ADDR            pTestResultsBitMask;
 } hseSelfTestSrv_t;
 
 

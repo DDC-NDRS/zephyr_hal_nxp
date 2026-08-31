@@ -10,11 +10,11 @@
 */
 /*==================================================================================================
 *
-*   Platform             : HSE_S32K3X8
+*   Platform             : HSE_S32K358
 *   FW Type              : STANDARD
-*   SW Version           : 2.12.0
+*   SW Version           : 2.55.0
 *
-*   Copyright 2019-2022 NXP.
+*   Copyright 2019-2024 NXP
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -65,22 +65,30 @@ extern "C"{
 /* ***********************************************
 * Define HSE FW type
 **************************************************/
-#define STANDARD 0
+#define HSE_STANDARD_FW 0
 
 /* ***********************************************
 * Define current configuration
 **************************************************/
-#define HSE_PLATFORM       HSE_S32K3X8              /**< @brief  HSE Platform. */
-#define HSE_FWTYPE         STANDARD                /**< @brief  HSE FW Type. */
+#define HSE_PLATFORM       HSE_S32K358              /**< @brief  HSE Platform. */
+#define HSE_FWTYPE         HSE_STANDARD_FW         /**< @brief  HSE FW Type. */
 
-/** @brief    HSE Firmware Version */
-#define HSE_FW_VERSION {        \
-    0U,     /* reserved */      \
-    14U,    /* socTypeId */     \
-    0U,     /* fwTypeId */      \
-    2U,     /* majorVersion */  \
-    12U,    /* minorVersion */  \
-    0U      /* patchVersion */  \
+
+/** @brief HSE Firmware Version */
+#define HSE_FW_VERSION { \
+     0U,        /* reserved */ \
+    14U,        /* socTypeId */ \
+     0U,        /* fwTypeId */ \
+     2U,        /* majorVersion */ \
+    55U,        /* minorVersion */ \
+     0U         /* patchVersion */ \
+}
+
+/** @brief    HSE Firmware Build Information */
+#define HSE_FW_BUILD_INFO { \
+    0x50e48d9d15d7e542ULL,      /* build unique identifier*/ \
+    20250207UL,                 /* build date */ \
+    151419UL                    /* build time */  \
 }
 
 /*==================================================================================================

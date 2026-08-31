@@ -10,7 +10,7 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019 - 2022 NXP.
+*   Copyright 2019-2024 NXP
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -41,7 +41,7 @@ extern "C"{
 #define HSE_START_PRAGMA_PACK
 #include "hse_compiler_abs.h"
 
-
+#ifdef HSE_SPT_SMR_CR
 /*==================================================================================================
 *                              SOURCE FILE VERSION INFORMATION
 ==================================================================================================*/
@@ -84,8 +84,10 @@ typedef uint16_t hseCrStartOption_t;
             - QSPI Flash
             - SD card
             - MMC
-            - for different SMR(s), any combination of the above memory interfaces, except MMC and SD (e.g. QSPI Flash and SD, QSPI Flash and MMC).
-      - For HSE_B, the source memory flags (QSPI/SD/MMC) are not used.
+            - LPDDR4 Flash (used only for S32ZE devices)
+            - for different SMR(s), any combination of the above memory interfaces, except MMC and SD (e.g. QSPI/LPDDR4 Flash and SD, QSPI/LPDDR4 Flash and MMC).
+      - For HSE_B, the source memory flags (QSPI/SD/MMC/LPDDR4) are not used.
+      - For SAF86XX devices, if the Flashless Boot Mode is used, The pSmrSrc and pSmrDest addresses must be equal. The SMR will be only authenticated and decrypted (only if encrypted) in place. BootROM copied the SMR images in SRAM.
 */
 typedef uint8_t hseSmrConfig_t;
 #define HSE_SMR_CFG_FLAG_QSPI_FLASH          ((hseSmrConfig_t)0x0U)        /**< @brief Identifies the Interface (where the SMR needs to be copied from)*/
@@ -104,8 +106,8 @@ typedef uint8_t hseSmrConfig_t;
 /** @brief Options for customizing SMR run-time verification. */
 typedef uint16_t hseSmrVerificationOptions_t;
 #define HSE_SMR_VERIFICATION_OPTION_NONE           ((hseSmrVerificationOptions_t)0UL)            /** @brief Default verification of the SMR at run-time. */
-#define HSE_SMR_VERIFICATION_OPTION_NO_LOAD        ((hseSmrVerificationOptions_t)(3UL << 0U))    /** @brief SMR is verified from the external flash (using pSmrSrc address) even if pSmrDest is specified or if already loaded. Can be used only if SMR is in a memory mapped external flash (e.g. QSPI and not SD/eMMC). Additionally the SMR cannot be encrypted. */
-#define HSE_SMR_VERIFICATION_OPTION_RELOAD         ((hseSmrVerificationOptions_t)(3UL << 2U))    /** @brief SMR is loaded from the external flash and verified even if it is already loaded. Can be used only if SMR is in a memory mapped external flash (e.g. QSPI and not SD/eMMC). */
+#define HSE_SMR_VERIFICATION_OPTION_NO_LOAD        ((hseSmrVerificationOptions_t)(3UL << 0U))    /** @brief SMR is verified from the external flash (using pSmrSrc address) even if pSmrDest is specified or if already loaded. Can be used only if SMR is in a memory mapped external flash (e.g. QSPI/LPDDR4 and not SD/eMMC). Additionally the SMR cannot be encrypted. */
+#define HSE_SMR_VERIFICATION_OPTION_RELOAD         ((hseSmrVerificationOptions_t)(3UL << 2U))    /** @brief SMR is loaded from the external flash and verified even if it is already loaded. Can be used only if SMR is in a memory mapped external flash (e.g. QSPI/LPDDR4 and not SD/eMMC). */
 #if defined(HSE_SPT_INTERNAL_FLASH_DEV)
 #define HSE_SMR_VERIFICATION_OPTION_PASSIVE_MEM    ((hseSmrVerificationOptions_t)(3UL << 4U))    /** @brief Only for HSE_B with A/B Swap Configuration. Verifies the SMR from the passive block, applying address translation. */
 #endif /* HSE_SPT_INTERNAL_FLASH_DEV */
@@ -120,7 +122,7 @@ typedef uint16_t hseSmrVerificationOptions_t;
 
 #ifdef HSE_SPT_SMR_DECRYPT
 /** @brief   Defines the parameters to decrypt an encrypted SMR.
- *  @details The paramters below are used in the SMR entry only with an encrypted SMR.
+ *  @details The parameters below are used in the SMR entry only with an encrypted SMR.
  *           @note The following algorithms can be used:
  *           - If pGmacTag == NULL, the SMR must be encrypted using AES-CTR
  *           - If pGmacTag != NULL, the SMR must be encrypted using AEAD-GCM with AAD = NULL (pGmacTag shall point to the GMAC Tag).
@@ -138,8 +140,8 @@ typedef struct
                                                               - If #pGmacTag != NULL, the external stored GMAC tag (in flash) is used to verify the encrypted SMR.
                                                                 The length considered in this case is 16 bytes. */
     uint8_t                 aadLength;          /**< @brief   Optional - the length in bytes of the Authenticated Additional Data (AAD). <br>
-                                                              - Can be zero; <br>
-                                                              - The maximum length is 128 bytes.
+                                                              - If not used, the length can be zero; <br>
+                                                              - If used, the length can be either 64 or 128 bytes.
                                                               - If used, #pGmacTag must also be provided. */
     uint8_t                 reserved[3U];       /**< @brief   Reserved - alignment. */
     uint32_t                pAAD;               /**< @brief   Optional - the AAD used for AEAD. <br>
@@ -154,7 +156,7 @@ typedef struct
  *           1. "Installation Phase" (using hseSmrEntryInstallSrv_t service).
  *                - The parameters related to SMR authetication and encryption, namely #authScheme, #authKeyHandle and if the SMR is encrypted, hseSmrDecrypt_t#decryptKeyHandle and hseSmrDecrypt_t#pGmacTag
  *                  will be used by HSE at installation time from the hseSmrEntry_t structure referenced in the hseSmrEntryInstallSrv_t#pSmrEntry.
- *                - This phase happens at run-time and as a consequence any data provided to HSE must be memory-mapped (QSPI/RAM). In case an SMR lying in SD/eMMC is installed, a copy of the data that is not stored
+ *                - This phase happens at run-time and as a consequence any data provided to HSE must be memory-mapped (QSPI/LPDDR4/RAM). In case an SMR lying in SD/eMMC is installed, a copy of the data that is not stored
  *                  by the HSE internally must be done available in RAM (e.g. SMR source, signature, AAD, GMAC tag, etc.). At installation time HSE will use the matching pointer fields from the hseSmrEntryInstallSrv_t structure to access the data.
  *           2. "Verification Phase" that can be configured to be performed in two modes:
  *                - Verify with the Original/Installation Authentication TAG over the plaintext (#HSE_SMR_CFG_FLAG_INSTALL_AUTH flag is set); the #pInstAuthTag parameter must be provided and must point to original signature.
@@ -163,21 +165,16 @@ typedef struct
  */
 typedef struct
 {
-    uint32_t            pSmrSrc;            /**< @brief Source address where the SMR needs to be loaded from.*/
-    #ifdef HSE_SPT_INTERNAL_FLASH_DEV
+    uint32_t            pSmrSrc;            /**< @brief Source address where the SMR needs to be loaded from. This address must be absolute address. */
     uint32_t            smrSize;            /**< @brief The size in bytes of the SMR to be loaded/verified. */
     HOST_ADDR           pSmrDest;           /**< @brief Destination address of SMR (where to copy the SMR after authentication).
                                                         @note
                                                         - For HSE_B, if this parameter is specified (i.e. pSmrDest != NULL), pSmrDest and (pSmrDest + smrSize) must be aligned to 16 bytes. */
-    #else
-    HOST_ADDR           pSmrDest;           /**< @brief Destination address of SMR (where to copy the SMR after authentication).*/
-    uint32_t            smrSize;            /**< @brief The size in bytes of the SMR to be loaded/verified. */
-    #endif /* HSE_SPT_INTERNAL_FLASH_DEV */
     hseSmrConfig_t      configFlags;        /**< @brief Configuration flags of SMR entry (see #hseSmrConfig_t). */
     uint8_t             reserved0[3U];      /**< @brief Reserved for alignment. */
     uint32_t            checkPeriod;        /**< @brief If #checkPeriod != 0, HSE verify the SMR entry periodically (in background).
                                                         Specifies the verification period in x100 milliseconds when HSE is running at maximum frequency.
-                                                        Otherwise, the period is multiplied by the factor max_freq/actual_freq (e.g. 10ms at 400MHz, 20ms at 200MHz, etc).
+                                                        Otherwise, the period is multiplied by the factor max_freq/actual_freq (e.g. 100ms at 400MHz, 200ms at 200MHz, etc).
                                                         @note
                                                         - The value 0xFFFFFFFFUL invalid; the checkPeriod max value must be [MAX_UNSIGNED32_INT - 1].
                                                         - If the checkPeriod is non zero, the #pSmrDest must be non zero and the #configFlags must be zero.
@@ -193,7 +190,7 @@ typedef struct
                                                         - Otherwise an internal authentication scheme is used.
                                                         @note
                                                         - The authKeyHandle must match the authentication scheme (e.g. a RSA key must be used for RSA signature).
-                                                        - Pure EDDSA scheme (eddsa.bHashEddsa != TRUE) is not supported for streaming installation. 
+                                                        - Pure EDDSA scheme (eddsa.bHashEddsa != TRUE) is not supported for streaming installation.
                                                         - Pure EDDSA scheme (eddsa.bHashEddsa != TRUE) is not supported with encrypted SMR.
                                                         - EDDSA scheme Context (if used) can be maximum 16 bytes. */
     uint32_t            pInstAuthTag[2];    /**< @brief Optional - The location in external flash of the initial proof of authenticity over SMR.
@@ -204,10 +201,10 @@ typedef struct
                                                         - For MAC and RSA signature, only pInstAuthTag[0] is used.
                                                         - Both addresses are used for ECDSA and EDDSA signatures (specified by (r,s), with r at index 0, and s at index 1). */
     #if defined(HSE_SPT_SMR_DECRYPT)
-    hseSmrDecrypt_t     smrDecrypt;         /**< @brief Specifies the paramters for SMR decryption */
+    hseSmrDecrypt_t     smrDecrypt;         /**< @brief Specifies the parameters for SMR decryption */
     #endif
 
-    uint32_t versionOffset;                 /**< @brief Optional - The offset in SMR where the image version can be found. 
+    uint32_t versionOffset;                 /**< @brief Optional - The offset in SMR where the image version can be found.
                                                         May be used to provide the SMR version which offers anti-rollback protection for the image against attacks during update.
                                                         @note
                                                         - Ignored if set to #HSE_SMR_VERSION_NOT_USED (i.e. 0).
@@ -259,7 +256,7 @@ typedef struct
                                                             - If #altPreBootSmrMap == 0, #pAltReset field is ignored (can not used).
                                                             - If the conditions to boot from #pAltReset are not met (#altPreBootSmrMap == 0, #pAltReset == NULL or one of the #altPreBootSmrMap SMR(s) fails)
                                                               HSE will apply the sanctions as specified in #crSanction field. */
-    uint32_t            postBootSmrMap;     /**< @brief The POST-BOOT SMR(s) which need to be loaded after verifing the #preBootSmrMap SMR(s) (if any). <br>
+    uint32_t            postBootSmrMap;     /**< @brief The POST-BOOT SMR(s) which need to be loaded after verifying the #preBootSmrMap SMR(s) (if any). <br>
                                                         It's a 32 bits value, each bit specifying the particular SMR entry index from 0-31. HSE verifies each SMR entry specified by this bitfield.
                                                         @note
                                                             - If #preBootSmrMap == 0 (no PRE-BOOT SMR is specified), the SMR(s) specified by #postBootSmrMap will be loaded before the core is un-gated from #pPassReset address.
@@ -297,9 +294,10 @@ typedef struct
 *    - In User mode, the SMR can be updated only changing the hseSmrEntry_t#pSmrSrc, hseSmrEntry_t#smrSize and hseSmrEntry_t#pInstAuthTag.
 *      Any other configuration fields (such as keyHandle, configFlags, verifMethod, etc.) of a SMR entry can only be updated if the host has SuperUser rights (for NVM Configuration).
 *    - POST_BOOT and periodic SMR(s) source addresses cannot be in SD/MMC or external flash memory.
-*    - The keys linked with a SMR entry (through smrFlags in hseKeyInfo_t) will become unavailable after successfull installation of the SMR entry.
+*    - The keys linked with a SMR entry (through smrFlags in hseKeyInfo_t) will become unavailable after successful installation of the SMR entry.
 *      The SMR must be verified (automatically at boot-time, periodically or via verify request at run-time) before the key can be used again.
 *    - If a periodic SMR is updated during runtime using this service, the periodic checks for this SMR entry are disabled till the next reset.
+*    - The HSE firmware authenticate image without loading the image when pSmrSrc and pSmrDest address are the same.
 *
 * @note (SHE boot): <br>
 *    The SMR #0 is the only SMR that can be associated to the SHE AES key BOOT_MAC_KEY as the
@@ -316,16 +314,19 @@ typedef struct
 *          respectively to NULL and 0.
 *        - If SMR #0 installation using the keyHandle for SHE(BOOT_MAC_KEY), #HSE_SMR_CFG_FLAG_INSTALL_AUTH = 0 is not allowed.
 *
-* @note NXP RFE SMR entries: <br>
-*    On platforms having #HSE_SPT_NXP_RFE_SW feature enabled HSE FW provides the functionality of installing NXP owned SMR entries on application cores.
-*    These are images encrypted and authenticated by NXP and have dedicated handling on installation.
-*    To install such an image one must:
-*        - Declare the ownership of the SW targeted for the application core to NXP - by setting the OTP attribute #HSE_RFE_CORE_SW_MODE_ATTR_ID.
+* @note Installing a NXP RFE SMRs entry: <br>
+*      For SAFXXXX, the protected NXP RFE images are installed configuring two image:
+*       - one image (CODE) having the destination address only in RFE ITCM (2 SMRs, one as primary and one as back-up)
+*       - and another image (configuration DATA) having the destination address RFE DTCM (2 SMRs, one as primary and one as back-up)
+*      All four SMR above are linked with the CR entry for RFE-M7 core (see the installation of NXP RFE CR entry).
+*      These images are encrypted and authenticated by NXP (using the NXP ROM keys) and have specific handling on installation (refer to HSE FW reference manual)
+*
+*    To install a single image one must (see the example code below):
 *        - Program the image(s) to the external flash to a chosen location, e.g. ExternalFlashAddr.
-*        - Provide the encryption and authentication key handles of the ROM keys targeted for this use case (#HSE_ROM_KEY_AES256_KEY2 and #HSE_ROM_KEY_RSA2048_PUB_KEY1).
-*        - Provide the installation address of the image (can be the same of that from the external flash - ExternalFlashAddr - as long as it is in QSPI or a different chosen location - InstallationAddr).
-*        - Provide a chosen index for the installed SMR - Ind.
-*   Example of NXP SMR installation:
+*        - Provide the encryption and authentication key handles of the ROM keys (#HSE_ROM_KEY_AES256_KEY2 and #HSE_ROM_KEY_RSA2048_PUB_KEY1).
+*        - Provide the installation address of the image (can be the same as ExternalFlashAddr).
+*        - Provide a SMR entryIndex for the installation
+*   Example of a single NXP RFE image installation (note that 4 SMRs must be installed):
 *   \code
 *   smrEntry.pSmrSrc                            = ExternalFlashAddr;
 *   smrEntry.authKeyHandle                      = HSE_ROM_KEY_RSA2048_PUB_KEY1;
@@ -337,10 +338,9 @@ typedef struct
 *   hseDescriptor.smrEntryInstallReq.pSmrEntry  = HSE_PTR_TO_HOST_ADDR(&smrEntry);
 *   hseDescriptor.smrEntryInstallReq.pSmrData   = InstallationAddr;
 *
-*   SendDescToHse(&hseDescriptor);
+*   response = SendDescToHse(&hseDescriptor);
 *   \endcode
 *   Constraints and additional notes:
-*        - #HSE_RFE_CORE_SW_MODE_ATTR_ID attribute must be set to NXP before being allowed to install NXP SMR entries.
 *        - Only #HSE_ACCESS_MODE_ONE_PASS access mode can be used.
 *        - All parameters not specified in the above example are ignored.
 */
@@ -411,7 +411,7 @@ typedef struct
     /** @brief INPUT: Optional - Cipher parameters used for installing encrypted SMR(s).
      *                @note
      *                  - These parameters are use only if hseSmrDecrypt_t#decryptKeyHandle != #HSE_SMR_DECRYPT_KEY_HANDLE_NOT_USED (see hseSmrDecrypt_t).
-     *                  - The pointers that are specified in this structure shall be provided from a memory-mapped location (QSPI/RAM).
+     *                  - The pointers that are specified in this structure shall be provided from a memory-mapped location (QSPI/LPDDR4/RAM).
      *                  - In case an SMR lying in SD/eMMC external flash is installed, a copy of GMAC tag (if used) shall be done in RAM and provided via the fields below. <br>
      *                    The pointers provided via hseSmrEntryInstallSrv_t#pSmrEntry shall point to the location in external flash that will be used by HSE at boot-time.
      */
@@ -423,13 +423,13 @@ typedef struct
         /** @brief INPUT: Optional - tag used for AEAD. The length considered for the GMAC tag is 16 bytes (if used - see hseSmrDecrypt_t).
          *                @note
          *                  - Used only if hseSmrDecrypt_t#pGmacTag != NULL.
-         *                  - Must point to the same data as hseSmrDecrypt_t#pGmacTag, however the memory location may differ (QSPI/RAM vs QSPI/SD/eMMC).
+         *                  - Must point to the same data as hseSmrDecrypt_t#pGmacTag, however the memory location may differ (QSPI/LPDDR4/RAM vs QSPI/LPDDR4/SD/eMMC).
          *         STREAMING USAGE: Used in FINISH.*/
         HOST_ADDR               pGmacTag;
         /** @brief INPUT: Optional - the AAD used for AEAD. The length considered for the AAD is specified via pSmrEntry->smrDecrypt.aadLength (see #hseSmrDecrypt_t).
          *                @note
          *                  - Used only if length is not zero.
-         *                  - Must point to the same data as pSmrEntry->smrDecrypt.pAAD, however the memory location may differ (QSPI/RAM vs QSPI/SD/eMMC).
+         *                  - Must point to the same data as pSmrEntry->smrDecrypt.pAAD, however the memory location may differ (QSPI/LPDDR4/RAM vs QSPI/LPDDR4/SD/eMMC).
          *         STREAMING USAGE: Used in START.*/
         HOST_ADDR               pAAD;
     } cipher;
@@ -438,6 +438,8 @@ typedef struct
 
 /** @brief HSE Secure Memory Region verification service.
  *  @details This service starts the on-demand verification of a secure memory region by specifying the index in the SMR table.
+ *
+ * @note: For SAF86XX devices, if the Flashless Boot Mode is used (pSmrSrc == pSmrDest), for any "options" value, HSE will skip the loading (the SMR image is already loaded in SRAM)
  */
 typedef struct
 {
@@ -477,28 +479,27 @@ typedef struct
  *          - SuperUser rights (for NVM Configuration) are needed to perform this service.
  *          - Updating an existing CR entry is conditioned by having all preBoot and postBoot SMR(s) linked with the previous entry verified successfully (applicable only in OEM_PROD/IN_FIELD LCs).
  *
- *  @note NXP RFE CR entry: <br>
- *      On platforms having #HSE_SPT_NXP_RFE_SW feature enabled HSE FW provides the functionality of installing NXP owned CR entry for application cores (e.g. RFE - CORE1 on SAF85XX platform).
- *      This CR entry are linked with the NXP SMR entries and have a dedicated handling on installation.
- *      To install such an entry one must:
- *          - Install the corresponding NXP SMR images.
- *          - Link the NXP SMR entries to the CR entry to be installed.
- *          - Provide a chosen index for the installed CR - CrInd.
- *   Example of RFE CR installation when owned by NXP:
+ *  @note Installing a NXP RFE Core Reset entry: <br>
+ *      For SAF85XX, SAF86XX, the HSE FW provides the functionality of installing the protected NXP RFE images (e.g. RFE - CORE1 on SAF85XX platform).
+ *      This CR entry are linked with the NXP RFE images (4 SMRs, two for primary and two for back-up) and have a specific handling on installation (refer to HSE FW reference manual).
+ *      To install such an entry one must (refer to the example code below):
+ *          - Install the corresponding NXP SMR images (see SMR installation NXP RFE images)
+ *          - Link the NXP RFE images (4 SMRs) to the CR entry to be installed.
+ *          - Provide the crEntryIndex index (CR_IND_RFE).
+ *   Example of RFE CR installation for NXP RFE im:
  *   \code
- *   crEntry.coreId                                 = HSE_APP_CORE1;
- *   crEntry.preBootSmrMap                          = ((1UL << ITCM_PRIMARY_IND) | (1UL << DTCM_PRIMARY_IND));
- *   crEntry.altPreBootSmrMap                       = ((1UL << ITCM_BACKUP_IND)  | (1UL << DTCM_BACKUP_IND));
+ *   crEntry.coreId = HSE_APP_CORE1;
+ *   crEntry.preBootSmrMap = ((1UL << SMR_IND_RFE_ITCM_PRIMARY) | (1UL << SMR_IND_RFE_DTCM_PRIMARY));
+ *   crEntry.altPreBootSmrMap = ((1UL << SMR_IND_RFE_ITCM_BACKUP) | (1UL << SMR_IND_RFE_DTCM_BACKUP));
  *
- *   hseDescriptor.srvId                            = HSE_SRV_ID_CORE_RESET_ENTRY_INSTALL;
- *   hseDescriptor.crEntryInstallReq.crEntryIndex   = CrInd;
- *   hseDescriptor.crEntryInstallReq.pCrEntry       = HSE_PTR_TO_HOST_ADDR(&crEntry);
+ *   desc.srvId = HSE_SRV_ID_CORE_RESET_ENTRY_INSTALL;
+ *   desc.crEntryInstallReq.crEntryIndex = CR_IND_RFE;
+ *   desc.crEntryInstallReq.pCrEntry = HSE_PTR_TO_HOST_ADDR(&crEntry);
+ *   response = SendHseDescriptor(&desc);
  *
- *   SendDescToHse(&hseDescriptor);
  *   \endcode
  *   Constraints and additional notes:
  *          - The referenced NXP SMR must be installed prior to CR entry installation.
- *          - Only NXP SMR are allowed to be linked with the RFE core when #HSE_RFE_CORE_SW_MODE_ATTR_ID is set to NXP.
  *          - All parameters not specified in the above example are ignored.
  */
 typedef struct
@@ -544,6 +545,7 @@ typedef struct
 /*==================================================================================================
                                      FUNCTION PROTOTYPES
 ==================================================================================================*/
+#endif /*#ifdef HSE_SPT_SMR_CR*/
 
 #define HSE_STOP_PRAGMA_PACK
 #include "hse_compiler_abs.h"

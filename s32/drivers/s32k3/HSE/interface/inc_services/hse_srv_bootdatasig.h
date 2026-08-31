@@ -10,7 +10,7 @@
 */
 /*==================================================================================================
 *
-*   Copyright 2019 - 2022 NXP.
+*   Copyright 2019 - 2024 NXP.
 *
 *   This software is owned or controlled by NXP and may only be used strictly in accordance with
 *   the applicable license terms. By expressly accepting such terms or by downloading, installing,
@@ -66,7 +66,17 @@ extern "C"{
 ==================================================================================================*/
 
 /** @brief The Application Image header that keeps information about the Basic Secure Booting (BSB)
- *        (e.g. header information, source and destination addresses, app code length, tag location). */
+ *        (e.g. header information, source and destination addresses, app code length, tag location).
+ *
+ *   @note
+ *   - If both SMR and BSB are configured, HSE executes the secure boot using SMR only. If the
+ *     SYS-IMG is not loaded because it is corrupted (the SMRs are not present), HSE executes the secure boot
+ *     using BSB. In this case, the App BSB can be seen as a recovery image (to recover the SYS-IMG).
+ *     Note that the App image can be booted without loading the SYS-IMG.
+ *   - For SAF86XX devices, if the flashless boot mode is configured (for the BSB feature),
+ *     the HSE firmware authenticates the image in place (without copying the image) when the AppBL
+ *     address in the IVT is equal to the RAM start pointer in AppBL image header.
+ */
 #ifdef HSE_SPT_BSB
 typedef struct
 {
@@ -84,10 +94,11 @@ typedef struct
 #endif /* HSE_SPT_BSB */
 
 /** @brief HSE Boot Data Image GMAC generation.
- *  @details This service is used to generate the GMAC tag along with the random IV (for new device revisions; see notes below)for different Boot Data images. <br>
+ *  @details This service is used to generate the GMAC tag along with the random IV (for new device revisions; see notes below) for different Boot Data images. <br>
  *           For HSE_H/M, the following Boot Data Images can be signed:
  *              - IVT, DCD, SELF-TEST and Application Image (also referred below as App BSB Image).
  *              - LPDDR4 Flash image for S32Z/E (HSE_H) devices.
+ *              - the Flashless Boot Image Header for SAF86XX (HSE_M) devices. <br>
  *           For HSE_B, the following Boot Data Images can be signed:
  *              - IVT and Application Image (also referred below as App BSB Image).
  *                The computed random IV and GMAC tag must be placed/copied at the end of the image.
@@ -101,45 +112,49 @@ typedef struct
  *      The GMAC tag and random IV offsets in the image are specified in the HSE Firmware Reference Manual.
  *    - For older device revisions (the part revision is smaller than the revision specified in the table below),
  *      a static IV is used that is not placed in the image. For the static IV value, refer to HSE Firmware Reference Manual.
- *    - The application can read the device revision information in the following fields:
- *         - SIUL2_0.MIDR1[MAJOR_MASK]
- *         - SIUL2_0.MIDR1[MINOR_MASK]
+ *    - The application can check the device revision information reading the MAJOR_MASK and MINOR_MASK
+ *      fields of SIUL2_4 for S32ZE or SIUL2_0 for the others devices
  *    - S32K3XX devices support only random IV
  *
  *    | Device  | New part revision|
  *    |:-------:|:----------------:|
- *    | S32G2   | rev2.1 or bigger |
- *    | S32G3   | rev1.1 or bigger |
- *    | S32ZE   | rev1.1 or bigger |
- *    | S32R45  | rev2.1 or bigger |
- *    | S32R41  | rev1.1 or bigger |
- *    | SAF85XX | rev2.0 or bigger |
+ *    | S32G2   | rev2.1 or higher |
+ *    | S32G3   | rev1.1 or higher |
+ *    | S32ZE   | rev1.1 or higher |
+ *    | S32R45  | rev2.1 or higher |
+ *    | S32R41  | rev1.1 or higher |
+ *    | SAF85XX | rev2.0 or higher |
  *    | S32K3XX | new rev only     |
+ *
  */
 #ifdef HSE_SPT_BOOTDATASIGN
 typedef struct
 {
     /** @brief  INPUT:  The address of the Boot Data Image. The Boot Data Image can be:
      *                  - For HSE_H/M, IVT or DCD or SELF-TEST or App BSB or LPDDR4(for S32Z/E devices) image; the address may be a QSPI-FLASH (external flash) or system RAM address. <br>
+     *                  - For SAF86XX devices (HSE_M), the Flashless Boot Image Header address must be system RAM address. <br>
      *                  - For HSE_B, the IVT or App BSB image; the address can be a flash or
      *                    system RAM address. <br>
+     *
      *                  The length of the pInImage is not provided. HSE uses the information
      *                  from the provided pInImage to compute the image length. <br>
      *                  The length of each image is computed in the below manner:
      *                  1. For HSE_H/M new device revisions: <br>
      *                      - the IVT Image length must be 256 bytes (IVT Image header (4bytes) + IVT Image data (224 bytes) + Random IV (12bytes) + GMAC(16 bytes))
-     *                      - DCD/SELF-TEST Image length must be maximum 8192 bytes (DCD/ST Image header(4 bytes) + maximum DCD/ST Image data (8188 byte))
+     *                      - For S32Z/E devices (HSE_H), DCD/SELF-TEST Image length must be maximum 32768 bytes (DCD/ST Image header(4 bytes) + maximum DCD/ST Image data (32764 byte))
+     *                      - For other devices,DCD/SELF-TEST Image length must be maximum 8192 bytes (DCD/ST Image header(4 bytes) + maximum DCD/ST Image data (8188 byte))
      *                      - For S32Z/E devices (HSE_H), the maximum length of the LPDDR4 Flash image must be smaller or equal to (7MB + 336bytes)(Image header(336 bytes) + code length(maximum 7MB))
+     *                      - For SAF86XX devices (HSE_M), the maximum length of the Flashless Boot Image Header must be smaller or equal to 1024 bytes
      *                      - pInImage can point to the App BSB Image that contains the App header and App code:
      *                          - App image header shall be specified as hseAppHeader_t. It has a fixed size of 64 bytes.
      *                          - App image code shall follow the App image header and has a variable length specified by "codelength" parameter.
-     *                          - The computed GMAC tag for App BSB Image includes both App header, App code and Random IV
-     *                          -  <br>
-     *                  @note:
-     *                  For old device revision (static IV):
+     *                          - The computed GMAC tag for App BSB Image includes both App header, App code and Random IV.
+     *
+     *                     For old device revision (static IV):
      *                     -  For IVT, the IV bytes are reserved (set to zero)
      *                     -  For DCD/SELF-TEST and APP BSB, the IV bytes are not included at all.
      *                     -  For S32Z/E devices, the image does not include any IV in the image header.
+     *                     -  For S32Z/E devices (HSE_H), DCD/SELF-TEST Image length must be maximum 8192 bytes (DCD/ST Image header(4 bytes) + maximum DCD/ST Image data (8188 byte))
      *
      *                  2. For HSE_B:
      *                      - The IVT image length must be 256 bytes (IVT Image header (4bytes) + IVT Image data (224 bytes) + IV (12 bytes) + GMAC(16 bytes)).
